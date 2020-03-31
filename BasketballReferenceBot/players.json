@@ -1,4 +1,4 @@
-({
+[{
   "name": "Alaa Abdelnaby",
   "year": "1991",
   "link": "/players/a/abdelal01.html"
@@ -13401,4 +13401,4 @@
 { "name": "Jim Zoet", "year": "1983", "link": "/players/z/zoetji01.html" },
 { "name": "Bill Zopf", "year": "1971", "link": "/players/z/zopfbi01.html" },
 { "name": "Ivica Zubac", "year": "2017", "link": "/players/z/zubaciv01.html" },
-{ "name": "Matt Zunic", "year": "1949", "link": "/players/z/zunicma01.html" })
+{ "name": "Matt Zunic", "year": "1949", "link": "/players/z/zunicma01.html" }]
