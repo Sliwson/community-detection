@@ -12,7 +12,7 @@ fs.readFile("./players.json", "utf8", (err, data) => {
   }
 
   var players = JSON.parse(data);
-  var counter = 1;
+  var counter = 199;
 
   console.log("Start");
   const urls = [];
