@@ -30,7 +30,21 @@ Podstawowa idea wykrywania społeczności opiera się na znajdowaniu grup wierzc
 
 \subsection{Typowe podejścia}
 Problem znajdowania społeczności, ze względu na swoją popularność i mnogość praktycznych zastosowań, doczekał się wielu podejść. Różnią się one zarówno złożonością obliczeń jak i jakością otrzymanego zbioru społeczności.  \\ \\
-Bazą wielu algorytmów wykrywania społeczności jest \textit{clustering} (klasterowanie). Jest to proces polegający na grupowaniu elementów na podstawie pewnych miar. W przypadku wierzchołków może być to na przykład ilość wspólnych sąsiadów.  Jednym z najpopularniejszych algorytmów opierających się na clusteringu jest algorytm Girvana Newmana. Skupia się on rozpatrywaniu krawędzi, które łączą różne społeczności, które z kolei konstruowane są poprzez usuwanie tych krawędzi. Ten algorytm zostanie dokładniej omówiony w dalszej części tej pracy. 
+Pierwszym, dość intuicyjnym podejściem jest wyszukiwanie społeczności skupione na wierzchołkach (node centric community detection). Zakłada ono znajdowanie grup wierzchołków z którym każdy spełnia pewne kryterium, jakim może być np: odpowiedni stopień, osiągalność (czyli odległość od innego, wskazanego wierzchołka) czy wzajemność (mutuality).\\ Przy znajdowaniu grup opartych na  wzajemności, kluczem jest znajdowanie klik (dla grafów nieskierowanych) lub pełnych grafów dwudzielnych(dla grafów skierowanych). Niestety szukanie tych struktur jest bardzo kosztowne czasowo (algorytmy NP) i dla większych grafów, o kilku tysiącach wierzchołków okazuje się niepraktyczne.\\
+Kolejnym sposobem jest rozpatrywanie grup opartych na osiągalności. W tym podejściu rozważa się kilka, dobrze zbadanych grup:
+\begin{itemize}
+\item $k-kliki$ - maksymalny podgraf w którym odległość między dwoma dowolnymi wierzchołkami (w oryginalnym grafie) jest nie większa niż $k$, czyli: $d(i,j)\leq k \forall v_i , v_j $
+\item  $k-klany$ - jest to $k$-klika dla której odległość między dwoma dowolnymi wierzchołkami w podgrafie jest nie większa niż $k$
+\item $k - kluby$ - wszystkie maksymalne pod względem zawierania grupy, w których odległość między dwoma wierzchołkami jest nie przekracza $k$ ($k$ - kluby mogą mieć różną liczność)
+
+\end{itemize}
+\\
+W przypadku grup opierających się na stopniach wierzchołków kluczowe są następujące struktury:
+\begin{itemize}
+\item $k - pleks $- to minimalny podgraf zawierający $n_s$ wierzchołków, z których każdy sąsiaduje z conajmniej $n_s k$ wierzchołkami z tego podgrafu. Innymi słowy każdy element ma conajwyżej $k$ wierzchołków, z którymi nie jest połączony.
+\item $k - rdzenie$ -  to struktury, w której każdy wierzchołek jest połączony z conajmniej $k$ wierzchołkami ze struktury, czyli  $d_s(i)\geq k \forall v_i \in V_s $
+\end{itemize}
+Definicje $k$-pleksu i $k$ - rdzeniu uzupełniają się. Te struktury są zwykle odporne na usuwanie krawędzi. Wiemy, że stopnie wierzchołków rozkładają się według prawa potęgowego, tzn. w grafie jest mało wierzch o dużych stopniach i wiele wierzchołków o mniejszych stopniach. Niestety grupy oparte na stopniach wierzchołków wymagają wielu wierzchołków o dużych stopniach, więc słabo nadają się one do analizy rzeczywistych sieci.
 \newpage
 \section{Algorytm Girvana-Newmana}
 \subsection{Opis algorytmu}
