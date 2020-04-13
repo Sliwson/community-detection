@@ -29,7 +29,45 @@ Badanie sieci społecznościowych jest podstawową dziedziną nauki o sieciach. 
 Podstawowa idea wykrywania społeczności opiera się na znajdowaniu grup wierzchołków, dla których liczba połączeń w obrębie społeczności jest znacząco wyższsza, niż liczba połączeń do wierzchołków spoza tej społeczności. Oczywiście definicja ta jest dosyć płynna - w tym problemie często algorytmy opiera się na pewnych heurystykach, które sprawdza się na rzeczywistych zbiorach danych. Weryfikacja takich rozwiązań nie jest prosta - często przeprowadzana jest ona manualnie, przez analizę wizualizacji. 
 
 \subsection{Typowe podejścia}
+Problem znajdowania społeczności, ze względu na swoją popularność i mnogość praktycznych zastosowań, doczekał się wielu podejść. Różnią się one zarówno złożonością obliczeń jak i jakością otrzymanego zbioru społeczności.
+\\ \\ 
+Pierwszym, dość intuicyjnym podejściem jest wyszukiwanie społeczności skupione na wierzchołkach (node centric community detection). Zakłada ono znajdowanie grup wierzchołków z którym każdy spełnia pewne kryterium, jakim może być np: odpowiedni stopień, osiągalność (czyli odległość od innego, wskazanego wierzchołka) czy wzajemność (mutuality).
 
+Przy znajdowaniu grup opartych na  wzajemności, kluczem jest znajdowanie klik (dla grafów nieskierowanych) lub pełnych grafów dwudzielnych (dla grafów skierowanych). Niestety szukanie tych struktur jest bardzo kosztowne czasowo (algorytmy NP) i dla większych grafów, o kilku tysiącach wierzchołków okazuje się niepraktyczne.
+
+Kolejnym sposobem jest rozpatrywanie grup opartych na osiągalności. W tym podejściu rozważa się kilka, dobrze zbadanych grup:
+
+\begin{itemize}
+\item $k-kliki$ - maksymalny podgraf w którym odległość między dwoma dowolnymi wierzchołkami (w oryginalnym grafie) jest nie większa niż $k$, czyli: $d(i,j)\leq k \forall v_i , v_j $
+\item  $k-klany$ - jest to $k$-klika dla której odległość między dwoma dowolnymi wierzchołkami w podgrafie jest nie większa niż $k$
+\item $k - kluby$ - wszystkie maksymalne pod względem zawierania grupy, w których odległość między dwoma wierzchołkami jest nie przekracza $k$ ($k$ - kluby mogą mieć różną liczność)
+\end{itemize}
+
+W przypadku grup opierających się na stopniach wierzchołków kluczowe są następujące struktury:
+
+\begin{itemize}
+\item $k - pleks $- to minimalny podgraf zawierający $n_s$ wierzchołków, z których każdy sąsiaduje z conajmniej $n_s k$ wierzchołkami z tego podgrafu. Innymi słowy każdy element ma conajwyżej $k$ wierzchołków, z którymi nie jest połączony.
+\item $k - rdzenie$ -  to struktury, w której każdy wierzchołek jest połączony z conajmniej $k$ wierzchołkami ze struktury, czyli  $d_s(i)\geq k \forall v_i \in V_s $
+\end{itemize}
+
+Definicje $k$-pleksu i $k$ - rdzeniu uzupełniają się. Te struktury są zwykle odporne na usuwanie krawędzi. Wiemy, że stopnie wierzchołków w rzeczywistych sieciach rozkładają się według prawa potęgowego, tzn. w grafie jest mało wierzch o dużych stopniach i wiele wierzchołków o mniejszych stopniach. Niestety grupy oparte na stopniach wierzchołków wymagają wielu wierzchołków o dużych stopniach, więc słabo nadają się one do analizy rzeczywistych sieci.
+\\ \\
+Odchodząc od rozważania pojedynczych wierzchołków, kolejne podejście skupia się na ich całych grupach. W takim podejściu to nie każdy wierzchołek, musi spełniać pewne założenia, ale całe zbiory wierzchołków. Przykładem takich grupy mogą być grupy oparte na gęstości. Podgraf $G_s(V_s,E_s)$ jest $\gamma$ gęsty (zwany również prawie-kliką) gdy $\frac{E_s}{V_S(V_s-1)/2}$. Wewnątrz takiego podgrafu, stopnie wierzchołków mogą znacznie się różnić, dlatego stosowane są one do dużych sieci.
+\\\\
+Rozszerzając dalej obszar rozważań, dochodzimy do metod opartych na całych sieciach. Rozważają one nie pojedyncze grupy, a sieci jako jedną całość. Przykładem mogą być: 
+\begin{itemize}
+\item grupy oparte na podobieństwie wierzchołków - biorą one pod uwagę np podobieństwo zbioru sąsiadów (podobieństwo strukturalne). Jest to jednak dosyć ograniczająca definicja, stosuje się więc też np. podobieństwo automorficzne, w którym dwa wierzchołki sa podobne, gdy ich etykiety mogą być zamienione by utworzyć izomorficzny graf. Wykrywanie podobieństw w dużych, praktycznych sieciach jest jednak dość trudne i bardzo skomplikowane obliczeniowo.
+\item grupy oparte na minimalnym przekroju - społeczności definiuje się jako podzbiór $C \subset V$, taki że $\forall v \in C, v$ ma co najmniej tak dużo krawędzi do wierzchołków z $C$ jak do wierzchołków z $V \backslash C$.
+\item grupy oparte na modularności - modularność jest miarą, która bierze pod uwagę rozkład stopni w grafie dostosowując strukturę społeczności. Mierzy ona jak bardzo sieć różni się od równomiernie losowego grafu ($null model$). Definiuje się ją następująco: $Q= \frac{1}{2m} \sum\limits_{ij} [A_{ij} - \frac{d_i d_j}{2m}]\delta(s_i,s_j)$. Generalnie celem jest dostosowanie struktury społeczności tak by zmaksymalizować modularność.
+\end{itemize}
+Ostatnim wartym wspomnienia podejściem jest wykrywanie społeczności oparte na hierarchiach. Wyróżnia się trzy typy podziału hierarchicznego:
+\begin{itemize}
+\item rozdzielające (divisive) hierarchiczne skupianie (clustering) - graf jest dzielony np. w oparciu o $edge betweeness$, które jest miarą tego jak wiele najkrótszych ścieżek pomiędzy dwoma wierzchołkami prowadzi przez daną krawędź. Pozwala ona wykrywać krawędzie, będące "mostami" między społecznościami, które w celu znalezienia podziału na społeczności są sukcesywnie usuwane.
+\item aglomeracyjne (agglomerative) hierarchiczne skupianie - opiera się na umieszczeniu wszystkich wierzchołków w oddzielnych społecznościach, które są następnie łączone, tak by zmaksymalizować modularność powstałego podziału. Ważne jest, by w tym podejściu łączyć przede wszystkim społeczności o podobnych rozmiarach, tak by uzyskać zbalansowany podział.
+\item wyszukiwanie struktur - bazuje na wyszukiwaniu hierarchii, które mają duże prawdopodobieństwo by utworzyć sieć.
+\end{itemize}
+
+Wszystkie te podejścia są jednak ściśle matematycznymi zagadnieniami. Używane w nich miary i struktury, często do obliczenia bądź znalezienia wymagają dużej mocy obliczeniowej. \cite{pw-paper1}. Dlatego w praktycznych zastosowaniach i algorytmach, często stosuje się pewne uproszczenia, modyfikuje się te podejścia, a nawet łączy je by uzyskać najlepsze efekty, za równo pod kątem czasu obliczeń jak i jakości otrzymanych społecznośći.
 \newpage
 \section{Algorytm Girvana-Newmana}
 \subsection{Opis algorytmu}
@@ -77,7 +115,7 @@ Jeśli chodzi o równoległą implementację, oczekujemy, że będzie ona znacz�
 \subsection{Oczekiwania}
 
 \newpage
-\section{Algorytm Louveina}
+\section{Algorytm Louvein}
 \subsection{Opis algorytmu}
 \subsection{Modyfikacje dla społeczności rozłącznych}
 \subsection{Proponowane modyfikacje}
@@ -96,7 +134,13 @@ W tym wypadku skupimy się na analizie wizualizacji rozwiązania. Sprawdzimy, cz
 
 \newpage
 \section{Uwagi końcowe}
-Sample z cytatem!\cite{sample}.
+
+
+Nie ulega wątpliwości, że wykrywanie społeczności i analiza sieci społecznościowych jest i staje się coraz bardziej przydatnym narzędziem. Pracują nad nim potężne zespoły, składające się z najlepszych matematyków i naukowców z całego świata, zatem naszym celem jest przede wszystkim zgłębienie tematu, aby zrozumieć działanie typowych metod i algorytmów, a następnie spróbować je wykorzystać i dostosować do postawionego przed nami problemu. Oczekujemy, że efekty mogą nie być, tak spektakularne jak byśmy tego chcieli, ale mamy nadzieję, że mimo wszystko uda nam się dokonać jakiś ciekawych obserwacji, które przybliżą nam temat wykrywania społeczności oraz problemów, z którymi spotykają się ludzie zajmujący się tym na co dzień. 
+
+
+Sample z cytatem!
+\cite{sample}.
 
 \printbibliography
 
