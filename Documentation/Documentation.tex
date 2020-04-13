@@ -91,6 +91,16 @@ Wszystkie te podejścia są jednak ściśle matematycznymi zagadnieniami. Używa
 \newpage
 \section{Algorytm Louvein}
 \subsection{Opis algorytmu}
+Algorytm ten został zaproponowany przez profesora Vincenta Blondela z Uniwersytetu w Louvain. Jest to tzw. algorytm zachłanny (greedy algorithm), który dąży w każdym kroku do zmaksymalizowania modularności. Modularność, jako miara podziału sieci na społeczności już pojawiła się w tej pracy, ale przypomnijmy: $Q= \frac{1}{2m} \sum\limits_{ij} [A_{ij} - \frac{d_i d_j}{2m}]\delta(s_i,s_j)$. W tym algorytmie jednak, o wiele ważniejsza od wartości modularności jest jej różnica w każdym kroku, bo to na jej podstawie będziemy przenosić wierzchołki pomiędzy społecznościami:  $$\Delta Q = [\frac{\Sigma_{in} +2k_{i,in}}{2m} - (\frac{\Sigma_{tot} + k_i}{2m})^2]$$
+Schemat algorytmu:
+\begin{enumerate}
+\item Każdy wierzchołek umieść w oddzielnej 1 elementowej społeczności
+\item Dla każdego wierzchołka przenieś go do sąsiadującej społeczności, tak by maksymalnie zwiększyć modularność (czyniąc to zachłannie, a więc nie biorąc pod uwagę kolejnych iteracji, czy wierzchołków). Jeśli nie da się tego wykonać, pozostaw go w obecnej. Jeśli w tym kroku, nie nastąpi żadna zmiana algorytm kończy działanie.
+\item Każdą powstałą społeczność, scal do jednego wierzchołka. Krawędzie pomiędzy wierzchołkami wewnątrz społeczności zamieniają się w pętle o odpowiedniej wadze, a krawędzie z kilku wierzchołków ze społeczności do jednego spoza łączą się w jedną o zsumowanej wadze.
+\item Powróć do 2 kroku.
+\end{enumerate}
+Wynikiem działania algorytmu jest  graf, w którym każdy wierzchołek reprezentuje społeczność w oryginalnym grafie. Wszystkie węzły, które w czasie działania algorytmu zostały scalone do jednego wierzchołka, należą do jednej społeczności. \\ 
+Algorytm ten, poza dość prostym schematem działania, cechuje się też dobrą szybkością obliczeń (w porównaniu do innych typowych rozwiązań), oraz wysoką jakością otrzymanych wyników. Niestety ze względu na wykorzystywaną modularność, zrównoleglenie działania algorytmu nie jest trywialnym zadaniem. 
 \subsection{Modyfikacje dla społeczności rozłącznych}
 \subsection{Proponowane modyfikacje}
 \subsection{Oczekiwania}
