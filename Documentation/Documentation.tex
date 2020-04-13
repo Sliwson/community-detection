@@ -22,7 +22,7 @@
 
 \section{Wstęp}
 \subsection{Przedstawienie problemu}
-Badanie sieci społecznościowych jest podstawową dziedziną nauki o sieciach. Problem ten znacząco zyskał na znaczeniu, odkąd możliwy jest dostęp do olbrzymich zbiorów danych, dzięki działaniom takich firm jak Facebook, Google, czy Twitter. Sczególnie istotnym zagadnieniem, zarówno dla środowiska biznesowego jak i akademickiego, jest wyszukiwanie społeczności w grafach społecznościowych. Wykorzystuje się je w takich dziedzinach jak kryminalistyka, opieka zdrowotna, polityka, czy marketing\cite{paper1}.
+Badanie sieci społecznościowych jest podstawową dziedziną nauki o sieciach. Problem ten znacząco zyskał na znaczeniu, odkąd możliwy jest dostęp do olbrzymich zbiorów danych, dzięki działaniom takich firm jak Facebook, Google, czy Twitter. Sczególnie istotnym zagadnieniem, zarówno dla środowiska biznesowego jak i akademickiego, jest wyszukiwanie społeczności w grafach społecznościowych. Wykorzystuje się je w takich dziedzinach jak kryminalistyka, opieka zdrowotna, polityka, czy marketing\cite{ms-paper1}.
 
 \textbf{Grafem społecznościowym} nazywamy taki graf, który reprezentuje relacje między jednostkami. Najczęściej spotykanym przykładem jest struktura, gdzie wierzchołki identyfikują osoby, a krawędzie - relacje między danymi osobami. Tą relacją może być znajomość, lecz nic nie stoi na przeszkodzie aby definiować ją dowolnie - np. pytaniem 'Czy dane osoby wymieniły ze sobą wiadomość?'.
 
@@ -78,9 +78,35 @@ Wszystkie te podejścia są jednak ściśle matematycznymi zagadnieniami. Używa
 \newpage
 \section{Label Propagation Algorithm}
 \subsection{Opis algorytmu}
+Label Propagation Algorithm to algorytm stosunkowo prosty i szybki. Wybraliśmy go ze względu na jego interesujące własności oraz fakt, że został zaimplementowany w bilbliotece neo4j. Dokładnie został opisany w pracy 'Near linear time algorithm to detect community structures in large-scale networks'\cite{ms-paper2}. Opiera się on na idei, że etykieta staje się dominująca w gętsto połączonych grupach, zaś nie jest propagowana przez rzadko połączone rejony. Ogólny schemat wygląda następująco:
+\begin{enumerate}
+\item Zainicjalizuj wierzchołki unikatowymi etykietami.
+\item Dla każdego wierzchołka przypisz mu etykietę, która występuje najwięcej razy wśród jego sąsiadów. W razie remisu, wybierz losowo.
+\item Powtarzaj krok 2, aż nie wystąpi żadna zmiana etykiety.
+\end{enumerate}
+
 \subsection{Modyfikacje dla społeczności rozłącznych}
+\subsubsection{COPRA}
+Aby umożliwić wykrywanie społeczności rozłączonych wprowadzono parametr $v$ - maksymalną ilość społeczności, do której może należeć wierzchołek\cite{ms-paper3}. W każdym kroku algorytmu wierzchołkowi przypisujemy $v$ najczęściej występujących wśród jego sąsiadów etykiet.
+\subsubsection{BMLPA}
+Zaproponowano modyfikację algorytmu COPRA, aby jego parametryzacja była bardziej uniwersalna\cite{ms-paper4}. Wierzchołkowi przypisujemy tylko te etykiety, dla których iloraz $\frac{b}{b_{max}}$ jest większy bądź równy od nowo wprowadzonego parametru $p$, gdzie $b$ to liczność danej etykiety wśród sąsiadów, $b_{max}$ to liczność najczęściej występującej etykiety wśród sąsiadów. Algorytm ten wymaga wyznaczenia początkowych społeczności.
+
 \subsection{Proponowane modyfikacje}
+\subsubsection{Zrównoleglenie}
+Algorytm LPA jest algorytmem o złożonosci liniowej, dlatego nie ma tutaj zbyt dużego pola na optymalizacje wydajnościowe. Interesującym doświadczeniem, może być jednak zaimplementowanie algorytmu oraz jego modyfikacji na procesory graficzne (np. używając biblioteki CUDA). Doświadczenia takie były już przeprowadzane (\cite{ms-paper5}, \cite{ms-paper6}), jednak w naszej pracy zyskalibyśmy porównanie nie tylko między CPU i GPU, lecz również między innymi metodami.
+\subsubsection{Użycie roli}
+\label{subsubsection:lparole}
+Znaczącą poprawę wyników LPA można uzyskać wybierając społeczności początkowe, zamiast inicjalizować wszystkie wierzchołki unikatowymi społecznościami. Jednym z pomysłów jest użycie idei ról w grafie do wyboru początkowych społeczności\cite{ms-paper7}. Chcemy zastosować tę ideę do inicjalizacji algorytmu BMLPA.
+\subsubsection{Użycie parametrów krawędzi}
+\label{subsubsection:lpaedges}
+Dla grafu z sieci Facebook możemy do krawędzi przypisać interesujące wartości, np. datę zawarcia znajomości, czy liczbę wspólnych znajomych. Chcemy użyć tych parametrów jako wag przy wyborze etykiet w kroku algorytmu. Przykłady:
+\begin{itemize}
+\item W przypadku remisu, wybieramy tę etykietę, dla której średnia data zawarcia znajomości jest niższa.
+\item Dodajemy wagę do wierzchołka - liczbę wspólnych znajomych dzieloną przez maksymalną wspólną liczbę znajomych z sąsiadem, a następnie używamy jej razem z wagami, zgodnie z ideą algorytmu BMLPA.
+\end{itemize}
+
 \subsection{Oczekiwania}
+Jeśli chodzi o równoległą implementację, oczekujemy, że będzie ona znacząco szybsza od jakiejkolwiek innej metody w naszej pracy. W przypadku modyfikacji z punktów \ref{subsubsection:lparole} i \ref{subsubsection:lparole}, chcemy uzyskać rezultaty bardziej wiarygodne, pozbawione gigantycznych społeczności, bez nienaturalnych rozkładów.
 
 \newpage
 \section{Overlapping Community Detection by Local Community Expansion}
@@ -97,6 +123,11 @@ Wszystkie te podejścia są jednak ściśle matematycznymi zagadnieniami. Używa
 
 \newpage
 \section{Porównanie}
+\subsection{Pod kątem szybkości działania}
+Aby uzyskać miarodajne rezultaty, planujemy każdy algorytm uruchamiać na tych samych zbiorach danych oraz tej samej maszynie. Dla problemu społeczności nachodzących oczekujemy, że najwolniejszy będzie Algorytm Girvana-Newmana, ze względu na swoją złożoność obliczeniową. Następnie Algorytm Louveina, przez bardzo kosztowny ostatni krok wyznaczania społeczności nachodzących. Najszybszy powinien okazać się algorytm LPA, ze względu na niemal liniową złożoność, zaś na drugim miejscu spodziewamy się algorytmu OCDLCE.
+
+\subsection{Pod kątem jakości rozwiązania}
+W tym wypadku skupimy się na analizie wizualizacji rozwiązania. Sprawdzimy, czy powstałe społeczności mają naturalne dla problemu rozłożenie. Zamierzamy również badać, czy w rozwiązaniu nie pojawiły się zbiory gigantyczne, zbyt obszerne przecięcia  lub zbiory rozłączne. Będziemy także sprawdzali, czy otrzymana liczba społeczności jest zbliżona do wzorcowego wyniku.
 
 \newpage
 \section{Projekt z dziedziny zainteresowań osobistych}
