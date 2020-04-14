@@ -33,12 +33,33 @@ Podstawowa idea wykrywania społeczności opiera się na znajdowaniu grup wierzc
 \newpage
 \section{Algorytm Girvana-Newmana}
 \subsection{Opis algorytmu}
-Metoda Girvan-Newmana jest metodą dzielącą - rozważanie problemu rozpoczyna się od całej sieci i z każdym krokiem zmniejsza ją poprzez usuwanie krawędzi. Każda z nich posiada specjalny parametr, który w literaturze funkcjonuje pod nazwą "edge betweeness". Określa on sumę najkrótszych ścieżek przechodzących przez daną krawędź. W przypadku tylko jednej takiej ścieżki parametr zwiększany jest o 1, natomiast gdy między wierzchołkami występuję więcej niż jedna najkrótsza ścieża, to każdej z tych ścieżek przypisywana jest równa waga, tak by suma wag dla wszystkich była równa 1.
+Metoda Girvan-Newmana jest metodą dzielącą - rozważanie problemu rozpoczyna się od całej sieci i z każdym krokiem zmniejsza ją poprzez usuwanie krawędzi. Każda z nich posiada specjalny parametr, który w literaturze funkcjonuje pod nazwą \textit{edge betweenness}. Określa on sumę najkrótszych ścieżek przechodzących przez daną krawędź. W przypadku tylko jednej takiej ścieżki parametr zwiększany jest o 1, natomiast gdy między wierzchołkami występuję więcej niż jedna najkrótsza ścieża, to każdej z tych ścieżek przypisywana jest równa waga, tak by suma wag dla wszystkich była równa 1.
 
-Cecha ta zwraca od razu uwagę na fakt, który może stanowić główną wadę algorytmu - jego złożoność jest dość duża i może on mieć znaczne problemy wydajnościowe przy większych sieciach. Co interację, po usunięciu krawędzi, konieczne jest ponowne wyliczenie wartości parametru dla każdej z krawędzi. To prowadzi do złożoności czasowej na poziomie $O({m}^2n)$, gdzie m stanowi liczbę krawędzi, a n liczbę wierzchołków. Usprawnienie algorytmu można dokonać poprzez wyrzucenie w jednym kroku wszystkich krawędzi o najwyższej wadze. Co prawda nie zmieni to złożoności pesymistycznej algorytmu, jednak w większości przypadków znacznie go usprawni. Warto nadmienić, iż twórcy algorytmu nie sprecyzowali kolejności usuwania krawędzi o tej samej wadze, pozostawiając ten aspekt do rozwiązania przy implementacji.
+Cecha ta zwraca od razu uwagę na fakt, który może stanowić główną wadę algorytmu - jego złożoność jest dość duża i może on mieć znaczne problemy wydajnościowe przy większych sieciach. Co interację, po usunięciu krawędzi, konieczne jest ponowne wyliczenie wartości parametru dla każdej z krawędzi. To prowadzi do złożoności czasowej na poziomie $O({m}^2n)$, gdzie m stanowi liczbę krawędzi, a n liczbę wierzchołków. Usprawnienia algorytmu można dokonać poprzez wyrzucenie w jednym kroku wszystkich krawędzi o najwyższej wadze. Co prawda nie zmieni to złożoności pesymistycznej algorytmu, jednak w większości przypadków znacznie go usprawni. Warto nadmienić, iż twórcy algorytmu nie sprecyzowali kolejności usuwania krawędzi o tej samej wadze, pozostawiając ten aspekt do rozwiązania przy implementacji.
 
 Algorytm kończy swe działanie, gdy usunięta zostanie ostatnia krawędź. W czasie jego działania stworzony zostanie dendrogram, na podstawie którego będzie można odbudować podział społeczności na danym poziomie. Znalezienie optymalnej dekompozycji grafu stanowi w tym wypadku kluczowy problem. W tym przypadku analizowana metoda ukazuje swoje zalety. Co iteracje można tutaj wyliczyć współczynnik modularności i na samym końcu określić poziom, dla którego był on największy, a następnie odtworzyć dany stan sieci. W ten sposób metoda Girvan-Newmana jest w stanie wskazać nam najlepszy podział sieci na społeczności.
+
+Motywację przy wyborze tego algorytmu stanowił fakt, iż jest to najbardziej znana metoda związana z wykrywaniem społeczności, o której wzmianki można odnaleźć w niemal każdej publikacji naukowej z tej dziedziny. Zagłebiając się w tematykę warto rozpocząć od niego swoją pracę. 
 \subsection{Modyfikacje dla społeczności rozłącznych}
+\subsubsection{CONGA}
+W tradycyjnym wykorzystaniu algorytmu Girvan-Newmana każda kolejna iteracja prowadzi do podziału sieci na mniejsze części, które razem zawierają wszystkie wierzchołki grafu. Aby umożliwić wykrywanie społeczności nakładających się, musimy odnaleźć moment w którym dojdzie do podziału wierzchołka, tak aby znalazł się on w dwóch oddzielnych społecznościach. W algorytmie CONGA problem ten został rozwiązany poprzez wprowadzenie dodatkowego parametru dla każdego wierzchołka, w literaturze nazwanego \textit{vertex betweenness}.
+
+Analogia do nazwy \textit{edge betweenness} wykorzystywanej w wersji podstatowej algorytmu nie jest przypadkowa. Parametr dla wierzchołka mówi nam bowiem o tym, ile najkrótszych ścieżek przechodzi przez ten wierzchołek. Dodatkowo dla każdego wierzchołka ${v}$ wartość tą można obliczyć bazując na wyliczonych wcześniej parametrów każdej z krawędzi zawierającej ${v}$. Zważywszy na złożoność czasową całego algorytmu modyfikacja ta nie jest znacząco kosztowna.
+
+Z podejściem CONGA związane są trzy główne pytania na temat podziału wierzchołka:
+\begin{enumerate}
+\item Kiedy wykonać je zamiast zwykłego usunięcia krawędzi?
+\item Który wierzchołek podzielić?
+\item Jak go podzielić?
+\end{enumerate} 
+
+O ile na 2 pytanie odpowiedź stanowi parametr \textit{vertex betweenness}, tak pozostałe wymagają przyjęcia pewnych założeń. Określenie momentu podziału wierzchołka zamiast usunięcia krawędzi również wydaje się proste - klonowanie następuje wtedy, gdy największa wartość \textit{vertex betweenness} przekroczy największą wartość \textit{edge betweenness}. Odpowiedź na ostatnie pytanie stanowi już jednak o wiele poważniejszy problem i wymaga wprowadzenia dodatkowego parametru.
+
+\textit{Pair betweeness} wierzchołka $v$ dla $(u,w)$, gdzie $u$ i $w$ są sąsiadami $v$ i $u \neq w$ jest to liczba najkrótszych ścieżek, które przechodzą zarówno przez krawędź $(u,v)$ jak i $(v,w)$. Obliczenie tego parametru dla każdej pary można przeprowadzić razem z wyliczaniem zwykłego \textit{edge betweenness}. Aby móc wykonać podział konieczne jest stworzenie dodatkowej konstrukcji opartej na ww. parametrze. Konstrukcja ta jest k-kliką, dla której każdy wierzchołek jest numerowany indeksem sąsiada $v$, a krawędzie $(u,w)$ są oznaczane wartością parametru \textit{pair betweenness} dla tej pary osiągniętym przy analizie z wierzchołka $v$.
+
+Podział wierzchołka na podstawie parametru \textit{pair betweeness} jest zrealizowany metodą zachłanną. Warto zwrócić uwagę, iż modyfikacja ta wymagać będzie dodatkowej pamięci, a także zwiększy czas wykonania. Jest to też zdecydowanie najbardziej rozbudowany krok algorytmu CONGA.
+\subsubsection{CONGO}
+Optymalizacja algorytmu CONGA zrealizowana przez jego twórców. Skupia się ona na analizie lokalnej problemu, odrzucając wszystkie ścieżki o długości większej niż parametr $h$ (zazwyczaj dość niska wartość). Następnie problem aktualizacji wartości \textit{edge betweenness} odbywa się również wyłącznie lokalnie, przez co czas wykonania algorytmu znacznie spada. W naszych działaniach pominiemy jednak tę metodę, gdyż podając ją analizie uznaliśmy, iż ciężko znaleźć w niej miejsce do skutecznej modyfikacji.
 \subsection{Proponowane modyfikacje}
 \subsection{Oczekiwania}
 
