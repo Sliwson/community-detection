@@ -22,11 +22,11 @@
 
 \section{Wstęp}
 \subsection{Przedstawienie problemu}
-Badanie sieci społecznościowych jest podstawową dziedziną nauki o sieciach. Problem ten znacząco zyskał na znaczeniu, odkąd możliwy jest dostęp do olbrzymich zbiorów danych, dzięki działaniom takich firm jak Facebook, Google, czy Twitter. Sczególnie istotnym zagadnieniem, zarówno dla środowiska biznesowego jak i akademickiego, jest wyszukiwanie społeczności w grafach społecznościowych. Wykorzystuje się je w takich dziedzinach jak kryminalistyka, opieka zdrowotna, polityka, czy marketing\cite{ms-paper1}.
+Badanie sieci społecznościowych jest podstawową dziedziną nauki o sieciach. Problem ten znacząco zyskał na znaczeniu, odkąd możliwy jest dostęp do olbrzymich zbiorów danych, dzięki działaniom takich firm jak Facebook, Google, czy Twitter. Szczególnie istotnym zagadnieniem, zarówno dla środowiska biznesowego jak i akademickiego, jest wyszukiwanie społeczności w grafach społecznościowych. Wykorzystuje się je w takich dziedzinach jak kryminalistyka, opieka zdrowotna, polityka, czy marketing\cite{ms-paper1}.
 
 \textbf{Grafem społecznościowym} nazywamy taki graf, który reprezentuje relacje między jednostkami. Najczęściej spotykanym przykładem jest struktura, gdzie wierzchołki identyfikują osoby, a krawędzie - relacje między danymi osobami. Tą relacją może być znajomość, lecz nic nie stoi na przeszkodzie aby definiować ją dowolnie - np. pytaniem 'Czy dane osoby wymieniły ze sobą wiadomość?'.
 
-Podstawowa idea wykrywania społeczności opiera się na znajdowaniu grup wierzchołków, dla których liczba połączeń w obrębie społeczności jest znacząco wyższsza, niż liczba połączeń do wierzchołków spoza tej społeczności. Oczywiście definicja ta jest dosyć płynna - w tym problemie często algorytmy opiera się na pewnych heurystykach, które sprawdza się na rzeczywistych zbiorach danych. Weryfikacja takich rozwiązań nie jest prosta - często przeprowadzana jest ona manualnie, przez analizę wizualizacji. 
+Podstawowa idea wykrywania społeczności opiera się na znajdowaniu grup wierzchołków, dla których liczba połączeń w obrębie społeczności jest znacząco wyższa, niż liczba połączeń do wierzchołków spoza tej społeczności. Oczywiście definicja ta jest dosyć płynna - w tym problemie często algorytmy opiera się na pewnych heurystykach, które sprawdza się na rzeczywistych zbiorach danych. Weryfikacja takich rozwiązań nie jest prosta - często przeprowadzana jest ona manualnie, przez analizę wizualizacji. 
 
 \subsection{Typowe podejścia}
 Problem znajdowania społeczności, ze względu na swoją popularność i mnogość praktycznych zastosowań, doczekał się wielu podejść. Różnią się one zarówno złożonością obliczeń jak i jakością otrzymanego zbioru społeczności.
@@ -139,9 +139,62 @@ Jeśli chodzi o równoległą implementację, oczekujemy, że będzie ona znacz�
 \newpage
 \section{Overlapping Community Detection by Local Community Expansion}
 \subsection{Opis algorytmu}
-\subsection{Proponowane modyfikacje}
-\subsection{Oczekiwania}
+Algorytm ten wykorzystuje podejście znalezienia wielu małych lokalnych społeczności, a następnie połączeniu ich w większe, nakładające się. Składa się on z trzech kroków:
 
+\subsubsection{Wyznaczenie lokalnych społeczności}
+\begin{itemize}
+\item Zainicjuj lokalne społeczności zbiorem pustym
+\item Dla każdej pary wierzchołków $(u,v)$, że oba nie należą jeszcze do tej samej społeczności wykonuj:
+\begin{itemize}
+\item Zainicjuj tymczasową społeczność $tmp$ jako $\{u,v\}$
+\item Rozpatrz każdego wspólnego sąsiada $u$ i $v$, jeżeli modularność społeczności wraz z nim jest większa od modularności bez niego, dodaj go do społeczności
+\item Jeżeli w $tmp$ znajduje się przynajmniej $5$ elementów, dodaj $tmp$ do zbioru lokalnych społeczności
+\end{itemize}
+\end{itemize}
+
+Jest to jedna z metod wyznaczania lokalnych społeczności, zaprezentowana w \cite{bt-paper1}. Najważniejszą rolę w niej odgrywa w niej modularność. Jest ona wyznaczana ze wzoru:
+
+$M = \frac{M_{in}}{M_{out}} = \frac{\frac{1}{2}\sum_{ij}A_{ij}\theta(i,j)}{\sum_{i,j}A_{ij}\lambda(i,j)}$,\\
+gdzie $A_{ij}$ jest macierzą sąsiedztwa grafu, $\theta$ i $\lambda$ zaś funkcjami. $\theta(i,j)$ zwraca $1$, jeśli oba wierzchołki $i$ i $j$ należą do rozpatrywanej społeczności, w przeciwnym wypadku zwraca $0$. $\lambda(i,j)$ zwraca $1$ jeśli tylko jeden z wierzchołków należy do społeczności, w przeciwnym wypadku $0$. Można więc powiedzieć, że $\theta$ odpowiada bitowej operacji AND, zaś $\lambda$ bitowej operacji XOR.
+\subsubsection{Łączenie społeczności}
+\begin{itemize}
+\item Zainicjuj zbiór wyjściowych społeczności $C'$ zbiorem lokalnych społeczności
+\item Dla każdej społeczności $C$ z $C'$ wykonuj:
+\begin{itemize}
+\item Znajdź zbiór społeczności połączonych z $C$
+\item Przyłącz ten zbiór do $C$
+\item Usuń z $C'$ wszystkie sieci należące do tego zbioru
+\item Uaktualnij licznik społeczności we wszystkich wierzchołkach z $C'$
+\end{itemize}
+\end{itemize}
+
+W wyniku wyżej opisanego algorytmu można skonstruować społeczności nakładające się na siebie, jako że wiele lokalnych społeczności może zawierać te same wierzchołki. Należy jednak zdefiniować, kiedy dwie społeczności są ze sobą połączone. W \cite{bt-paper1} proponowana jest metoda, polegająca na liczeniu ważonego wyniku nakładania się $WOS$, danego wzorem:\\
+$WOS(C_i,C_j) = \alpha\frac{|V_i \cap V_j|}{min(|V_i|,|V_j|)} + (1-\alpha)\frac{|E^{in}_i \cap E^{out}_j|}{min(E^{in}_i,E^{out}_j)}$, \\gdzie $\alpha$ jest ustalonym parametrem między $0$, a $1$, $V$ określa zbiór wierzchołków danej społeczności, a $E^{in}$ i $E^{out}$ to zbiory krawędzi odpowiednio wewnętrznych (o obu końcach w społeczności) i zewnętrznych (o tylko jednym końcu wewnątrz). Dane społeczności $C_i$ i $C_j$ sąsiadują ze sobą jeśli $WOS(i,j)$ jest większy od ustalonej na początku stałej $\beta$.
+\subsubsection{Przyłączanie wierzchołków izolowanych}
+\begin{itemize}
+\item Dla każdego wierzchołka $u$, który nie należy do żadnej społeczności wykonaj:
+\begin{itemize}
+\item Rozpatrz każdą społeczność, do której należy $u$, jeżeli modularność tej społeczności wraz z nim jest większa, niż bez niego, dodaj go do społeczności
+\end{itemize}
+\end{itemize}
+
+Jako, że w pierwszym kroku odrzuca się wszystkie społeczności mające mniej niż 5 wierzchołków, istnieje istotne prawdopodobieństwo, że w grafie pozostanie wiele wierzchołków izolowanych. Krok ten ma na celu zmniejszyć tę liczbę, jednak warto zauważyć, że mimo wykonania go, nie wszystkie wierzchołki muszą należeć do jakiejś społeczności. Modularność jest wyznaczania jak w kroku pierwszym.
+
+\subsubsection{Złożoność obliczeniowa}
+\begin{enumerate}
+\item Krok pierwszy ma złożoność $O(m\cdot d)$, gdzie $m$ jest liczbą krawędzi w grafie, a d średnim stopniem wierzchołków. Jest tak ponieważ początkowych społeczności będzie rzędu $m$, a wspólnych sąsiadów rzędu $d$.
+\item Krok drugi ma złożoność $O(k_1^2)$, gdzie $k_1$ to liczba społeczności znalezionych w pierwszym kroku. Oczywiście $k_1 < m$, ale można oczekiwać, że zazwyczaj będzie $k_1 << m$.
+\item Krok trzeci ma złożoność $O(n\cdot d)$, ponieważ rozważanych jest najwyżej $n$ wierzchołków (zazwyczaj istotnie mniej) i każdy średnio ma stopień rzędu $d$.
+\end{enumerate}
+Z powyższych rozważań wynika, że przy założeniu $n \approx m$, złożoność pesymistyczna jest kwadratowa, ale zazwyczaj będzie bliska liniowej.
+
+\subsection{Proponowane modyfikacje}
+\subsubsection{Użycie innej miary niż modularność}
+Wierzchołki do lokalnych społeczności można dodawać za pomocą innych miar niż modularność M. Może być to na przykład funkcja $f$ z \cite{bt-paper2}.
+\subsubsection{Inny sposób wybierania lokalnych społeczności}
+W dotychczasowej wersji algorytmu za początek społeczności brane są pary sąsiadujących wierzchołków, niebędących jeszcze w jednej społeczności. Zamiast tego można rozpatrzeć połączone ze sobą trójkąty, bądź większe kliki, których wszystkie wierzchołki nie są jeszcze w jednej społeczności. To rozwiązanie jest wolniejsze z powodu konieczności znalezienia wszystkich takich klik, ale istnieje szansa, że tak zbudowane społeczności będą lepiej dobrane. 
+\subsection{Oczekiwania}
+Od metody oczekujemy tego, że po jej implementacji potwierdzą się wyniki podane w \cite{bt-paper1} i w przyzwoitym czasie uda się uzyskać wysokiej jakości podział na społeczności. Od modyfikacji oczekujemy, że wprowadzenie ich zmieni w istotnym stopniu uzyskany wcześniej rezultat.
 \newpage
 \section{Algorytm Louvein}
 \subsection{Opis algorytmu}
