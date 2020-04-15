@@ -22,11 +22,13 @@
 
 \section{Wstęp}
 \subsection{Przedstawienie problemu}
-Badanie sieci społecznościowych jest podstawową dziedziną nauki o sieciach. Problem ten znacząco zyskał na znaczeniu, odkąd możliwy jest dostęp do olbrzymich zbiorów danych, dzięki działaniom takich firm jak Facebook, Google, czy Twitter. Szczególnie istotnym zagadnieniem, zarówno dla środowiska biznesowego jak i akademickiego, jest wyszukiwanie społeczności w grafach społecznościowych. Wykorzystuje się je w takich dziedzinach jak kryminalistyka, opieka zdrowotna, polityka, czy marketing\cite{paper1}.
+
+Badanie sieci społecznościowych jest podstawową dziedziną nauki o sieciach. Problem ten znacząco zyskał na znaczeniu, odkąd możliwy jest dostęp do olbrzymich zbiorów danych, dzięki działaniom takich firm jak Facebook, Google, czy Twitter. Sczególnie istotnym zagadnieniem, zarówno dla środowiska biznesowego jak i akademickiego, jest wyszukiwanie społeczności w grafach społecznościowych. Wykorzystuje się je w takich dziedzinach jak kryminalistyka, opieka zdrowotna, polityka, czy marketing\cite{ms-paper1}.
+
 
 \textbf{Grafem społecznościowym} nazywamy taki graf, który reprezentuje relacje między jednostkami. Najczęściej spotykanym przykładem jest struktura, gdzie wierzchołki identyfikują osoby, a krawędzie - relacje między danymi osobami. Tą relacją może być znajomość, lecz nic nie stoi na przeszkodzie aby definiować ją dowolnie - np. pytaniem 'Czy dane osoby wymieniły ze sobą wiadomość?'.
 
-Podstawowa idea wykrywania społeczności opiera się na znajdowaniu grup wierzchołków, dla których liczba połączeń w obrębie społeczności jest znacząco wyższsza, niż liczba połączeń do wierzchołków spoza tej społeczności. Oczywiście definicja ta jest dosyć płynna - w tym problemie często algorytmy opiera się na pewnych heurystykach, które sprawdza się na rzeczywistych zbiorach danych. Weryfikacja takich rozwiązań nie jest prosta - często przeprowadzana jest ona manualnie, przez analizę wizualizacji. 
+Podstawowa idea wykrywania społeczności opiera się na znajdowaniu grup wierzchołków, dla których liczba połączeń w obrębie społeczności jest znacząco wyższa, niż liczba połączeń do wierzchołków spoza tej społeczności. Oczywiście definicja ta jest dosyć płynna - w tym problemie często algorytmy opiera się na pewnych heurystykach, które sprawdza się na rzeczywistych zbiorach danych. Weryfikacja takich rozwiązań nie jest prosta - często przeprowadzana jest ona manualnie, przez analizę wizualizacji. 
 
 \subsection{Typowe podejścia}
 Problem znajdowania społeczności, ze względu na swoją popularność i mnogość praktycznych zastosowań, doczekał się wielu podejść. Różnią się one zarówno złożonością obliczeń jak i jakością otrzymanego zbioru społeczności.
@@ -71,16 +73,70 @@ Wszystkie te podejścia są jednak ściśle matematycznymi zagadnieniami. Używa
 \newpage
 \section{Algorytm Girvana-Newmana}
 \subsection{Opis algorytmu}
+Metoda Girvan-Newmana jest metodą dzielącą - rozważanie problemu rozpoczyna się od całej sieci i z każdym krokiem zmniejsza ją poprzez usuwanie krawędzi. Każda z nich posiada specjalny parametr, który w literaturze funkcjonuje pod nazwą \textit{edge betweenness} \cite{is-paper1}. Określa on sumę najkrótszych ścieżek przechodzących przez daną krawędź. W przypadku tylko jednej takiej ścieżki parametr zwiększany jest o 1, natomiast gdy między wierzchołkami występuję więcej niż jedna najkrótsza ścieża, to każdej z tych ścieżek przypisywana jest równa waga, tak by suma wag dla wszystkich była równa 1.
+
+Cecha ta zwraca od razu uwagę na fakt, który może stanowić główną wadę algorytmu - jego złożoność jest dość duża i może on mieć znaczne problemy wydajnościowe przy większych sieciach. Co iterację, po usunięciu krawędzi, konieczne jest ponowne wyliczenie wartości parametru dla każdej z krawędzi. To prowadzi do złożoności czasowej na poziomie $O({m}^2n)$, gdzie m stanowi liczbę krawędzi, a n liczbę wierzchołków. Usprawnienia algorytmu można dokonać poprzez wyrzucenie w jednym kroku wszystkich krawędzi o najwyższej wadze. Co prawda nie zmieni to złożoności pesymistycznej algorytmu, jednak w większości przypadków znacznie go usprawni. Warto nadmienić, iż twórcy algorytmu nie sprecyzowali kolejności usuwania krawędzi o tej samej wadze, pozostawiając ten aspekt do rozwiązania przy implementacji.
+
+Algorytm kończy swe działanie, gdy usunięta zostanie ostatnia krawędź. W czasie jego działania stworzony zostanie dendrogram, na podstawie którego będzie można odbudować podział społeczności na danym poziomie. Znalezienie optymalnej dekompozycji grafu stanowi w tym wypadku kluczowy problem. W tym przypadku analizowana metoda ukazuje swoje zalety. Co iterację można tutaj wyliczyć współczynnik modularności i na samym końcu określić poziom, dla którego był on największy, a następnie odtworzyć dany stan sieci. W ten sposób metoda Girvan-Newmana jest w stanie wskazać nam najlepszy podział sieci na społeczności.
+
+Motywację przy wyborze tego algorytmu stanowił fakt, iż jest to najbardziej znana metoda związana z wykrywaniem społeczności, o której wzmianki można odnaleźć w niemal każdej publikacji naukowej z tej dziedziny. Zagłebiając się w tematykę warto rozpocząć od niego swoją pracę. 
 \subsection{Modyfikacje dla społeczności rozłącznych}
+\subsubsection{CONGA}
+W tradycyjnym wykorzystaniu algorytmu Girvan-Newmana każda kolejna iteracja prowadzi do podziału sieci na mniejsze części, które razem zawierają wszystkie wierzchołki grafu. Aby umożliwić wykrywanie społeczności nakładających się, musimy odnaleźć moment w którym dojdzie do podziału wierzchołka, tak aby znalazł się on w dwóch oddzielnych społecznościach. W algorytmie CONGA problem ten został rozwiązany poprzez wprowadzenie dodatkowego parametru dla każdego wierzchołka, w literaturze nazwanego \textit{vertex betweenness} \cite{is-paper2}.
+
+Analogia do nazwy \textit{edge betweenness} wykorzystywanej w wersji podstatowej algorytmu nie jest przypadkowa. Parametr dla wierzchołka mówi nam bowiem o tym, ile najkrótszych ścieżek przechodzi przez ten wierzchołek. Dodatkowo dla każdego wierzchołka ${v}$ wartość tą można obliczyć bazując na wyliczonych wcześniej parametrów każdej z krawędzi zawierającej ${v}$. Zważywszy na złożoność czasową całego algorytmu modyfikacja ta nie jest znacząco kosztowna.
+
+Z podejściem CONGA związane są trzy główne pytania na temat podziału wierzchołka:
+\begin{enumerate}
+\item Kiedy wykonać je zamiast zwykłego usunięcia krawędzi?
+\item Który wierzchołek podzielić?
+\item Jak go podzielić?
+\end{enumerate} 
+
+O ile na 2 pytanie odpowiedź stanowi parametr \textit{vertex betweenness}, tak pozostałe wymagają przyjęcia pewnych założeń. Określenie momentu podziału wierzchołka zamiast usunięcia krawędzi również wydaje się proste - klonowanie następuje wtedy, gdy największa wartość \textit{vertex betweenness} przekroczy największą wartość \textit{edge betweenness}. Odpowiedź na ostatnie pytanie stanowi już jednak o wiele poważniejszy problem i wymaga wprowadzenia dodatkowego parametru.
+
+\textit{Pair betweeness} wierzchołka $v$ dla $(u,w)$, gdzie $u$ i $w$ są sąsiadami $v$ i $u \neq w$ jest to liczba najkrótszych ścieżek, które przechodzą zarówno przez krawędź $(u,v)$ jak i $(v,w)$. Obliczenie tego parametru dla każdej pary można przeprowadzić razem z wyliczaniem zwykłego \textit{edge betweenness}. Aby móc wykonać podział konieczne jest stworzenie dodatkowej konstrukcji opartej na ww. parametrze. Konstrukcja ta jest k-kliką, dla której każdy wierzchołek jest numerowany indeksem sąsiada $v$, a krawędzie $(u,w)$ są oznaczane wartością parametru \textit{pair betweenness} dla tej pary osiągniętym przy analizie z wierzchołka $v$.
+
+Podział wierzchołka na podstawie parametru \textit{pair betweeness} jest zrealizowany metodą zachłanną. Warto zwrócić uwagę, iż modyfikacja ta wymagać będzie dodatkowej pamięci, a także zwiększy czas wykonania. Jest to też zdecydowanie najbardziej rozbudowany krok algorytmu CONGA.
+\subsubsection{CONGO}
+Optymalizacja algorytmu CONGA zrealizowana przez jego twórców \cite{is-paper3}. Skupia się ona na analizie lokalnej problemu, odrzucając wszystkie ścieżki o długości większej niż parametr $h$ (zazwyczaj dość niska wartość). Następnie problem aktualizacji wartości \textit{edge betweenness} odbywa się również wyłącznie lokalnie, przez co czas wykonania algorytmu znacznie spada. W naszych działaniach pominiemy jednak tę metodę, gdyż podając ją analizie uznaliśmy, iż ciężko znaleźć w niej miejsce do skutecznej modyfikacji.
 \subsection{Proponowane modyfikacje}
+Usprawnienia możliwe do zrealizowania oparte zostały o algorytm CONGA. Bazując na parametrach \textit{edge} i \textit{vertex betweenness} do głębszej analizy został wybrany krok sposobu podziału wierzchołka. Algorytm podstawowy bazuje na heurystyce i dodatkowym wykorzystaniu pamięci, a także dość skomplikowanym modelu obliczeniowym. W naszej modyfikacji chcielibyśmy wykorzystać dodatkowe własności grafu, które dla sieci społecznościowych stanowią cechy nieodłącznie z nimi kojarzone. Mowa tutaj o liczbie wspólnych znajomych, a także dacie zawarcia znajomości. Moduł podziału wierzchołka można wymienić na inny, korzystający z ww. cech. Dzięki temu w dość prosty sposób można zmodyfikować algorytm i skorzystać z dwóch sposobów podziału wierzchołka. Dzieląc wierzchołek przy pomocy liczby wspólnych znajomych, celem będzie stworzenie takiego podziału, który zmaksymalizuje liczbę wspólnych znajomych w obu zbiorach dla wierzchołka $v$ i jego kopii. Bazując na dacie zawarcia znajomości można kierować się zasadą chronologii - daty mogą mieć odzwierciedlenie w danej sytuacji życiowej, a także grupie, w której w danym momencie się znajdujemy.
 \subsection{Oczekiwania}
+Korzystająć z usprawnień opisanych w poprzedniej sekcji naszym głównym celem będzie poprawa parametru modularności. Każda dodatkowa wiadomość dotycząca krawędzi powinna prowadzić do lepszego podziału danej społeczności. Co za tym idzie algorytm szybciej powinien podzielić sieć na mniejsze części, przez co wykona mniej obliczeń w obrębie pełnego grafu, co przyspieszy jego działanie. Sam krok podziału wierzchołka również powinien zostać przyspieszony, a wykorzystana do tego pamięć znacznie zmniejszona i sprowadzona do informacji uzyskanych w fazie preprocessingu.
 
 \newpage
 \section{Label Propagation Algorithm}
 \subsection{Opis algorytmu}
+Label Propagation Algorithm to algorytm stosunkowo prosty i szybki. Wybraliśmy go ze względu na jego interesujące własności oraz fakt, że został zaimplementowany w bilbliotece neo4j. Dokładnie został opisany w pracy 'Near linear time algorithm to detect community structures in large-scale networks'\cite{ms-paper2}. Opiera się on na idei, że etykieta staje się dominująca w gętsto połączonych grupach, zaś nie jest propagowana przez rzadko połączone rejony. Ogólny schemat wygląda następująco:
+\begin{enumerate}
+\item Zainicjalizuj wierzchołki unikatowymi etykietami.
+\item Dla każdego wierzchołka przypisz mu etykietę, która występuje najwięcej razy wśród jego sąsiadów. W razie remisu, wybierz losowo.
+\item Powtarzaj krok 2, aż nie wystąpi żadna zmiana etykiety.
+\end{enumerate}
+
 \subsection{Modyfikacje dla społeczności rozłącznych}
+\subsubsection{COPRA}
+Aby umożliwić wykrywanie społeczności rozłączonych wprowadzono parametr $v$ - maksymalną ilość społeczności, do której może należeć wierzchołek\cite{ms-paper3}. W każdym kroku algorytmu wierzchołkowi przypisujemy $v$ najczęściej występujących wśród jego sąsiadów etykiet.
+\subsubsection{BMLPA}
+Zaproponowano modyfikację algorytmu COPRA, aby jego parametryzacja była bardziej uniwersalna\cite{ms-paper4}. Wierzchołkowi przypisujemy tylko te etykiety, dla których iloraz $\frac{b}{b_{max}}$ jest większy bądź równy od nowo wprowadzonego parametru $p$, gdzie $b$ to liczność danej etykiety wśród sąsiadów, $b_{max}$ to liczność najczęściej występującej etykiety wśród sąsiadów. Algorytm ten wymaga wyznaczenia początkowych społeczności.
+
 \subsection{Proponowane modyfikacje}
+\subsubsection{Zrównoleglenie}
+Algorytm LPA jest algorytmem o złożonosci liniowej, dlatego nie ma tutaj zbyt dużego pola na optymalizacje wydajnościowe. Interesującym doświadczeniem, może być jednak zaimplementowanie algorytmu oraz jego modyfikacji na procesory graficzne (np. używając biblioteki CUDA). Doświadczenia takie były już przeprowadzane (\cite{ms-paper5}, \cite{ms-paper6}), jednak w naszej pracy zyskalibyśmy porównanie nie tylko między CPU i GPU, lecz również między innymi metodami.
+\subsubsection{Użycie roli}
+\label{subsubsection:lparole}
+Znaczącą poprawę wyników LPA można uzyskać wybierając społeczności początkowe, zamiast inicjalizować wszystkie wierzchołki unikatowymi społecznościami. Jednym z pomysłów jest użycie idei ról w grafie do wyboru początkowych społeczności\cite{ms-paper7}. Chcemy zastosować tę ideę do inicjalizacji algorytmu BMLPA.
+\subsubsection{Użycie parametrów krawędzi}
+\label{subsubsection:lpaedges}
+Dla grafu z sieci Facebook możemy do krawędzi przypisać interesujące wartości, np. datę zawarcia znajomości, czy liczbę wspólnych znajomych. Chcemy użyć tych parametrów jako wag przy wyborze etykiet w kroku algorytmu. Przykłady:
+\begin{itemize}
+\item W przypadku remisu, wybieramy tę etykietę, dla której średnia data zawarcia znajomości jest niższa.
+\item Dodajemy wagę do wierzchołka - liczbę wspólnych znajomych dzieloną przez maksymalną wspólną liczbę znajomych z sąsiadem, a następnie używamy jej razem z wagami, zgodnie z ideą algorytmu BMLPA.
+\end{itemize}
+
 \subsection{Oczekiwania}
+Jeśli chodzi o równoległą implementację, oczekujemy, że będzie ona znacząco szybsza od jakiejkolwiek innej metody w naszej pracy. W przypadku modyfikacji z punktów \ref{subsubsection:lparole} i \ref{subsubsection:lparole}, chcemy uzyskać rezultaty bardziej wiarygodne, pozbawione gigantycznych społeczności, bez nienaturalnych rozkładów.
 
 \newpage
 \section{Overlapping Community Detection by Local Community Expansion}
@@ -112,9 +168,19 @@ Pozostałe dwa etapy są dość proste i trudno w nich o dodatkowe modyfikacje. 
 Algorytm Louvain w swej oryginalnej formie powinien osiągać jedne z lepszych czasów spośród wybranych przez nas algorytmów dla społeczności rozłącznych. Jeżeli zaś chodzi o modyfikację dla społeczności nachodzących to oczekujemy, że dotrzyma kroku co najmniej algorytmowi będącemu modyfikacją algorytmu Girvan-Newmana.
 \newpage
 \section{Porównanie}
+\subsection{Pod kątem szybkości działania}
+Aby uzyskać miarodajne rezultaty, planujemy każdy algorytm uruchamiać na tych samych zbiorach danych oraz tej samej maszynie. Dla problemu społeczności nachodzących oczekujemy, że najwolniejszy będzie Algorytm Girvana-Newmana, ze względu na swoją złożoność obliczeniową. Następnie Algorytm Louveina, przez bardzo kosztowny ostatni krok wyznaczania społeczności nachodzących. Najszybszy powinien okazać się algorytm LPA, ze względu na niemal liniową złożoność, zaś na drugim miejscu spodziewamy się algorytmu OCDLCE.
+
+\subsection{Pod kątem jakości rozwiązania}
+W tym wypadku skupimy się na analizie wizualizacji rozwiązania. Sprawdzimy, czy powstałe społeczności mają naturalne dla problemu rozłożenie. Zamierzamy również badać, czy w rozwiązaniu nie pojawiły się zbiory gigantyczne, zbyt obszerne przecięcia  lub zbiory rozłączne. Będziemy także sprawdzali, czy otrzymana liczba społeczności jest zbliżona do wzorcowego wyniku.
 
 \newpage
 \section{Projekt z dziedziny zainteresowań osobistych}
+Naszą pracę nad projektem chcieliśmy wzbogacić o coś, czego zazwyczaj nie kojarzymy z nauką, a raczej z chwilą odpoczynku. Oczy skierowaliśmy w stronę NBA - najlepszej ligi koszykarskiej na świecie, która skupia przed odbiornikami miliony odbiorców na całym świecie. Ta dość wąska grupa wybitnych koszykarzy będzie stanowić część naszej analizy.
+
+Pomysł narodził się podczas obserwacji pomeczowego rytuału przybijania piątek. Oglądając go, można zwrócić uwagę, iż dla niektórych zawodników drużyn przeciwnych nie jest to tylko standardowy gest. Zamienia się on często w dłuższe rozmowy, a przecież mówimy często o zawodnikach, którzy jeszcze przed chwilą byli w stanie roszarpać się o najmniejszą różnicę zdań na parkiecie. Cofając się jednak rok czy dwa lata wcześniej odnajdziemy tę dwójkę, grającą razem w jednej drużynie. To stamtąd wywodzą się zapewne pomeczowe rozmowy i uśmiechy, chociaż dzieli ich obecnie kolor koszulki. Pytanie jednak, co bardziej identyfikuje społeczności koszykarzy - wspólna wielopokoleniowa tradycja klubowa, podobny staż w lidze czy może podobny poziom sportowy? Na to pytanie postaramy się odpowiedź przy pomocy naszych algorytmów. Problem jest o tyle ciekawy, iż w lidze przez 73 lata jej funkcjonania przewinęło sie mnóstwo typów zawodników - od tych wiernych jednej drużynie przez całą karierę, po takich, którzy zdążyli zwiedzić 15 miast w ciągu 15 lat swojej kariery.
+
+Dane do stworzenia struktury grafu zostały przez nas pobrane z ogólnodostępnej witryny basketball-reference.com. Ilość danych na temat NBA, jaką można tam odnaleźć, jest ogromna. My skupiliśmy się na zbiorze 4800 koszykarzy, którzy będą stanowić wierzchołki naszego grafu. Dwa wierzchołki będą w relacji, jeśli kiedykolwiek udało im się zagrać wspólnie w jednej drużynie. Ponadto każda znajomość została wzbogacona informacją na temat daty jej zawarcia, a także liczbą wspólnych znajomych - ta została wygenerowana na podstawie struktury grafu, gdyż na stronie taka informacja nie jest dostępna.
 
 \newpage
 \section{Uwagi końcowe}
