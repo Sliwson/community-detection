@@ -56,13 +56,13 @@ Odchodząc od rozważania pojedynczych wierzchołków, kolejne podejście skupia
 \\\\
 Rozszerzając dalej obszar rozważań, dochodzimy do metod opartych na całych sieciach. Rozważają one nie pojedyncze grupy, a sieci jako jedną całość. Przykładem mogą być: 
 \begin{itemize}
-\item grupy oparte na podobieństwie wierzchołków - biorą one pod uwagę np podobieństwo zbioru sąsiadów (podobieństwo strukturalne). Jest to jednak dosyć ograniczająca definicja, stosuje się więc też np. podobieństwo automorficzne, w którym dwa wierzchołki sa podobne, gdy ich etykiety mogą być zamienione by utworzyć izomorficzny graf. Wykrywanie podobieństw w dużych, praktycznych sieciach jest jednak dość trudne i bardzo skomplikowane obliczeniowo.
+\item grupy oparte na podobieństwie wierzchołków - biorą one pod uwagę np podobieństwo zbioru sąsiadów (podobieństwo strukturalne). Jest to jednak dosyć ograniczająca definicja, stosuje się więc też np. podobieństwo automorficzne, w którym dwa wierzchołki są podobne, gdy ich sąsiedzi mogą być przemianowani tak by utworzyć izomorficzny graf. Wykrywanie podobieństw w dużych, praktycznych sieciach jest jednak dość trudne i bardzo skomplikowane obliczeniowo.
 \item grupy oparte na minimalnym przekroju - społeczności definiuje się jako podzbiór $C \subset V$, taki że $\forall v \in C, v$ ma co najmniej tak dużo krawędzi do wierzchołków z $C$ jak do wierzchołków z $V \backslash C$.
 \item grupy oparte na modularności - modularność jest miarą, która bierze pod uwagę rozkład stopni w grafie dostosowując strukturę społeczności. Mierzy ona jak bardzo sieć różni się od równomiernie losowego grafu ($null model$). Definiuje się ją następująco: $Q= \frac{1}{2m} \sum\limits_{ij} [A_{ij} - \frac{d_i d_j}{2m}]\delta(s_i,s_j)$. Generalnie celem jest dostosowanie struktury społeczności tak by zmaksymalizować modularność.
 \end{itemize}
 Ostatnim wartym wspomnienia podejściem jest wykrywanie społeczności oparte na hierarchiach. Wyróżnia się trzy typy podziału hierarchicznego:
 \begin{itemize}
-\item rozdzielające (divisive) hierarchiczne skupianie (clustering) - graf jest dzielony np. w oparciu o $edge betweeness$, które jest miarą tego jak wiele najkrótszych ścieżek pomiędzy dwoma wierzchołkami prowadzi przez daną krawędź. Pozwala ona wykrywać krawędzie, będące "mostami" między społecznościami, które w celu znalezienia podziału na społeczności są sukcesywnie usuwane.
+\item rozdzielające (divisive) hierarchiczne skupianie (clustering) - graf jest dzielony np. w oparciu o \textit{edge betweeness}, które jest miarą tego jak wiele najkrótszych ścieżek pomiędzy dwoma wierzchołkami prowadzi przez daną krawędź. Pozwala ona wykrywać krawędzie, będące "mostami" między społecznościami, które w celu znalezienia podziału na społeczności są sukcesywnie usuwane.
 \item aglomeracyjne (agglomerative) hierarchiczne skupianie - opiera się na umieszczeniu wszystkich wierzchołków w oddzielnych społecznościach, które są następnie łączone, tak by zmaksymalizować modularność powstałego podziału. Ważne jest, by w tym podejściu łączyć przede wszystkim społeczności o podobnych rozmiarach, tak by uzyskać zbalansowany podział.
 \item wyszukiwanie struktur - bazuje na wyszukiwaniu hierarchii, które mają duże prawdopodobieństwo by utworzyć sieć.
 \end{itemize}
@@ -196,11 +196,29 @@ W dotychczasowej wersji algorytmu za początek społeczności brane są pary są
 \subsection{Oczekiwania}
 Od metody oczekujemy tego, że po jej implementacji uda się uzyskać wysokiej jakości podział na społeczności. Od modyfikacji oczekujemy, że wprowadzenie ich zmieni w istotnym stopniu uzyskany wcześniej rezultat. Zastosowanie innej miary powinno być porównywalne co do wydajności w zestawieniu z podstawową wersją algorytmu, ale znalezione społeczności powinny się zauważalnie różnić. Inny sposób wybierania lokalnych społeczności zapewne będzie zaś sporo mniej wydajny, ale powinien skutkować zdecydowanie lepszej jakości rezultatem, to znaczy ściślejszymi powiązaniami wśród społeczności.
 \newpage
-\section{Algorytm Louvein}
+\section{Algorytm Louvain}
 \subsection{Opis algorytmu}
-\subsection{Modyfikacje dla społeczności rozłącznych}
+Algorytm ten został zaproponowany przez profesora Vincenta Blondela z Uniwersytetu w Louvain. Jest to tzw. algorytm zachłanny (greedy algorithm), który dąży w każdym kroku do zmaksymalizowania modularności. Modularność, jako miara podziału sieci na społeczności już pojawiła się w tej pracy, ale przypomnijmy: $Q= \frac{1}{2m} \sum\limits_{ij} [A_{ij} - \frac{d_i d_j}{2m}]\delta(s_i,s_j)$. W tym algorytmie jednak, o wiele ważniejsza od wartości modularności jest jej różnica w każdym kroku, bo to na jej podstawie będziemy przenosić wierzchołki pomiędzy społecznościami:  $$\Delta Q = [\frac{\Sigma_{in} +2k_{i,in}}{2m} - (\frac{\Sigma_{tot} + k_i}{2m})^2]$$ gdzie $k_i$ to stopień wierzchołka $i$, $k_{in}$ to suma wag krawędzi między wierzchołkiem $i$ i wierzchołkami ze społeczności, do której trafia $i$, $\Sigma_{in}$ to suma wag krawędzi wewnątrz tej społeczności, a $\Sigma_{tot}$ to suma wag krawędzi wewnątrz społeczności z której usuwamy wierzchołek $i$. \\
+Schemat algorytmu:
+\begin{enumerate}
+\item Każdy wierzchołek umieść w oddzielnej jednoelementowej społeczności.
+\item Dla każdego wierzchołka przenieś go do sąsiadującej społeczności, tak by maksymalnie zwiększyć modularność (czyniąc to zachłannie). Jeśli nie da się tego wykonać, pozostaw go w obecnej. Jeśli w tym kroku nie nastąpi żadna zmiana, algorytm kończy działanie.
+\item Każdą powstałą społeczność, scal do jednego wierzchołka. Krawędzie pomiędzy wierzchołkami wewnątrz społeczności zamieniają się w pętle o odpowiedniej wadze, a krawędzie z kilku wierzchołków ze społeczności do jednego spoza łączą się w jedną o zsumowanej wadze.
+\item Powróć do drugiego kroku.
+\end{enumerate}
+Wynikiem działania algorytmu jest  graf, w którym każdy wierzchołek reprezentuje społeczność w oryginalnym grafie. Wszystkie węzły, które w czasie działania algorytmu zostały scalone do jednego wierzchołka, należą do jednej społeczności. \\ 
+Wybraliśmy ten algorytm do naszych rozważań, ponieważ poza dość prostym schematem działania, cechuje się też dobrą szybkością obliczeń (złożoność $O(nlogn)$), oraz wysoką jakością otrzymanych wyników (w porównaniu do innych typowych rozwiązań). Z powodu tych własności jest jednym z algorytmów zaimplementowanych w bibliotece neo4j.
+\subsection{Modyfikacje dla społeczności nachodzących}
+Z racji, że algorytm Louvain jest algorytmem zachłannym, zależnie od kolejności iterowania po wierzchołkach, może on dawać różne wyniki pod względem powstałych społecznośći. Ten fakt zostanie wykorzystany do znajdowania społeczności nachodzących.\\
+Modyfikacja dla społeczności nierozłącznych opiera się na wykonaniu $n$ razy algorytmu dla społeczności rozłącznych, dla różnych permutacji wierzchołków. Na podstawie każdego otrzymanego zbioru społeczności konstruowana jest macierz $n \times m$ gdzie $n$ - liczba wierzchołków w grafie, $m$ - liczba społeczności, a element macierzy $A_{n,m}$ oznacza ilość krawędzi wychodzących z wierzchołka $n$ do wierzchołków ze społeczności $m$ (zakładamy, że wierzchołki są numerowane od 1 do n, społeczności od 1 do m). Następnie macierze dla każdego przebiegu algorytmu są sumowane, a wartości są następnie normalizowane. W tak powstałej macierzy, jeżeli wartości w $n$ wierszu i $m$ kolumnie przekracza wartość progową $\lambda = \frac{1}{ov + 1}$ (gdzie $ov$ jest wartością dobraną podczas implementacji algorytmu) wierzchołek $n$ należy do społeczności $m$. \\
+Następnie w ostatnim kroku, niektóre z powstałych społeczności mogą zostać połączone na podstawie modularności zaproponowanej przez Vincenzo Nicosie z Uniwersytetu w Catanii \cite{pw-paper2} . Jest to jednak krok bardzo kosztowny ze względu na czas obliczeń (złożoność $O(n^3)$ ), a przynosi on stosunkowo niewielką poprawę ostatecznej jakości wyniku. Algorytm dokładniej wytłumaczony jest w artykule: "A Fast Algorithm for Overlapping Community Detection" \cite{pw-paper3}.
 \subsection{Proponowane modyfikacje}
+W naszym projekcie skupimy się przede wszystkim na próbach optymalizacji ostatniego kroku, oraz porównaniu jego wpływu na ostateczny wynik. W celach optymalizacji możemy wykorzystać heurystyki oraz dodatkową wiedzę na temat sieci. Możemy na przykład, nie rozważać do scalenia społeczności, które przekroczą żądaną przez nas wielkość, lub ilość ich wspólnych wierzchołków nie jest wystarczająca.
+Ponadto modularność pozwoli w bardzo naturalny sposób wykorzystać dodatkowe informacje (np w przypadku znajomych, datę zawarcia znajomości) jako wagę krawędzi. Powinno to dać ciekawe efekty, gdyż starzy znajomi powinni tworzyć rdzenie społeczności, i tak stworzone grupy mogą znacznie różnić się od społeczności otrzymanych bez tej modyfikacji.\\
+
 \subsection{Oczekiwania}
+Oczekujemy, że dodatkowe usprawnienia pozwolą zniwelować, albo chociaż zmniejszyć negatywny wpływ jaki na czas obliczeń ma ostatni etap. 
+Sama metoda, w artykule w którym została przedstawiona, opisywana jest w samych superlatywach. Autorzy zapewniają o jej wyższości nad innymi typowymi algorytmami. Oczekujemy, że dzięki naszym eksperymentom uda nam się skonfrontować ją z innymi metodami i ewentualnie usprawnić ją.
 
 \newpage
 \section{Porównanie}
