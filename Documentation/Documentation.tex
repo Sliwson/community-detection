@@ -156,7 +156,7 @@ Schemat algorytmu:
 Wynikiem działania algorytmu jest  graf, w którym każdy wierzchołek reprezentuje społeczność w oryginalnym grafie. Wszystkie węzły, które w czasie działania algorytmu zostały scalone do jednego wierzchołka, należą do jednej społeczności. \\ 
 Wybraliśmy ten algorytm do naszych rozważań, ponieważ poza dość prostym schematem działania, cechuje się też dobrą szybkością obliczeń (złożoność $O(nlogn)$), oraz wysoką jakością otrzymanych wyników (w porównaniu do innych typowych rozwiązań). Z powodu tych własności jest jednym z algorytmów zaimplementowanych w bibliotece neo4j.
 \subsection{Modyfikacje dla społeczności nachodzących}
-Z racji, że algorytm Louvain jest algorytmem zachłannym, zależnie od kolejności iterowania po wierzchołkach, może on dawać różne wyniki pod względem powstałych społecznośći. Ten fakt zostanie wykorzystany do znajdowania społeczności nachodzących.\\
+Z racji, że algorytm Louvain jest algorytmem zachłannym, zależnie od kolejności iterowania po wierzchołkach, może on dawać różne wyniki pod względem powstałych społeczności. Ten fakt zostanie wykorzystany do znajdowania społeczności nachodzących.\\
 Modyfikacja dla społeczności nierozłącznych opiera się na wykonaniu $n$ razy algorytmu dla społeczności rozłącznych, dla różnych permutacji wierzchołków. Na podstawie każdego otrzymanego zbioru społeczności konstruowana jest macierz $n \times m$ gdzie $n$ - liczba wierzchołków w grafie, $m$ - liczba społeczności, a element macierzy $A_{n,m}$ oznacza ilość krawędzi wychodzących z wierzchołka $n$ do wierzchołków ze społeczności $m$ (zakładamy, że wierzchołki są numerowane od 1 do n, społeczności od 1 do m). Następnie macierze dla każdego przebiegu algorytmu są sumowane, a wartości są następnie normalizowane. W tak powstałej macierzy, jeżeli wartości w $n$ wierszu i $m$ kolumnie przekracza wartość progową $\lambda = \frac{1}{ov + 1}$ (gdzie $ov$ jest wartością dobraną podczas implementacji algorytmu) wierzchołek $n$ należy do społeczności $m$. \\
 Następnie w ostatnim kroku, niektóre z powstałych społeczności mogą zostać połączone na podstawie modularności zaproponowanej przez Vincenzo Nicosie z Uniwersytetu w Catanii \cite{pw-paper2} . Jest to jednak krok bardzo kosztowny ze względu na czas obliczeń (złożoność $O(n^3)$ ), a przynosi on stosunkowo niewielką poprawę ostatecznej jakości wyniku. Algorytm dokładniej wytłumaczony jest w artykule: "A Fast Algorithm for Overlapping Community Detection" \cite{pw-paper3}.
 \subsection{Proponowane modyfikacje}
@@ -164,7 +164,7 @@ W naszym projekcie skupimy się przede wszystkim na próbach optymalizacji ostat
 Ponadto modularność pozwoli w bardzo naturalny sposób wykorzystać dodatkowe informacje (np w przypadku znajomych, datę zawarcia znajomości) jako wagę krawędzi. Powinno to dać ciekawe efekty, gdyż starzy znajomi powinni tworzyć rdzenie społeczności, i tak stworzone grupy mogą znacznie różnić się od społeczności otrzymanych bez tej modyfikacji.\\
 
 \subsection{Oczekiwania}
-Oczekujemy, że dodatkowe usprawnienia pozwolą zniwelować, albo chociaż zmniejszyć negatywny wpływ jaki na czas obliczeń ma ostatni etap. 
+Oczekujemy, że dodatkowe usprawnienia pozwolą zniwelować, albo chociaż zmniejszyć negatywny wpływ jaki na czas obliczeń ma ostatni etap. \\
 Sama metoda, w artykule w którym została przedstawiona, opisywana jest w samych superlatywach. Autorzy zapewniają o jej wyższości nad innymi typowymi algorytmami. Oczekujemy, że dzięki naszym eksperymentom uda nam się skonfrontować ją z innymi metodami i ewentualnie usprawnić ją.
 
 \newpage
