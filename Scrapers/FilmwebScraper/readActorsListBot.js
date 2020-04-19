@@ -9,7 +9,7 @@ rp(url)
   .then(function(html) {
     //success!
     const urls = [];
-    for (var i = 100; i < 200; i++) {
+    for (var i = 900; i <= 1000; i++) {
       urls.push(url + i);
     }
 
@@ -31,7 +31,7 @@ rp(url)
     });
     console.log(result.length);
 
-    fs.writeFile("./data/actors2.json", JSON.stringify(result), function(err) {
+    fs.writeFile("./data/actors10.json", JSON.stringify(result), function(err) {
       if (err) {
         return console.log(err);
       }
