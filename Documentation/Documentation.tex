@@ -33,20 +33,20 @@ Problem znajdowania społeczności, ze względu na swoją popularność i mnogo�
 \\ \\ 
 Pierwszym, dość intuicyjnym podejściem jest wyszukiwanie społeczności skupione na wierzchołkach (node centric community detection). Zakłada ono znajdowanie grup wierzchołków z którym każdy spełnia pewne kryterium, jakim może być np: odpowiedni stopień, osiągalność (czyli odległość od innego, wskazanego wierzchołka) czy wzajemność (mutuality).
 
-Przy znajdowaniu grup opartych na  wzajemności, kluczem jest znajdowanie klik (dla grafów nieskierowanych) lub pełnych grafów dwudzielnych (dla grafów skierowanych). Niestety szukanie tych struktur jest bardzo kosztowne czasowo (algorytmy NP) i dla większych grafów, o kilku tysiącach wierzchołków okazuje się niepraktyczne.
+Przy znajdowaniu grup opartych na  wzajemności, kluczem jest znajdowanie klik (dla grafów nieskierowanych) lub pełnych grafów dwudzielnych (dla grafów skierowanych). Niestety szukanie tych struktur jest bardzo kosztowne czasowo i dla większych grafów, o kilku tysiącach wierzchołków okazuje się niepraktyczne.
 
 Kolejnym sposobem jest rozpatrywanie grup opartych na osiągalności. W tym podejściu rozważa się kilka, dobrze zbadanych grup:
 
 \begin{itemize}
-\item $k-kliki$ - maksymalny podgraf w którym odległość między dwoma dowolnymi wierzchołkami (w oryginalnym grafie) jest nie większa niż $k$, czyli: $d(i,j)\leq k \forall v_i , v_j $
-\item  $k-klany$ - jest to $k$-klika dla której odległość między dwoma dowolnymi wierzchołkami w podgrafie jest nie większa niż $k$
-\item $k - kluby$ - wszystkie maksymalne pod względem zawierania grupy, w których odległość między dwoma wierzchołkami jest nie przekracza $k$ ($k$ - kluby mogą mieć różną liczność)
+\item $k-klika$ - maksymalny podgraf w którym odległość między dwoma dowolnymi wierzchołkami (w oryginalnym grafie) jest nie większa niż $k$, czyli: $d(i,j)\leq k \forall v_i , v_j $
+\item  $k-klany$ - największe pod względem ilości wierzchołków $k$-kliki dla których odległość między dwoma dowolnymi wierzchołkami w podgrafie (to jest, biorąc pod uwagę tylko krawędzie pomiędzy wierzchołkami z $k-klanu$) jest nie większa niż $k$
+\item $k - kluby$ - wszystkie maksymalne pod względem zawierania grupy, w których odległość między dwoma wierzchołkami w grupie (nie uwzględniając ścieżek przechodzących po wierzchołkach spoza grupy) nie przekracza $k$ ($k$ - kluby mogą mieć różną liczność, w przeciwieństwie do $k-klanów$)
 \end{itemize}
 
 W przypadku grup opierających się na stopniach wierzchołków kluczowe są następujące struktury:
 
 \begin{itemize}
-\item $k - pleks $- to minimalny podgraf zawierający $n_s$ wierzchołków, z których każdy sąsiaduje z conajmniej $n_s k$ wierzchołkami z tego podgrafu. Innymi słowy każdy element ma conajwyżej $k$ wierzchołków, z którymi nie jest połączony.
+\item $k - pleks $- to minimalny podgraf zawierający $n_s$ wierzchołków, z których każdy sąsiaduje z conajmniej $n_s - k$ wierzchołkami z tego podgrafu. Innymi słowy każdy element ma conajwyżej $k$ wierzchołków, z którymi nie jest połączony.
 \item $k - rdzenie$ -  to struktury, w której każdy wierzchołek jest połączony z conajmniej $k$ wierzchołkami ze struktury, czyli  $d_s(i)\geq k \forall v_i \in V_s $
 \end{itemize}
 
@@ -58,7 +58,7 @@ Rozszerzając dalej obszar rozważań, dochodzimy do metod opartych na całych s
 \begin{itemize}
 \item grupy oparte na podobieństwie wierzchołków - biorą one pod uwagę np podobieństwo zbioru sąsiadów (podobieństwo strukturalne). Jest to jednak dosyć ograniczająca definicja, stosuje się więc też np. podobieństwo automorficzne, w którym dwa wierzchołki są podobne, gdy ich sąsiedzi mogą być przemianowani tak by utworzyć izomorficzny graf. Wykrywanie podobieństw w dużych, praktycznych sieciach jest jednak dość trudne i bardzo skomplikowane obliczeniowo.
 \item grupy oparte na minimalnym przekroju - społeczności definiuje się jako podzbiór $C \subset V$, taki że $\forall v \in C, v$ ma co najmniej tak dużo krawędzi do wierzchołków z $C$ jak do wierzchołków z $V \backslash C$.
-\item grupy oparte na modularności - modularność jest miarą, która bierze pod uwagę rozkład stopni w grafie dostosowując strukturę społeczności. Mierzy ona jak bardzo sieć różni się od równomiernie losowego grafu ($null model$). Definiuje się ją następująco: $Q= \frac{1}{2m} \sum\limits_{ij} [A_{ij} - \frac{d_i d_j}{2m}]\delta(s_i,s_j)$. Generalnie celem jest dostosowanie struktury społeczności tak by zmaksymalizować modularność.
+\item grupy oparte na modularności - modularność jest miarą, która bierze pod uwagę rozkład stopni w grafie dostosowując strukturę społeczności. Mierzy ona jak bardzo sieć różni się od równomiernie losowego grafu ($null model$). Definiuje się ją następująco: $Q= \frac{1}{2m} \sum\limits_{ij} [A_{ij} - \frac{d_i d_j}{2m}]\delta(s_i,s_j)$, gdzie $d_i$ to stopień wierzchołka $v_i$, a $s_i$ to społeczność do której należy wierzchołek $v_i$ (podobnie $d_j$ i $s_j$ dla $v_j$). Generalnie celem jest dostosowanie struktury społeczności tak by zmaksymalizować modularność.
 \end{itemize}
 Ostatnim wartym wspomnienia podejściem jest wykrywanie społeczności oparte na hierarchiach. Wyróżnia się trzy typy podziału hierarchicznego:
 \begin{itemize}
