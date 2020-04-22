@@ -115,7 +115,7 @@ Label Propagation Algorithm to algorytm stosunkowo prosty i szybki. Wybraliśmy 
 
 \subsection{Modyfikacje dla społeczności nachodzących}
 \subsubsection{COPRA}
-Aby umożliwić wykrywanie społeczności rozłączonych wprowadzono parametr $v$ - maksymalną ilość społeczności, do której może należeć wierzchołek\cite{ms-paper3}. W każdym kroku algorytmu wierzchołkowi przypisujemy $v$ najczęściej występujących wśród jego sąsiadów etykiet.
+Aby umożliwić wykrywanie społeczności nachodzących wprowadzono parametr $v$ - maksymalną ilość społeczności, do której może należeć wierzchołek\cite{ms-paper3}. W każdym kroku algorytmu wierzchołkowi przypisujemy $v$ najczęściej występujących wśród jego sąsiadów etykiet.
 \subsubsection{BMLPA}
 Zaproponowano modyfikację algorytmu COPRA, aby jego parametryzacja była bardziej uniwersalna\cite{ms-paper4}. Wierzchołkowi przypisujemy tylko te etykiety, dla których iloraz $\frac{b}{b_{max}}$ jest większy bądź równy od nowo wprowadzonego parametru $p$, gdzie $b$ to liczność danej etykiety wśród sąsiadów, $b_{max}$ to liczność najczęściej występującej etykiety wśród sąsiadów. Algorytm ten wymaga wyznaczenia początkowych społeczności.
 
