@@ -172,9 +172,9 @@ W wyniku wyżej opisanego algorytmu można skonstruować społeczności nakłada
 $WOS(C_i,C_j) = \alpha\frac{|V_i \cap V_j|}{min(|V_i|,|V_j|)} + (1-\alpha)\frac{|E^{in}_i \cap E^{out}_j|}{min(E^{in}_i,E^{out}_j)}$, \\gdzie $\alpha$ jest ustalonym parametrem między $0$, a $1$, $V$ określa zbiór wierzchołków danej społeczności, a $E^{in}$ i $E^{out}$ to zbiory krawędzi odpowiednio wewnętrznych (o obu końcach w społeczności) i zewnętrznych (o tylko jednym końcu wewnątrz). Dane społeczności $C_i$ i $C_j$ sąsiadują ze sobą jeśli $WOS(i,j)$ jest większy od ustalonej na początku stałej $\beta$.
 \subsubsection{Przyłączanie wierzchołków izolowanych}
 \begin{itemize}
-\item Dla każdego wierzchołka $u$, który nie należy do żadnej społeczności wykonaj:
+\item Niech $U$ będzie zbiorem takich wierzchołków, które aktualnie nie należą do żadnej społeczności. Dla każdego $u \in U$ , wykonaj:
 \begin{itemize}
-\item Rozpatrz każdą społeczność, do której należy $u$, jeżeli modularność tej społeczności wraz z nim jest większa, niż bez niego, dodaj go do społeczności
+\item Rozpatrz wszystkich sąsiadów $u$ i społeczności, do których należą. Dla każdej takiej społeczności oblicz modularność wraz z $u$ oraz bez niego. Jeżeli modularność tej społeczności wraz z $u$ jest większa, dodaj $u$ do tej społeczności.
 \end{itemize}
 \end{itemize}
 
