@@ -41,14 +41,16 @@ for (var i = 0; i < 100; i++) {
             first_link: table[j].first_link,
             second_link: table[j].second_link,
             first_number,
-            second_number
+            second_number,
+            how_many: table[j].how_many
         })
     else{
       result.push({
         first_link: table[j].second_link,
         second_link: table[j].first_link,
         first_number: second_number,
-        second_number: first_number
+        second_number: first_number,
+        how_many: table[j].how_many
     })
     }
   }

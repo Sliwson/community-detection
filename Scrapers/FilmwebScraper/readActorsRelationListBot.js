@@ -4,23 +4,25 @@ const fs = require("fs");
 
 const listActorRelationSite = require("./listActorRelationSite");
 const url = "https://www.filmweb.pl";
-const n = 100;
+const n = parseInt(process.argv[2]);
 
 var content = fs.readFileSync(
-    "./data/allActors.json",
+    "./data/allActors.csv",
     "utf8"
   );
 
-  var actors = JSON.parse(content);
+  var actors = content.split('\n');
+  actors.shift();
 
 rp(url)
   .then(function(html) {
     //success!
     const urls = [];
     for (var i = n*100; i < (n+1)*100; i++) {
+      var tmp = actors[i].split(';');
       urls.push({
-          url: url + actors[i].link + '/partners',
-          link: actors[i].link
+          url: url + tmp[1] + '/partners',
+          link: tmp[1]
       });
     }
 
