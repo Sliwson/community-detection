@@ -1,7 +1,7 @@
 #!/bin/bash
-for i in {1901..2000}
+for i in {0..99}
 do
    echo $i 
-   node readActorsRelationWithDateListBot.js $i
+   node readActorsRelationListBot.js $i
    sleep 3
 done
