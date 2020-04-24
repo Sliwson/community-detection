@@ -113,9 +113,9 @@ Label Propagation Algorithm to algorytm stosunkowo prosty i szybki. Wybraliśmy 
 \item Powtarzaj krok 2, aż nie wystąpi żadna zmiana etykiety.
 \end{enumerate}
 
-\subsection{Modyfikacje dla społeczności rozłącznych}
+\subsection{Modyfikacje dla społeczności nachodzących}
 \subsubsection{COPRA}
-Aby umożliwić wykrywanie społeczności rozłączonych wprowadzono parametr $v$ - maksymalną ilość społeczności, do której może należeć wierzchołek\cite{ms-paper3}. W każdym kroku algorytmu wierzchołkowi przypisujemy $v$ najczęściej występujących wśród jego sąsiadów etykiet.
+Aby umożliwić wykrywanie społeczności nachodzących wprowadzono parametr $v$ - maksymalną ilość społeczności, do której może należeć wierzchołek\cite{ms-paper3}. W każdym kroku algorytmu wierzchołkowi przypisujemy $v$ najczęściej występujących wśród jego sąsiadów etykiet.
 \subsubsection{BMLPA}
 Zaproponowano modyfikację algorytmu COPRA, aby jego parametryzacja była bardziej uniwersalna\cite{ms-paper4}. Wierzchołkowi przypisujemy tylko te etykiety, dla których iloraz $\frac{b}{b_{max}}$ jest większy bądź równy od nowo wprowadzonego parametru $p$, gdzie $b$ to liczność danej etykiety wśród sąsiadów, $b_{max}$ to liczność najczęściej występującej etykiety wśród sąsiadów. Algorytm ten wymaga wyznaczenia początkowych społeczności.
 
@@ -129,7 +129,7 @@ Znaczącą poprawę wyników LPA można uzyskać wybierając społeczności pocz
 \label{subsubsection:lpaedges}
 Dla grafu z sieci Facebook możemy do krawędzi przypisać interesujące wartości, np. datę zawarcia znajomości, czy liczbę wspólnych znajomych. Chcemy użyć tych parametrów jako wag przy wyborze etykiet w kroku algorytmu. Przykłady:
 \begin{itemize}
-\item W przypadku remisu, wybieramy tę etykietę, dla której średnia data zawarcia znajomości jest niższa.
+\item W przypadku remisu, wybieramy tę etykietę, dla której znajomości były zawarte w najwęższym oknie czasowym, tj. dla zbioru krawędzi różnica daty najpóźniejszej i najwcześniejszej jest najmniejsza.
 \item Dodajemy wagę do wierzchołka - liczbę wspólnych znajomych dzieloną przez maksymalną wspólną liczbę znajomych z sąsiadem, a następnie używamy jej razem z wagami, zgodnie z ideą algorytmu BMLPA.
 \end{itemize}
 
