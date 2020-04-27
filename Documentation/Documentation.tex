@@ -28,10 +28,12 @@ Badanie sieci społecznościowych jest podstawową dziedziną nauki o sieciach. 
 
 Podstawowa idea wykrywania społeczności opiera się na znajdowaniu grup wierzchołków, dla których liczba połączeń w obrębie społeczności jest znacząco wyższa, niż liczba połączeń do wierzchołków spoza tej społeczności. Oczywiście definicja ta jest dosyć płynna - w tym problemie często algorytmy opiera się na pewnych heurystykach, które sprawdza się na rzeczywistych zbiorach danych. Weryfikacja takich rozwiązań nie jest prosta - często przeprowadzana jest ona manualnie, przez analizę wizualizacji. 
 
-\subsection{Typowe podejścia}\label{subsection:typical-approaches}
+\subsection{Typowe podejścia}
 Problem znajdowania społeczności, ze względu na swoją popularność i mnogość praktycznych zastosowań, stał się przedmiotem badań w wielu pracach naukowych.
-\\ \\ 
-Pierwszym, dość intuicyjnym podejściem jest wyszukiwanie społeczności skupione na wierzchołkach (node centric community detection). Zakłada ono znajdowanie grup wierzchołków z którym każdy spełnia pewne kryterium, jakim może być np: odpowiedni stopień, osiągalność (czyli odległość od innego, wskazanego wierzchołka) czy wzajemność (mutuality). Przy znajdowaniu grup opartych na  wzajemności, kluczem jest znajdowanie klik (dla grafów nieskierowanych) lub pełnych grafów dwudzielnych (dla grafów skierowanych). Niestety, znalezienie tych struktur jest bardzo kosztowne czasowo i dla większych grafów okazuje się niepraktyczne (dla kliki mamy do czynienia z problemem NP-zupełnym).\\
+\subsubsection{Node-Centric Community Detection}
+Pierwszym, dość intuicyjnym podejściem jest wyszukiwanie społeczności skupione na wierzchołkach. Zakłada ono znajdowanie grup wierzchołków z którym każdy spełnia pewne kryterium, jakim może być np: odpowiedni stopień, osiągalność (czyli odległość od innego, wskazanego wierzchołka) czy wzajemność (mutuality).
+
+Przy znajdowaniu grup opartych na  wzajemności, kluczem jest znajdowanie klik (dla grafów nieskierowanych) lub pełnych grafów dwudzielnych (dla grafów skierowanych). Niestety szukanie tych struktur jest bardzo kosztowne czasowo i dla większych grafów, o kilku tysiącach wierzchołków okazuje się niepraktyczne.
 
 Kolejnym sposobem jest rozpatrywanie grup opartych na osiągalności. W tym podejściu rozważa się kilka, podstawowych grup:
 
@@ -48,16 +50,19 @@ W przypadku grup opierających się na stopniach wierzchołków kluczowe są nas
 \item $k - rdzenie$ -  to struktury, w której każdy wierzchołek jest połączony z conajmniej $k$ wierzchołkami ze struktury, czyli  $d_s(i)\geq k \forall v_i \in V_s $
 \end{itemize}
 
-Definicje $k-pleksu$ i $k - rdzenia$ uzupełniają się. Te struktury są zwykle odporne na usuwanie krawędzi. Wiemy, że stopnie wierzchołków w rzeczywistych sieciach rozkładają się według prawa potęgowego, tzn. w grafie jest mało wierzchołków o dużych stopniach i wiele wierzchołków o mniejszych stopniach. Niestety grupy oparte na stopniach wierzchołków wymagają wielu wierzchołków o dużych stopniach, więc słabo nadają się one do analizy rzeczywistych sieci.
-\\ \\
-Odchodząc od rozważania pojedynczych wierzchołków, kolejne podejście skupia się na ich całych grupach. W takim podejściu to nie każdy wierzchołek, musi spełniać pewne założenia, ale całe zbiory wierzchołków. Przykładem takich grupy mogą być grupy oparte na gęstości. Podgraf $G_s(V_s,E_s)$ jest $\gamma$ gęsty (zwany również prawie-kliką) gdy $\frac{E_s}{V_S(V_s-1)/2} >= \gamma$. Wewnątrz takiego podgrafu, stopnie wierzchołków mogą znacznie się różnić, dlatego stosowane są one do dużych sieci.
-\\\\
+Definicje $k-pleksu$ i $k - rdzeniu$ uzupełniają się. Te struktury są zwykle odporne na usuwanie krawędzi. Wiemy, że stopnie wierzchołków w rzeczywistych sieciach rozkładają się według prawa potęgowego, tzn. w grafie jest mało wierzch o dużych stopniach i wiele wierzchołków o mniejszych stopniach. Niestety grupy oparte na stopniach wierzchołków wymagają wielu wierzchołków o dużych stopniach, więc słabo nadają się one do analizy rzeczywistych sieci.
+\subsubsection{Group-Centric Community Detection}
+Odchodząc od rozważania pojedynczych wierzchołków, kolejne podejście skupia się na ich całych grupach. W takim podejściu to nie każdy wierzchołek, musi spełniać pewne założenia, ale całe zbiory wierzchołków. Przykładem takich grupy mogą być grupy oparte na gęstości. Podgraf $G_s(V_s,E_s)$ jest $\gamma$ gęsty (zwany również prawie-kliką) gdy $\frac{E_s}{V_S(V_s-1)/2}$. Wewnątrz takiego podgrafu, stopnie wierzchołków mogą znacznie się różnić, dlatego stosowane są one do dużych sieci.
+\subsubsection{Network-Centric Community Detection}
+\label{subsubsection:net-cent}
+
 Rozszerzając dalej obszar rozważań, dochodzimy do metod opartych na całych sieciach. Rozważają one nie pojedyncze grupy, a sieci jako jedną całość. Przykładem mogą być: 
 \begin{itemize}
 \item grupy oparte na podobieństwie wierzchołków - biorą one pod uwagę np podobieństwo zbioru sąsiadów (podobieństwo strukturalne). Jest to jednak dosyć ograniczająca definicja, stosuje się więc też np. podobieństwo automorficzne, w którym dwa wierzchołki są podobne, gdy ich sąsiedzi mogą być przemianowani tak by utworzyć izomorficzny graf. Wykrywanie podobieństw w dużych, praktycznych sieciach jest jednak dość trudne i bardzo skomplikowane obliczeniowo.
 \item grupy oparte na minimalnym przekroju - społeczności definiuje się jako podzbiór $C \subset V$, taki że $\forall v \in C, v$ ma co najmniej tak dużo krawędzi do wierzchołków z $C$ jak do wierzchołków z $V \backslash C$.
 \item grupy oparte na modularności - modularność jest miarą, która bierze pod uwagę rozkład stopni w grafie dostosowując strukturę społeczności. Mierzy ona jak bardzo sieć różni się od równomiernie losowego grafu ($null model$). Definiuje się ją następująco: $Q= \frac{1}{2m} \sum\limits_{ij} [A_{ij} - \frac{d_i d_j}{2m}]\delta(s_i,s_j)$, gdzie $d_i$ to stopień wierzchołka $v_i$, a $s_i$ to społeczność do której należy wierzchołek $v_i$ (podobnie $d_j$ i $s_j$ dla $v_j$), $\delta$ to delta Kroneckera (wartość 1 gdy $v_i$ i $v_j$ są w tej samej społeczność 0 wpw.). Generalnie celem jest dostosowanie struktury społeczności tak by zmaksymalizować modularność.
 \end{itemize}
+\subsubsection{Hierarchy-Centric Community Detection}
 Ostatnim wartym wspomnienia podejściem jest wykrywanie społeczności oparte na hierarchiach. Wyróżnia się trzy typy podziału hierarchicznego:
 \begin{itemize}
 \item rozdzielające (divisive) hierarchiczne skupianie (clustering) - graf jest dzielony np. w oparciu o \textit{edge betweeness}, które jest miarą tego jak wiele najkrótszych ścieżek pomiędzy dwoma wierzchołkami prowadzi przez daną krawędź. Pozwala ona wykrywać krawędzie, będące "mostami" między społecznościami, które w celu znalezienia podziału na społeczności są sukcesywnie usuwane.
@@ -196,7 +201,9 @@ Od metody oczekujemy tego, że po jej implementacji uda się uzyskać wysokiej j
 \newpage
 \section{Algorytm Louvain}
 \subsection{Opis algorytmu}
-Algorytm ten został zaproponowany przez profesora Vincenta Blondela z Uniwersytetu w Louvain. Jest to tzw. algorytm zachłanny (greedy algorithm), który dąży w każdym kroku do zmaksymalizowania modularności. Modularność, jako miara podziału sieci na społeczności już pojawiła się w tej pracy (\ref{subsection:typical-approaches}), ale przypomnijmy: $Q= \frac{1}{2m} \sum\limits_{ij} [A_{ij} - \frac{d_i d_j}{2m}]\delta(s_i,s_j)$. W tym algorytmie jednak, o wiele ważniejsza od wartości modularności jest jej różnica w każdym kroku, bo to na jej podstawie będziemy przenosić wierzchołki pomiędzy społecznościami:  $$\Delta Q = [\frac{\Sigma_{in} +2k_{i,in}}{2m} - (\frac{\Sigma_{tot} + k_i}{2m})^2]$$ gdzie $k_i$ to stopień wierzchołka $i$, $k_{in}$ to suma wag krawędzi między wierzchołkiem $i$ i wierzchołkami ze społeczności, do której trafia $i$, $\Sigma_{in}$ to suma wag krawędzi wewnątrz tej społeczności, a $\Sigma_{tot}$ to suma wag krawędzi wewnątrz społeczności z której usuwamy wierzchołek $i$. \\
+
+Algorytm ten został zaproponowany przez profesora Vincenta Blondela z Uniwersytetu w Louvain. Jest to tzw. algorytm zachłanny (greedy algorithm), który dąży w każdym kroku do zmaksymalizowania modularności. Modularność, jako miara podziału sieci na społeczności już pojawiła się w tej pracy (\ref{subsubsection:net-cent}), ale przypomnijmy: $Q= \frac{1}{2m} \sum\limits_{ij} [A_{ij} - \frac{d_i d_j}{2m}]\delta(s_i,s_j)$. W tym algorytmie jednak, o wiele ważniejsza od wartości modularności jest jej różnica w każdym kroku, bo to na jej podstawie będziemy przenosić wierzchołki pomiędzy społecznościami:  $$\Delta Q = [\frac{\Sigma_{in} +2k_{i,in}}{2m} - (\frac{\Sigma_{tot} + k_i}{2m})^2]$$ gdzie $k_i$ to stopień wierzchołka $i$, $k_{in}$ to suma wag krawędzi między wierzchołkiem $i$ i wierzchołkami ze społeczności, do której trafia $i$, $\Sigma_{in}$ to suma wag krawędzi wewnątrz tej społeczności, a $\Sigma_{tot}$ to suma wag krawędzi wewnątrz społeczności z której usuwamy wierzchołek $i$. \\
+
 Schemat algorytmu:
 \begin{enumerate}
 \item Każdy wierzchołek umieść w oddzielnej jednoelementowej społeczności.
@@ -208,7 +215,8 @@ Wynikiem działania algorytmu jest  graf, w którym każdy wierzchołek reprezen
 
 Wybraliśmy ten algorytm do naszych rozważań, ponieważ poza dość prostym schematem działania, cechuje się też dobrą szybkością obliczeń (złożoność $O(nlogn)$), oraz wysoką jakością otrzymanych wyników (w porównaniu do innych typowych rozwiązań). Z powodu tych własności jest jednym z algorytmów zaimplementowanych w bibliotece neo4j.
 \subsection{Modyfikacje dla społeczności nachodzących}
-Z racji, że algorytm Louvain jest algorytmem zachłannym, zależnie od kolejności iterowania po wierzchołkach, może on dawać różne wyniki pod względem powstałych społecznośći. Ten fakt zostanie wykorzystany do znajdowania społeczności nachodzących.\\
+
+Z racji, że algorytm Louvain jest algorytmem zachłannym, zależnie od kolejności iterowania po wierzchołkach, może on dawać różne wyniki pod względem powstałych społeczności. Ten fakt zostanie wykorzystany do znajdowania społeczności nachodzących.\\
 
 Modyfikacja dla społeczności nierozłącznych opiera się na wykonaniu $n$ razy algorytmu dla społeczności rozłącznych, dla różnych permutacji wierzchołków. Na podstawie każdego otrzymanego zbioru społeczności konstruowana jest macierz $n \times m$ gdzie $n$ - liczba wierzchołków w grafie, $m$ - liczba społeczności, a element macierzy $A_{n,m}$ oznacza ilość krawędzi wychodzących z wierzchołka $n$ do wierzchołków ze społeczności $m$ (zakładamy, że wierzchołki są numerowane od 1 do n, społeczności od 1 do m). Następnie macierze dla każdego przebiegu algorytmu są sumowane, a wartości są następnie normalizowane. W tak powstałej macierzy, jeżeli wartości w $n$ wierszu i $m$ kolumnie przekracza wartość progową $\lambda = \frac{1}{ov + 1}$ (gdzie $ov$ jest wartością dobraną podczas implementacji algorytmu) wierzchołek $n$ należy do społeczności $m$. \\
 
@@ -218,7 +226,7 @@ W naszym projekcie skupimy się przede wszystkim na próbach optymalizacji ostat
 Ponadto modularność pozwoli w bardzo naturalny sposób wykorzystać dodatkowe informacje (np. w przypadku znajomych, datę zawarcia znajomości) jako wagę krawędzi. Powinno to dać ciekawe efekty, gdyż starzy znajomi powinni tworzyć rdzenie społeczności, i tak stworzone grupy mogą znacznie różnić się od społeczności otrzymanych bez tej modyfikacji.\\
 
 \subsection{Oczekiwania}
-Oczekujemy, że dodatkowe usprawnienia pozwolą zniwelować, albo chociaż zmniejszyć negatywny wpływ jaki na czas obliczeń ma ostatni etap. 
+Oczekujemy, że dodatkowe usprawnienia pozwolą zniwelować, albo chociaż zmniejszyć negatywny wpływ jaki na czas obliczeń ma ostatni etap. \\
 Sama metoda, w artykule w którym została przedstawiona, opisywana jest w samych superlatywach. Autorzy zapewniają o jej wyższości nad innymi typowymi algorytmami. Oczekujemy, że dzięki naszym eksperymentom uda nam się skonfrontować ją z innymi metodami i ewentualnie usprawnić ją.
 
 \newpage
