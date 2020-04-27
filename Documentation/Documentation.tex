@@ -31,7 +31,7 @@ Podstawowa idea wykrywania społeczności opiera się na znajdowaniu grup wierzc
 \subsection{Typowe podejścia}
 Problem znajdowania społeczności, ze względu na swoją popularność i mnogość praktycznych zastosowań, doczekał się wielu podejść. Różnią się one zarówno złożonością obliczeń jak i jakością otrzymanego zbioru społeczności.
 \subsubsection{Node-Centric Community Detection}
-Pierwszym, dość intuicyjnym podejściem jest wyszukiwanie społeczności skupione na wierzchołkach (node centric community detection). Zakłada ono znajdowanie grup wierzchołków z którym każdy spełnia pewne kryterium, jakim może być np: odpowiedni stopień, osiągalność (czyli odległość od innego, wskazanego wierzchołka) czy wzajemność (mutuality).
+Pierwszym, dość intuicyjnym podejściem jest wyszukiwanie społeczności skupione na wierzchołkach. Zakłada ono znajdowanie grup wierzchołków z którym każdy spełnia pewne kryterium, jakim może być np: odpowiedni stopień, osiągalność (czyli odległość od innego, wskazanego wierzchołka) czy wzajemność (mutuality).
 
 Przy znajdowaniu grup opartych na  wzajemności, kluczem jest znajdowanie klik (dla grafów nieskierowanych) lub pełnych grafów dwudzielnych (dla grafów skierowanych). Niestety szukanie tych struktur jest bardzo kosztowne czasowo i dla większych grafów, o kilku tysiącach wierzchołków okazuje się niepraktyczne.
 
