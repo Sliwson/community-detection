@@ -22,7 +22,7 @@
 
 \section{Wstęp}
 \subsection{Przedstawienie problemu}
-Badanie sieci społecznościowych jest podstawową dziedziną nauki o sieciach. Problem ten znacząco zyskał na znaczeniu, odkąd możliwy jest dostęp do olbrzymich zbiorów danych, dzięki działaniom takich firm jak Facebook, Google, czy Twitter. Sczególnie istotnym zagadnieniem, zarówno dla środowiska biznesowego jak i akademickiego, jest wyszukiwanie społeczności w grafach społecznościowych. Wykorzystuje się je w takich dziedzinach jak kryminalistyka, opieka zdrowotna, polityka, czy marketing\cite{ms-paper1}.
+Badanie sieci społecznościowych jest podstawową dziedziną nauki o sieciach. Problem ten znacząco zyskał na znaczeniu, odkąd możliwy jest dostęp do olbrzymich zbiorów danych, dzięki działaniom takich firm jak Facebook, Google, czy Twitter. Szczególnie istotnym zagadnieniem, zarówno dla środowiska biznesowego jak i akademickiego, jest wyszukiwanie społeczności w grafach społecznościowych. Wykorzystuje się je w takich dziedzinach jak kryminalistyka, opieka zdrowotna, polityka, czy marketing\cite{ms-paper1}.
 
 \textbf{Grafem społecznościowym} nazywamy taki graf, który reprezentuje relacje między jednostkami. Najczęściej spotykanym przykładem jest struktura, gdzie wierzchołki identyfikują osoby, a krawędzie - relacje między danymi osobami. Tą relacją może być znajomość, lecz nic nie stoi na przeszkodzie aby definiować ją dowolnie - np. pytaniem 'Czy dane osoby wymieniły ze sobą wiadomość?'.
 
@@ -33,24 +33,24 @@ Problem znajdowania społeczności, ze względu na swoją popularność i mnogo�
 \\ \\ 
 Pierwszym, dość intuicyjnym podejściem jest wyszukiwanie społeczności skupione na wierzchołkach (node centric community detection). Zakłada ono znajdowanie grup wierzchołków z którym każdy spełnia pewne kryterium, jakim może być np: odpowiedni stopień, osiągalność (czyli odległość od innego, wskazanego wierzchołka) czy wzajemność (mutuality).
 
-Przy znajdowaniu grup opartych na  wzajemności, kluczem jest znajdowanie klik (dla grafów nieskierowanych) lub pełnych grafów dwudzielnych (dla grafów skierowanych). Niestety szukanie tych struktur jest bardzo kosztowne czasowo (algorytmy NP) i dla większych grafów, o kilku tysiącach wierzchołków okazuje się niepraktyczne.
+Przy znajdowaniu grup opartych na  wzajemności, kluczem jest znajdowanie klik (dla grafów nieskierowanych) lub pełnych grafów dwudzielnych (dla grafów skierowanych). Niestety szukanie tych struktur jest bardzo kosztowne czasowo i dla większych grafów, o kilku tysiącach wierzchołków okazuje się niepraktyczne.
 
-Kolejnym sposobem jest rozpatrywanie grup opartych na osiągalności. W tym podejściu rozważa się kilka, dobrze zbadanych grup:
+Kolejnym sposobem jest rozpatrywanie grup opartych na osiągalności. W tym podejściu rozważa się kilka, podstawowych grup:
 
 \begin{itemize}
-\item $k-kliki$ - maksymalny podgraf w którym odległość między dwoma dowolnymi wierzchołkami (w oryginalnym grafie) jest nie większa niż $k$, czyli: $d(i,j)\leq k \forall v_i , v_j $
-\item  $k-klany$ - jest to $k$-klika dla której odległość między dwoma dowolnymi wierzchołkami w podgrafie jest nie większa niż $k$
-\item $k - kluby$ - wszystkie maksymalne pod względem zawierania grupy, w których odległość między dwoma wierzchołkami jest nie przekracza $k$ ($k$ - kluby mogą mieć różną liczność)
+\item $k-klika$ - maksymalny podgraf w którym odległość między dwoma dowolnymi wierzchołkami (w oryginalnym grafie, więc ścieżki mogą przechodzić przez wierzchołki spoza $k-kliki$) jest nie większa niż $k$, czyli: $d(i,j)\leq k  \forall v_i , v_j $
+\item  $k-klan$ - $k-klika$ dla której odległość między dwoma dowolnymi wierzchołkami w podgrafie (to jest, biorąc pod uwagę tylko krawędzie pomiędzy wierzchołkami z $k-klanu$) jest nie większa niż $k$. Każdy k-klan jest k-kliką.
+\item $k - klub$ - maksymalny podgraf, w których odległość między dwoma wierzchołkami w grupie (nie uwzględniając ścieżek przechodzących po wierzchołkach spoza grupy) nie przekracza $k$. Każdy k-klan jest k-klubem.
 \end{itemize}
 
 W przypadku grup opierających się na stopniach wierzchołków kluczowe są następujące struktury:
 
 \begin{itemize}
-\item $k - pleks $- to minimalny podgraf zawierający $n_s$ wierzchołków, z których każdy sąsiaduje z conajmniej $n_s k$ wierzchołkami z tego podgrafu. Innymi słowy każdy element ma conajwyżej $k$ wierzchołków, z którymi nie jest połączony.
+\item $k - pleks $- to minimalny podgraf zawierający $n_s$ wierzchołków, z których każdy sąsiaduje z conajmniej $n_s - k$ wierzchołkami z tego podgrafu. Innymi słowy każdy element ma co najwyżej $k$ wierzchołków, z którymi nie jest połączony.
 \item $k - rdzenie$ -  to struktury, w której każdy wierzchołek jest połączony z conajmniej $k$ wierzchołkami ze struktury, czyli  $d_s(i)\geq k \forall v_i \in V_s $
 \end{itemize}
 
-Definicje $k$-pleksu i $k$ - rdzeniu uzupełniają się. Te struktury są zwykle odporne na usuwanie krawędzi. Wiemy, że stopnie wierzchołków w rzeczywistych sieciach rozkładają się według prawa potęgowego, tzn. w grafie jest mało wierzch o dużych stopniach i wiele wierzchołków o mniejszych stopniach. Niestety grupy oparte na stopniach wierzchołków wymagają wielu wierzchołków o dużych stopniach, więc słabo nadają się one do analizy rzeczywistych sieci.
+Definicje $k-pleksu$ i $k - rdzeniu$ uzupełniają się. Te struktury są zwykle odporne na usuwanie krawędzi. Wiemy, że stopnie wierzchołków w rzeczywistych sieciach rozkładają się według prawa potęgowego, tzn. w grafie jest mało wierzch o dużych stopniach i wiele wierzchołków o mniejszych stopniach. Niestety grupy oparte na stopniach wierzchołków wymagają wielu wierzchołków o dużych stopniach, więc słabo nadają się one do analizy rzeczywistych sieci.
 \\ \\
 Odchodząc od rozważania pojedynczych wierzchołków, kolejne podejście skupia się na ich całych grupach. W takim podejściu to nie każdy wierzchołek, musi spełniać pewne założenia, ale całe zbiory wierzchołków. Przykładem takich grupy mogą być grupy oparte na gęstości. Podgraf $G_s(V_s,E_s)$ jest $\gamma$ gęsty (zwany również prawie-kliką) gdy $\frac{E_s}{V_S(V_s-1)/2}$. Wewnątrz takiego podgrafu, stopnie wierzchołków mogą znacznie się różnić, dlatego stosowane są one do dużych sieci.
 \\\\
@@ -58,7 +58,7 @@ Rozszerzając dalej obszar rozważań, dochodzimy do metod opartych na całych s
 \begin{itemize}
 \item grupy oparte na podobieństwie wierzchołków - biorą one pod uwagę np podobieństwo zbioru sąsiadów (podobieństwo strukturalne). Jest to jednak dosyć ograniczająca definicja, stosuje się więc też np. podobieństwo automorficzne, w którym dwa wierzchołki są podobne, gdy ich sąsiedzi mogą być przemianowani tak by utworzyć izomorficzny graf. Wykrywanie podobieństw w dużych, praktycznych sieciach jest jednak dość trudne i bardzo skomplikowane obliczeniowo.
 \item grupy oparte na minimalnym przekroju - społeczności definiuje się jako podzbiór $C \subset V$, taki że $\forall v \in C, v$ ma co najmniej tak dużo krawędzi do wierzchołków z $C$ jak do wierzchołków z $V \backslash C$.
-\item grupy oparte na modularności - modularność jest miarą, która bierze pod uwagę rozkład stopni w grafie dostosowując strukturę społeczności. Mierzy ona jak bardzo sieć różni się od równomiernie losowego grafu ($null model$). Definiuje się ją następująco: $Q= \frac{1}{2m} \sum\limits_{ij} [A_{ij} - \frac{d_i d_j}{2m}]\delta(s_i,s_j)$. Generalnie celem jest dostosowanie struktury społeczności tak by zmaksymalizować modularność.
+\item grupy oparte na modularności - modularność jest miarą, która bierze pod uwagę rozkład stopni w grafie dostosowując strukturę społeczności. Mierzy ona jak bardzo sieć różni się od równomiernie losowego grafu ($null model$). Definiuje się ją następująco: $Q= \frac{1}{2m} \sum\limits_{ij} [A_{ij} - \frac{d_i d_j}{2m}]\delta(s_i,s_j)$, gdzie $d_i$ to stopień wierzchołka $v_i$, a $s_i$ to społeczność do której należy wierzchołek $v_i$ (podobnie $d_j$ i $s_j$ dla $v_j$), $\delta$ to delta Kroneckera (wartość 1 gdy $v_i$ i $v_j$ są w tej samej społeczność 0 wpw.). Generalnie celem jest dostosowanie struktury społeczności tak by zmaksymalizować modularność.
 \end{itemize}
 Ostatnim wartym wspomnienia podejściem jest wykrywanie społeczności oparte na hierarchiach. Wyróżnia się trzy typy podziału hierarchicznego:
 \begin{itemize}
@@ -67,22 +67,22 @@ Ostatnim wartym wspomnienia podejściem jest wykrywanie społeczności oparte na
 \item wyszukiwanie struktur - bazuje na wyszukiwaniu hierarchii, które mają duże prawdopodobieństwo by utworzyć sieć.
 \end{itemize}
 
-Wszystkie te podejścia są jednak ściśle matematycznymi zagadnieniami. Używane w nich miary i struktury, często do obliczenia bądź znalezienia wymagają dużej mocy obliczeniowej. \cite{pw-paper1}. Dlatego w praktycznych zastosowaniach i algorytmach, często stosuje się pewne uproszczenia, modyfikuje się te podejścia, a nawet łączy je by uzyskać najlepsze efekty, za równo pod kątem czasu obliczeń jak i jakości otrzymanych społecznośći.
+Wszystkie te podejścia są jednak ściśle matematycznymi zagadnieniami. Używane w nich miary i struktury, często do obliczenia bądź znalezienia wymagają dużej mocy obliczeniowej. \cite{pw-paper1}. Dlatego w praktycznych zastosowaniach i algorytmach, często stosuje się pewne uproszczenia, modyfikuje się te podejścia, a nawet łączy je by uzyskać najlepsze efekty, za równo pod kątem czasu obliczeń jak i jakości otrzymanych społeczności.
 \newpage
 \section{Algorytm Girvana-Newmana}
 \subsection{Opis algorytmu}
-Metoda Girvan-Newmana jest metodą dzielącą - rozważanie problemu rozpoczyna się od całej sieci i z każdym krokiem zmniejsza ją poprzez usuwanie krawędzi. Każda z nich posiada specjalny parametr, który w literaturze funkcjonuje pod nazwą \textit{edge betweenness} \cite{is-paper1}. Określa on sumę najkrótszych ścieżek przechodzących przez daną krawędź. W przypadku tylko jednej takiej ścieżki parametr zwiększany jest o 1, natomiast gdy między wierzchołkami występuję więcej niż jedna najkrótsza ścieża, to każdej z tych ścieżek przypisywana jest równa waga, tak by suma wag dla wszystkich była równa 1.
+Metoda Girvan-Newmana jest metodą dzielącą - rozważanie problemu rozpoczyna się od całej sieci i z każdym krokiem zmniejsza ją poprzez usuwanie krawędzi. Każda z nich posiada specjalny parametr, który w literaturze funkcjonuje pod nazwą \textit{edge betweenness} \cite{is-paper1}. Określa on sumę najkrótszych ścieżek przechodzących przez daną krawędź. W przypadku tylko jednej takiej ścieżki parametr zwiększany jest o 1, natomiast gdy między wierzchołkami występuję więcej niż jedna najkrótsza ścieżka, to każdej z tych ścieżek przypisywana jest równa waga, tak by suma wag dla wszystkich była równa 1.
 
 Cecha ta zwraca od razu uwagę na fakt, który może stanowić główną wadę algorytmu - jego złożoność jest dość duża i może on mieć znaczne problemy wydajnościowe przy większych sieciach. Co iterację, po usunięciu krawędzi, konieczne jest ponowne wyliczenie wartości parametru dla każdej z krawędzi. To prowadzi do złożoności czasowej na poziomie $O({m}^2n)$, gdzie m stanowi liczbę krawędzi, a n liczbę wierzchołków. Usprawnienia algorytmu można dokonać poprzez wyrzucenie w jednym kroku wszystkich krawędzi o najwyższej wadze. Co prawda nie zmieni to złożoności pesymistycznej algorytmu, jednak w większości przypadków znacznie go usprawni. Warto nadmienić, iż twórcy algorytmu nie sprecyzowali kolejności usuwania krawędzi o tej samej wadze, pozostawiając ten aspekt do rozwiązania przy implementacji.
 
 Algorytm kończy swe działanie, gdy usunięta zostanie ostatnia krawędź. W czasie jego działania stworzony zostanie dendrogram, na podstawie którego będzie można odbudować podział społeczności na danym poziomie. Znalezienie optymalnej dekompozycji grafu stanowi w tym wypadku kluczowy problem. W tym przypadku analizowana metoda ukazuje swoje zalety. Co iterację można tutaj wyliczyć współczynnik modularności i na samym końcu określić poziom, dla którego był on największy, a następnie odtworzyć dany stan sieci. W ten sposób metoda Girvan-Newmana jest w stanie wskazać nam najlepszy podział sieci na społeczności.
 
-Motywację przy wyborze tego algorytmu stanowił fakt, iż jest to najbardziej znana metoda związana z wykrywaniem społeczności, o której wzmianki można odnaleźć w niemal każdej publikacji naukowej z tej dziedziny. Zagłebiając się w tematykę warto rozpocząć od niego swoją pracę. 
+Motywację przy wyborze tego algorytmu stanowił fakt, iż jest to najbardziej znana metoda związana z wykrywaniem społeczności, o której wzmianki można odnaleźć w niemal każdej publikacji naukowej z tej dziedziny. Zagłębiając się w tematykę warto rozpocząć od niego swoją pracę. 
 \subsection{Modyfikacje dla społeczności rozłącznych}
 \subsubsection{CONGA}
 W tradycyjnym wykorzystaniu algorytmu Girvan-Newmana każda kolejna iteracja prowadzi do podziału sieci na mniejsze części, które razem zawierają wszystkie wierzchołki grafu. Aby umożliwić wykrywanie społeczności nakładających się, musimy odnaleźć moment w którym dojdzie do podziału wierzchołka, tak aby znalazł się on w dwóch oddzielnych społecznościach. W algorytmie CONGA problem ten został rozwiązany poprzez wprowadzenie dodatkowego parametru dla każdego wierzchołka, w literaturze nazwanego \textit{vertex betweenness} \cite{is-paper2}.
 
-Analogia do nazwy \textit{edge betweenness} wykorzystywanej w wersji podstatowej algorytmu nie jest przypadkowa. Parametr dla wierzchołka mówi nam bowiem o tym, ile najkrótszych ścieżek przechodzi przez ten wierzchołek. Dodatkowo dla każdego wierzchołka ${v}$ wartość tą można obliczyć bazując na wyliczonych wcześniej parametrów każdej z krawędzi zawierającej ${v}$. Zważywszy na złożoność czasową całego algorytmu modyfikacja ta nie jest znacząco kosztowna.
+Analogia do nazwy \textit{edge betweenness} wykorzystywanej w wersji podstawowej algorytmu nie jest przypadkowa. Parametr dla wierzchołka mówi nam bowiem o tym, ile najkrótszych ścieżek przechodzi przez ten wierzchołek. Dodatkowo dla każdego wierzchołka ${v}$ wartość tą można obliczyć bazując na wyliczonych wcześniej parametrów każdej z krawędzi zawierającej ${v}$. Zważywszy na złożoność czasową całego algorytmu modyfikacja ta nie jest znacząco kosztowna.
 
 Z podejściem CONGA związane są trzy główne pytania na temat podziału wierzchołka:
 \begin{enumerate}
@@ -101,27 +101,27 @@ Optymalizacja algorytmu CONGA zrealizowana przez jego twórców \cite{is-paper3}
 \subsection{Proponowane modyfikacje}
 Usprawnienia możliwe do zrealizowania oparte zostały o algorytm CONGA. Bazując na parametrach \textit{edge} i \textit{vertex betweenness} do głębszej analizy został wybrany krok sposobu podziału wierzchołka. Algorytm podstawowy bazuje na heurystyce i dodatkowym wykorzystaniu pamięci, a także dość skomplikowanym modelu obliczeniowym. W naszej modyfikacji chcielibyśmy wykorzystać dodatkowe własności grafu, które dla sieci społecznościowych stanowią cechy nieodłącznie z nimi kojarzone. Mowa tutaj o liczbie wspólnych znajomych, a także dacie zawarcia znajomości. Moduł podziału wierzchołka można wymienić na inny, korzystający z ww. cech. Dzięki temu w dość prosty sposób można zmodyfikować algorytm i skorzystać z dwóch sposobów podziału wierzchołka. Dzieląc wierzchołek przy pomocy liczby wspólnych znajomych, celem będzie stworzenie takiego podziału, który zmaksymalizuje liczbę wspólnych znajomych w obu zbiorach dla wierzchołka $v$ i jego kopii. Bazując na dacie zawarcia znajomości można kierować się zasadą chronologii - daty mogą mieć odzwierciedlenie w danej sytuacji życiowej, a także grupie, w której w danym momencie się znajdujemy.
 \subsection{Oczekiwania}
-Korzystająć z usprawnień opisanych w poprzedniej sekcji naszym głównym celem będzie poprawa parametru modularności. Każda dodatkowa wiadomość dotycząca krawędzi powinna prowadzić do lepszego podziału danej społeczności. Co za tym idzie algorytm szybciej powinien podzielić sieć na mniejsze części, przez co wykona mniej obliczeń w obrębie pełnego grafu, co przyspieszy jego działanie. Sam krok podziału wierzchołka również powinien zostać przyspieszony, a wykorzystana do tego pamięć znacznie zmniejszona i sprowadzona do informacji uzyskanych w fazie preprocessingu.
+Korzystając z usprawnień opisanych w poprzedniej sekcji naszym głównym celem będzie poprawa parametru modularności. Każda dodatkowa wiadomość dotycząca krawędzi powinna prowadzić do lepszego podziału danej społeczności. Co za tym idzie algorytm szybciej powinien podzielić sieć na mniejsze części, przez co wykona mniej obliczeń w obrębie pełnego grafu, co przyspieszy jego działanie. Sam krok podziału wierzchołka również powinien zostać przyspieszony, a wykorzystana do tego pamięć znacznie zmniejszona i sprowadzona do informacji uzyskanych w fazie preprocessingu.
 
 \newpage
 \section{Label Propagation Algorithm}
 \subsection{Opis algorytmu}
-Label Propagation Algorithm to algorytm stosunkowo prosty i szybki. Wybraliśmy go ze względu na jego interesujące własności oraz fakt, że został zaimplementowany w bilbliotece neo4j. Dokładnie został opisany w pracy 'Near linear time algorithm to detect community structures in large-scale networks'\cite{ms-paper2}. Opiera się on na idei, że etykieta staje się dominująca w gętsto połączonych grupach, zaś nie jest propagowana przez rzadko połączone rejony. Ogólny schemat wygląda następująco:
+Label Propagation Algorithm to algorytm stosunkowo prosty i szybki. Wybraliśmy go ze względu na jego interesujące własności oraz fakt, że został zaimplementowany w bilbliotece neo4j. Dokładnie został opisany w pracy 'Near linear time algorithm to detect community structures in large-scale networks'\cite{ms-paper2}. Opiera się on na idei, że etykieta staje się dominująca w gęsto połączonych grupach, zaś nie jest propagowana przez rzadko połączone rejony. Ogólny schemat wygląda następująco:
 \begin{enumerate}
 \item Zainicjalizuj wierzchołki unikatowymi etykietami.
 \item Dla każdego wierzchołka przypisz mu etykietę, która występuje najwięcej razy wśród jego sąsiadów. W razie remisu, wybierz losowo.
 \item Powtarzaj krok 2, aż nie wystąpi żadna zmiana etykiety.
 \end{enumerate}
 
-\subsection{Modyfikacje dla społeczności rozłącznych}
+\subsection{Modyfikacje dla społeczności nachodzących}
 \subsubsection{COPRA}
-Aby umożliwić wykrywanie społeczności rozłączonych wprowadzono parametr $v$ - maksymalną ilość społeczności, do której może należeć wierzchołek\cite{ms-paper3}. W każdym kroku algorytmu wierzchołkowi przypisujemy $v$ najczęściej występujących wśród jego sąsiadów etykiet.
+Aby umożliwić wykrywanie społeczności nachodzących wprowadzono parametr $v$ - maksymalną ilość społeczności, do której może należeć wierzchołek\cite{ms-paper3}. W każdym kroku algorytmu wierzchołkowi przypisujemy $v$ najczęściej występujących wśród jego sąsiadów etykiet.
 \subsubsection{BMLPA}
 Zaproponowano modyfikację algorytmu COPRA, aby jego parametryzacja była bardziej uniwersalna\cite{ms-paper4}. Wierzchołkowi przypisujemy tylko te etykiety, dla których iloraz $\frac{b}{b_{max}}$ jest większy bądź równy od nowo wprowadzonego parametru $p$, gdzie $b$ to liczność danej etykiety wśród sąsiadów, $b_{max}$ to liczność najczęściej występującej etykiety wśród sąsiadów. Algorytm ten wymaga wyznaczenia początkowych społeczności.
 
 \subsection{Proponowane modyfikacje}
 \subsubsection{Zrównoleglenie}
-Algorytm LPA jest algorytmem o złożonosci liniowej, dlatego nie ma tutaj zbyt dużego pola na optymalizacje wydajnościowe. Interesującym doświadczeniem, może być jednak zaimplementowanie algorytmu oraz jego modyfikacji na procesory graficzne (np. używając biblioteki CUDA). Doświadczenia takie były już przeprowadzane (\cite{ms-paper5}, \cite{ms-paper6}), jednak w naszej pracy zyskalibyśmy porównanie nie tylko między CPU i GPU, lecz również między innymi metodami.
+Algorytm LPA jest algorytmem o złożoności liniowej, dlatego nie ma tutaj zbyt dużego pola na optymalizacje wydajnościowe. Interesującym doświadczeniem, może być jednak zaimplementowanie algorytmu oraz jego modyfikacji na procesory graficzne (np. używając biblioteki CUDA). Doświadczenia takie były już przeprowadzane (\cite{ms-paper5}, \cite{ms-paper6}), jednak w naszej pracy zyskalibyśmy porównanie nie tylko między CPU i GPU, lecz również między innymi metodami.
 \subsubsection{Użycie roli}
 \label{subsubsection:lparole}
 Znaczącą poprawę wyników LPA można uzyskać wybierając społeczności początkowe, zamiast inicjalizować wszystkie wierzchołki unikatowymi społecznościami. Jednym z pomysłów jest użycie idei ról w grafie do wyboru początkowych społeczności\cite{ms-paper7}. Chcemy zastosować tę ideę do inicjalizacji algorytmu BMLPA.
@@ -129,7 +129,7 @@ Znaczącą poprawę wyników LPA można uzyskać wybierając społeczności pocz
 \label{subsubsection:lpaedges}
 Dla grafu z sieci Facebook możemy do krawędzi przypisać interesujące wartości, np. datę zawarcia znajomości, czy liczbę wspólnych znajomych. Chcemy użyć tych parametrów jako wag przy wyborze etykiet w kroku algorytmu. Przykłady:
 \begin{itemize}
-\item W przypadku remisu, wybieramy tę etykietę, dla której średnia data zawarcia znajomości jest niższa.
+\item W przypadku remisu, wybieramy tę etykietę, dla której znajomości były zawarte w najwęższym oknie czasowym, tj. dla zbioru krawędzi różnica daty najpóźniejszej i najwcześniejszej jest najmniejsza.
 \item Dodajemy wagę do wierzchołka - liczbę wspólnych znajomych dzieloną przez maksymalną wspólną liczbę znajomych z sąsiadem, a następnie używamy jej razem z wagami, zgodnie z ideą algorytmu BMLPA.
 \end{itemize}
 
@@ -139,9 +139,62 @@ Jeśli chodzi o równoległą implementację, oczekujemy, że będzie ona znacz�
 \newpage
 \section{Overlapping Community Detection by Local Community Expansion}
 \subsection{Opis algorytmu}
-\subsection{Proponowane modyfikacje}
-\subsection{Oczekiwania}
+Algorytm ten wykorzystuje podejście znalezienia wielu małych lokalnych społeczności, a następnie połączeniu ich w większe, nakładające się. Składa się on z trzech kroków:
 
+\subsubsection{Wyznaczenie lokalnych społeczności}
+\begin{itemize}
+\item Zainicjuj lokalne społeczności zbiorem pustym
+\item Dla każdej pary wierzchołków $(u,v)$, że oba nie należą jeszcze do tej samej społeczności wykonuj:
+\begin{itemize}
+\item Zainicjuj tymczasową społeczność $tmp$ jako $\{u,v\}$
+\item Rozpatrz każdego wspólnego sąsiada $u$ i $v$, jeżeli modularność społeczności wraz z nim jest większa od modularności bez niego, dodaj go do społeczności
+\item Jeżeli w $tmp$ znajduje się przynajmniej $5$ elementów, dodaj $tmp$ do zbioru lokalnych społeczności
+\end{itemize}
+\end{itemize}
+
+Jest to jedna z metod wyznaczania lokalnych społeczności, zaprezentowana w \cite{bt-paper1}. Najważniejszą rolę w niej odgrywa w niej modularność. Jest ona wyznaczana ze wzoru:
+
+$M = \frac{M_{in}}{M_{out}} = \frac{\frac{1}{2}\sum_{ij}A_{ij}\theta(i,j)}{\sum_{i,j}A_{ij}\lambda(i,j)}$,\\
+gdzie $A_{ij}$ jest macierzą sąsiedztwa grafu, $\theta$ i $\lambda$ zaś funkcjami. $\theta(i,j)$ zwraca $1$, jeśli oba wierzchołki $i$ i $j$ należą do rozpatrywanej społeczności, w przeciwnym wypadku zwraca $0$. $\lambda(i,j)$ zwraca $1$ jeśli tylko jeden z wierzchołków należy do społeczności, w przeciwnym wypadku $0$. Można więc powiedzieć, że $\theta$ odpowiada bitowej operacji AND, zaś $\lambda$ bitowej operacji XOR.
+\subsubsection{Łączenie społeczności}
+\begin{itemize}
+\item Zainicjuj zbiór wyjściowych społeczności $C'$ zbiorem lokalnych społeczności
+\item Dla każdej społeczności $C$ z $C'$ wykonuj:
+\begin{itemize}
+\item Znajdź zbiór społeczności połączonych z $C$
+\item Przyłącz ten zbiór do $C$
+\item Usuń z $C'$ wszystkie sieci należące do tego zbioru
+\item Uaktualnij licznik społeczności we wszystkich wierzchołkach z $C'$
+\end{itemize}
+\end{itemize}
+
+W wyniku wyżej opisanego algorytmu można skonstruować społeczności nakładające się na siebie, jako że wiele lokalnych społeczności może zawierać te same wierzchołki. Należy jednak zdefiniować, kiedy dwie społeczności są ze sobą połączone. W \cite{bt-paper1} proponowana jest metoda, polegająca na liczeniu ważonego wyniku nakładania się $WOS$, danego wzorem:\\
+$WOS(C_i,C_j) = \alpha\frac{|V_i \cap V_j|}{min(|V_i|,|V_j|)} + (1-\alpha)\frac{|E^{in}_i \cap E^{out}_j|}{min(E^{in}_i,E^{out}_j)}$, \\gdzie $\alpha$ jest ustalonym parametrem między $0$, a $1$, $V$ określa zbiór wierzchołków danej społeczności, a $E^{in}$ i $E^{out}$ to zbiory krawędzi odpowiednio wewnętrznych (o obu końcach w społeczności) i zewnętrznych (o tylko jednym końcu wewnątrz). Dane społeczności $C_i$ i $C_j$ sąsiadują ze sobą jeśli $WOS(i,j)$ jest większy od ustalonej na początku stałej $\beta$.
+\subsubsection{Przyłączanie wierzchołków izolowanych}
+\begin{itemize}
+\item Niech $U$ będzie zbiorem takich wierzchołków, które aktualnie nie należą do żadnej społeczności. Dla każdego $u \in U$ , wykonaj:
+\begin{itemize}
+\item Rozpatrz wszystkich sąsiadów $u$ i społeczności, do których należą. Dla każdej takiej społeczności oblicz modularność wraz z $u$ oraz bez niego. Jeżeli modularność tej społeczności wraz z $u$ jest większa, dodaj $u$ do tej społeczności.
+\end{itemize}
+\end{itemize}
+
+Jako, że w pierwszym kroku odrzuca się wszystkie społeczności mające mniej niż 5 wierzchołków, istnieje istotne prawdopodobieństwo, że w grafie pozostanie wiele wierzchołków izolowanych. Krok ten ma na celu zmniejszyć tę liczbę, jednak warto zauważyć, że mimo wykonania go, nie wszystkie wierzchołki muszą należeć do jakiejś społeczności. Modularność jest wyznaczania jak w kroku pierwszym.
+
+\subsubsection{Złożoność obliczeniowa}
+\begin{enumerate}
+\item Krok pierwszy ma złożoność $O(m\cdot d)$, gdzie $m$ jest liczbą krawędzi w grafie, a d średnim stopniem wierzchołków. Jest tak ponieważ początkowych społeczności będzie rzędu $m$, a wspólnych sąsiadów rzędu $d$.
+\item Krok drugi ma złożoność $O(k_1^2)$, gdzie $k_1$ to liczba społeczności znalezionych w pierwszym kroku. Oczywiście $k_1 < m$, ale można oczekiwać, że zazwyczaj będzie $k_1 << m$.
+\item Krok trzeci ma złożoność $O(n\cdot d)$, ponieważ rozważanych jest najwyżej $n$ wierzchołków (zazwyczaj istotnie mniej) i każdy średnio ma stopień rzędu $d$.
+\end{enumerate}
+Z powyższych rozważań wynika, że przy założeniu $n \approx m$, złożoność pesymistyczna jest kwadratowa, ale zazwyczaj będzie bliska liniowej.
+
+\subsection{Proponowane modyfikacje}
+\subsubsection{Użycie innej miary niż modularność}
+Wierzchołki do lokalnych społeczności można dodawać za pomocą innych miar niż modularność M. Może być to na przykład funkcja $f$ z \cite{bt-paper2}.
+\subsubsection{Inny sposób wybierania lokalnych społeczności}
+W dotychczasowej wersji algorytmu za początek społeczności brane są pary sąsiadujących wierzchołków, niebędących jeszcze w jednej społeczności. Zamiast tego można rozpatrzeć połączone ze sobą trójkąty, bądź większe kliki, których wszystkie wierzchołki nie są jeszcze w jednej społeczności. To rozwiązanie jest wolniejsze z powodu konieczności znalezienia wszystkich takich klik, ale istnieje szansa, że tak zbudowane społeczności będą lepiej dobrane. 
+\subsection{Oczekiwania}
+Od metody oczekujemy tego, że po jej implementacji uda się uzyskać wysokiej jakości podział na społeczności. Od modyfikacji oczekujemy, że wprowadzenie ich zmieni w istotnym stopniu uzyskany wcześniej rezultat. Zastosowanie innej miary powinno być porównywalne co do wydajności w zestawieniu z podstawową wersją algorytmu, ale znalezione społeczności powinny się zauważalnie różnić. Inny sposób wybierania lokalnych społeczności zapewne będzie zaś sporo mniej wydajny, ale powinien skutkować zdecydowanie lepszej jakości rezultatem, to znaczy ściślejszymi powiązaniami wśród społeczności.
 \newpage
 \section{Algorytm Louvain}
 \subsection{Opis algorytmu}
@@ -161,7 +214,7 @@ Modyfikacja dla społeczności nierozłącznych opiera się na wykonaniu $n$ raz
 Następnie w ostatnim kroku, niektóre z powstałych społeczności mogą zostać połączone na podstawie modularności zaproponowanej przez Vincenzo Nicosie z Uniwersytetu w Catanii \cite{pw-paper2} . Jest to jednak krok bardzo kosztowny ze względu na czas obliczeń (złożoność $O(n^3)$ ), a przynosi on stosunkowo niewielką poprawę ostatecznej jakości wyniku. Algorytm dokładniej wytłumaczony jest w artykule: "A Fast Algorithm for Overlapping Community Detection" \cite{pw-paper3}.
 \subsection{Proponowane modyfikacje}
 W naszym projekcie skupimy się przede wszystkim na próbach optymalizacji ostatniego kroku, oraz porównaniu jego wpływu na ostateczny wynik. W celach optymalizacji możemy wykorzystać heurystyki oraz dodatkową wiedzę na temat sieci. Możemy na przykład, nie rozważać do scalenia społeczności, które przekroczą żądaną przez nas wielkość, lub ilość ich wspólnych wierzchołków nie jest wystarczająca.
-Ponadto modularność pozwoli w bardzo naturalny sposób wykorzystać dodatkowe informacje (np w przypadku znajomych, datę zawarcia znajomości) jako wagę krawędzi. Powinno to dać ciekawe efekty, gdyż starzy znajomi powinni tworzyć rdzenie społeczności, i tak stworzone grupy mogą znacznie różnić się od społeczności otrzymanych bez tej modyfikacji.\\
+Ponadto modularność pozwoli w bardzo naturalny sposób wykorzystać dodatkowe informacje (np. w przypadku znajomych, datę zawarcia znajomości) jako wagę krawędzi. Powinno to dać ciekawe efekty, gdyż starzy znajomi powinni tworzyć rdzenie społeczności, i tak stworzone grupy mogą znacznie różnić się od społeczności otrzymanych bez tej modyfikacji.\\
 
 \subsection{Oczekiwania}
 Oczekujemy, że dodatkowe usprawnienia pozwolą zniwelować, albo chociaż zmniejszyć negatywny wpływ jaki na czas obliczeń ma ostatni etap. \\
@@ -189,10 +242,7 @@ Dane do stworzenia struktury grafu zostały przez nas pobrane z ogólnodostępne
 
 Nie ulega wątpliwości, że wykrywanie społeczności i analiza sieci społecznościowych jest i staje się coraz bardziej przydatnym narzędziem. Pracują nad nim potężne zespoły, składające się z najlepszych matematyków i naukowców z całego świata, zatem naszym celem jest przede wszystkim zgłębienie tematu, aby zrozumieć działanie typowych metod i algorytmów, a następnie spróbować je wykorzystać i dostosować do postawionego przed nami problemu. Oczekujemy, że efekty mogą nie być, tak spektakularne jak byśmy tego chcieli, ale mamy nadzieję, że mimo wszystko uda nam się dokonać jakiś ciekawych obserwacji, które przybliżą nam temat wykrywania społeczności oraz problemów, z którymi spotykają się ludzie zajmujący się tym na co dzień. 
 
-
-Sample z cytatem!
-\cite{sample}.
-
+\newpage
 \printbibliography
 
 \end{document}
