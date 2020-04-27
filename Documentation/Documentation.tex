@@ -29,9 +29,9 @@ Badanie sieci społecznościowych jest podstawową dziedziną nauki o sieciach. 
 Podstawowa idea wykrywania społeczności opiera się na znajdowaniu grup wierzchołków, dla których liczba połączeń w obrębie społeczności jest znacząco wyższa, niż liczba połączeń do wierzchołków spoza tej społeczności. Oczywiście definicja ta jest dosyć płynna - w tym problemie często algorytmy opiera się na pewnych heurystykach, które sprawdza się na rzeczywistych zbiorach danych. Weryfikacja takich rozwiązań nie jest prosta - często przeprowadzana jest ona manualnie, przez analizę wizualizacji. 
 
 \subsection{Typowe podejścia}\label{subsection:typical-approaches}
-Problem znajdowania społeczności, ze względu na swoją popularność i mnogość praktycznych zastosowań, doczekał się wielu podejść teoretycznych.
+Problem znajdowania społeczności, ze względu na swoją popularność i mnogość praktycznych zastosowań, stał się przedmiotem badań w wielu pracach naukowych.
 \\ \\ 
-Pierwszym, dość intuicyjnym podejściem jest wyszukiwanie społeczności skupione na wierzchołkach (node centric community detection). Zakłada ono znajdowanie grup wierzchołków z którym każdy spełnia pewne kryterium, jakim może być np: odpowiedni stopień, osiągalność (czyli odległość od innego, wskazanego wierzchołka) czy wzajemność (mutuality). Przy znajdowaniu grup opartych na  wzajemności, kluczem jest znajdowanie klik (dla grafów nieskierowanych) lub pełnych grafów dwudzielnych (dla grafów skierowanych). Niestety, znalezienie tych struktur jest bardzo kosztowne czasowo i dla większych grafów okazuje się niepraktyczne (dla kliki mamy doczynienia z problemem NP-zupełnym).\\
+Pierwszym, dość intuicyjnym podejściem jest wyszukiwanie społeczności skupione na wierzchołkach (node centric community detection). Zakłada ono znajdowanie grup wierzchołków z którym każdy spełnia pewne kryterium, jakim może być np: odpowiedni stopień, osiągalność (czyli odległość od innego, wskazanego wierzchołka) czy wzajemność (mutuality). Przy znajdowaniu grup opartych na  wzajemności, kluczem jest znajdowanie klik (dla grafów nieskierowanych) lub pełnych grafów dwudzielnych (dla grafów skierowanych). Niestety, znalezienie tych struktur jest bardzo kosztowne czasowo i dla większych grafów okazuje się niepraktyczne (dla kliki mamy do czynienia z problemem NP-zupełnym).\\
 
 Kolejnym sposobem jest rozpatrywanie grup opartych na osiągalności. W tym podejściu rozważa się kilka, podstawowych grup:
 
@@ -48,7 +48,7 @@ W przypadku grup opierających się na stopniach wierzchołków kluczowe są nas
 \item $k - rdzenie$ -  to struktury, w której każdy wierzchołek jest połączony z conajmniej $k$ wierzchołkami ze struktury, czyli  $d_s(i)\geq k \forall v_i \in V_s $
 \end{itemize}
 
-Definicje $k-pleksu$ i $k - rdzenia$ uzupełniają się. Te struktury są zwykle odporne na usuwanie krawędzi. Wiemy, że stopnie wierzchołków w rzeczywistych sieciach rozkładają się według prawa potęgowego, tzn. w grafie jest mało wierzch o dużych stopniach i wiele wierzchołków o mniejszych stopniach. Niestety grupy oparte na stopniach wierzchołków wymagają wielu wierzchołków o dużych stopniach, więc słabo nadają się one do analizy rzeczywistych sieci.
+Definicje $k-pleksu$ i $k - rdzenia$ uzupełniają się. Te struktury są zwykle odporne na usuwanie krawędzi. Wiemy, że stopnie wierzchołków w rzeczywistych sieciach rozkładają się według prawa potęgowego, tzn. w grafie jest mało wierzchołków o dużych stopniach i wiele wierzchołków o mniejszych stopniach. Niestety grupy oparte na stopniach wierzchołków wymagają wielu wierzchołków o dużych stopniach, więc słabo nadają się one do analizy rzeczywistych sieci.
 \\ \\
 Odchodząc od rozważania pojedynczych wierzchołków, kolejne podejście skupia się na ich całych grupach. W takim podejściu to nie każdy wierzchołek, musi spełniać pewne założenia, ale całe zbiory wierzchołków. Przykładem takich grupy mogą być grupy oparte na gęstości. Podgraf $G_s(V_s,E_s)$ jest $\gamma$ gęsty (zwany również prawie-kliką) gdy $\frac{E_s}{V_S(V_s-1)/2} >= \gamma$. Wewnątrz takiego podgrafu, stopnie wierzchołków mogą znacznie się różnić, dlatego stosowane są one do dużych sieci.
 \\\\
@@ -65,7 +65,7 @@ Ostatnim wartym wspomnienia podejściem jest wykrywanie społeczności oparte na
 \item wyszukiwanie struktur - bazuje na wyszukiwaniu hierarchii, które mają duże prawdopodobieństwo by utworzyć sieć.
 \end{itemize}
 
-Wszystkie te podejścia są jednak ściśle matematycznymi zagadnieniami. Używane w nich miary i struktury, często do obliczenia bądź znalezienia wymagają dużej mocy obliczeniowej\cite{pw-paper1}. Dlatego w praktycznych zastosowaniach i algorytmach często stosuje się pewne uproszczenia, modyfikuje się te podejścia, a nawet łączy je by uzyskać najlepsze efekty, zarówno pod kątem czasu obliczeń, jak i jakości otrzymanych społeczności.
+Wszystkie te podejścia są jednak ściśle matematycznymi zagadnieniami. Używane w nich miary i struktury, często do obliczenia, bądź znalezienia wymagają dużej mocy obliczeniowej\cite{pw-paper1}. Dlatego w praktycznych zastosowaniach i algorytmach często stosuje się pewne uproszczenia, modyfikuje się te podejścia, a nawet łączy je by uzyskać najlepsze efekty, zarówno pod kątem czasu obliczeń, jak i jakości otrzymanych społeczności.
 \newpage
 \section{Algorytm Girvan-Newmana}
 \subsection{Opis algorytmu}
