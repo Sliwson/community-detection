@@ -1,5 +1,6 @@
 import requests
 import json
+import csv
 
 response = requests.get('https://api.github.com/users/wwylele/repos', auth=('8902bc979763f1342c7efe61f50cf05816ecf54d', 'x-oauth-basic'))
 responseJson = response.json()
@@ -45,10 +46,27 @@ for item in queue:
                                 'contributor_2_id': max(contributor['id'], otherContributor['id'])
                             }
                         )
-        with open('nodes.json','w') as outfile:
-            json.dump(nodes,outfile)
-        with open('edges.json','w') as outfile:
-            json.dump(edges,outfile)
+        #with open('nodes.json','w') as outfile:
+        #    json.dump(nodes,outfile)
+        f1 = csv.writer(open("nodes.csv", "w+"))
+        f1.writerow(["id", "name"])
+        for node in nodes:
+            f1.writerow([node["id"], node["name"]])
+
+#       with open('edges.json','w') as outfile:
+#            json.dump(edges,outfile)
+        f2 = csv.writer(open("edges.csv", "w+"))
+        f2.writerow(["repo_id", "created_date", "updated_date", "pushed_date", "contributions",
+                    "contributor_1_id", "contributor_2_id"])
+        for edge in edges:
+            f2.writerow([edge["repo_id"],
+                        edge["created_date"],
+                        edge["updated_date"],
+                        edge["pushed_date"], 
+                        edge["contributions"],
+                        edge["contributor_1_id"],
+                        edge["contributor_2_id"]])
+
         print("data saved")
 
 with open('data.json','w') as outfile:
