@@ -54,6 +54,7 @@ bool GraphLoader::Load()
     string line;
 
     //get header
+	stream.ignore(3);
     getline(stream, line);
     printf("Reading %s with header \"%s\"\n", verticesPath.c_str(), line.c_str());
 
@@ -75,11 +76,9 @@ bool GraphLoader::Load()
 	stream.open(edgesPath, ios::in);
 
 	//get header
-	if (type != GraphType::Basketball)
-	{
-		getline(stream, line);
-		printf("Reading %s with header \"%s\"\n", edgesPath.c_str(), line.c_str());
-	}
+	stream.ignore(3);
+	getline(stream, line);
+	printf("Reading %s with header \"%s\"\n", edgesPath.c_str(), line.c_str());
 
     //read vertices
     while (getline(stream, line)) 
