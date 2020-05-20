@@ -29,6 +29,6 @@ private:
 	std::string edgesPath;
 	GraphType type;
 
-	std::vector<int> vertices;
-	std::vector<std::pair<int, int>> edges;
+	thrust::host_vector<int> vertices;
+	thrust::host_vector<thrust::pair<int, int>> edges;
 };

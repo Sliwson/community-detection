@@ -90,9 +90,9 @@ bool GraphLoader::Load()
             continue;
         }
 
-		const auto v1 = ToInt(tokens[0]);
-		const auto v2 = ToInt(tokens[1]);
-		edges.push_back(make_pair(v1, v2));
+		auto v1 = ToInt(tokens[0]);
+		auto v2 = ToInt(tokens[1]);
+		edges.push_back(thrust::make_pair(v1, v2));
     }
 
 	stream.close();
