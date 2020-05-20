@@ -21,12 +21,14 @@
     <CudaCompile Include="source\cuda.cu" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="source\exporter.cpp" />
     <ClCompile Include="source\loader.cpp" />
     <ClCompile Include="source\main.cpp" />
     <ClCompile Include="source\timer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\cuda.cuh" />
+    <ClInclude Include="source\exporter.h" />
     <ClInclude Include="source\functors.cuh" />
     <ClInclude Include="source\includes.h" />
     <ClInclude Include="source\loader.h" />

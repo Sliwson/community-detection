@@ -1,8 +1,13 @@
 #include "cuda.cuh"
 
+#include "timer.h"
+#include "loader.h"
+#include "exporter.h"
+
 namespace {
 	constexpr char* verticesPath = "../../Data/Basketball/Players.csv";
 	constexpr char* edgesPath = "../../Data/Basketball/Edges.csv";
+	constexpr char* output = "../../Data/CudaLPA/Communities.csv";
 }
 
 int main()
@@ -17,13 +22,20 @@ int main()
 	auto edges = loader.GetEdges();
 
 	timer.StopStage("loading data");
+	timer.StartStage("creating graph");
+
+	auto cuda = CudaLPA(vertices, edges);
+	cuda.CreateGpuGraph();
+
+	timer.StopStage("creating graph");
 	timer.StartStage("calculation");
 
-	auto result = CalculateLPA(vertices, edges);
+	auto result = cuda.Calculate();
 
 	timer.StopStage("calculation");
 	timer.StartStage("export");
 
+	GraphExporter::ExportCommunityLabels(result, output);
 
 	timer.StopStage("export");
 	printf("\n");

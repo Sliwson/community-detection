@@ -5,10 +5,14 @@ namespace {
 
 }
 
-thrust::host_vector<int> CalculateLPA(thrust::host_vector<int> vertices, thrust::host_vector<thrust::pair<int, int>> edges)
+void CudaLPA::CreateGpuGraph()
+{
+}
+
+thrust::host_vector<int> CudaLPA::Calculate()
 {
 	printf("Kernel execution, begin...\n");
-	auto result = thrust::host_vector<int>(vertices.size());
+	auto result = thrust::host_vector<int>(inputVertices.size());
 	thrust::sequence(thrust::host, result.begin(), result.end(), 0);
 	printf("Kernel execution, end...\n");
 	return result;
