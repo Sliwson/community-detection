@@ -29,7 +29,6 @@
   <ItemGroup>
     <ClInclude Include="source\cuda.cuh" />
     <ClInclude Include="source\exporter.h" />
-    <ClInclude Include="source\functors.cuh" />
     <ClInclude Include="source\includes.h" />
     <ClInclude Include="source\loader.h" />
     <ClInclude Include="source\timer.h" />

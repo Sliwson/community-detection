@@ -9,7 +9,7 @@
 class CudaLPA
 {
 public:
-	CudaLPA(thrust::host_vector<int> vertices, thrust::host_vector<thrust::pair<int, int>> edges) : inputVertices(vertices), inputEdges(edges) {}
+	CudaLPA(const thrust::host_vector<int>& vertices, const thrust::host_vector<thrust::pair<int, int>>& edges) : inputVertices(vertices), inputEdges(edges) {}
 
 	void CreateGpuGraph();
 	thrust::host_vector<int> Calculate();
@@ -21,6 +21,8 @@ public:
 private:
 	thrust::device_vector<int> d_vertices;
 	thrust::device_vector<int> d_edges;
+	thrust::device_vector<int> d_communities;
+	thrust::device_vector<int> d_communities_buf;
 
 	thrust::host_vector<int> inputVertices;
 	thrust::host_vector<thrust::pair<int, int>> inputEdges;
