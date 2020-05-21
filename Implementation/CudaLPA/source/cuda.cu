@@ -2,13 +2,15 @@
 
 namespace {
 
-	constexpr int countersSize = 64;
+	constexpr int countersSize = 32;
+
 	__global__ void PerformLpaStep(int* communities, int* communitiesBuf, int* vertices, int* edges, int verticesCount)
 	{
 		int idx = blockDim.x * blockIdx.x + threadIdx.x;
 
 		int countersIdx[countersSize];
 		int counters[countersSize];
+		int counterCount = 0;
 
 		if (idx < verticesCount)
 		{
@@ -20,7 +22,35 @@ namespace {
 
 			for (int i = edgesBegin; i < edgesEnd; i++)
 			{
+				int neigh = edges[i];
+				bool found = false;
 
+				for (int y = 0; y < counterCount; y++)
+				{
+					if (countersIdx[y] == neigh)
+					{
+						found = true;
+						counters[y] += 1;
+						break;
+					}
+				}
+
+				if (!found && counterCount < countersSize)
+				{
+					countersIdx[counterCount] = neigh;
+					counters[counterCount] = 1;
+					counterCount++;
+				}
+			}
+
+			if (counterCount > 0)
+			{
+				int max = 0;
+				for (int y = 1; y < counterCount; y++)
+					if (counters[y] > counters[max])
+						max = y;
+
+				communitiesBuf[idx] = countersIdx[max];
 			}
 		}
 	}
