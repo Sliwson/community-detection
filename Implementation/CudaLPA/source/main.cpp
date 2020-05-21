@@ -38,7 +38,7 @@ int main()
 	GraphExporter::ExportCommunityLabels(result, output);
 
 	timer.StopStage("export");
-	printf("\n");
+	printf("\n\n");
 	timer.PrintResults();
 
 	return 0;

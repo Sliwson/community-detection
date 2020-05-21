@@ -2,6 +2,7 @@
 
 #include <thrust/execution_policy.h>
 #include <thrust/sequence.h>
+#include <thrust/device_vector.h>
 
 #include "includes.h"
 
@@ -18,9 +19,9 @@ public:
 	CudaLPA& operator=(const CudaLPA&) = delete;
 
 private:
+	thrust::device_vector<int> d_vertices;
+	thrust::device_vector<int> d_edges;
 
 	thrust::host_vector<int> inputVertices;
 	thrust::host_vector<thrust::pair<int, int>> inputEdges;
 };
-
-
