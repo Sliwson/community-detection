@@ -56,9 +56,10 @@ namespace {
 	}
 }
 
-void CudaLPA::CreateGpuGraph()
+void CudaLPA::CreateGpuGraph(Timer* timer)
 {
 	printf("Creating gpu graph (naive), begin...\n");
+	timer->StartStage("representation transform");
 	const auto verticesCount = inputVertices.size();
 	const auto edgesCount = inputEdges.size();
 
@@ -89,6 +90,9 @@ void CudaLPA::CreateGpuGraph()
 	if (vertices[verticesCount - 1] != edgesCount * 2)
 		printf("Error, filled less data than expected\n");
 
+	timer->StopStage("representation transform");
+	timer->StartStage("gpu allocation");
+
 	// copy arrays to gpu
 	d_vertices = vertices;
 	d_edges = edges;
@@ -98,6 +102,7 @@ void CudaLPA::CreateGpuGraph()
 
 	thrust::sequence(thrust::device, d_communities.begin(), d_communities.end());
 
+	timer->StopStage("gpu allocation");
 	printf("Creating gpu graph (naive), end...\n");
 }
 

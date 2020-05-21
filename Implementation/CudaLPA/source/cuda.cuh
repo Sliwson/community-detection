@@ -5,13 +5,14 @@
 #include <thrust/device_vector.h>
 
 #include "includes.h"
+#include "timer.h"
 
 class CudaLPA
 {
 public:
 	CudaLPA(const thrust::host_vector<int>& vertices, const thrust::host_vector<thrust::pair<int, int>>& edges) : inputVertices(vertices), inputEdges(edges) {}
 
-	void CreateGpuGraph();
+	void CreateGpuGraph(Timer* timer);
 	thrust::host_vector<int> Calculate();
 
 	CudaLPA(const CudaLPA&) = delete;
