@@ -5,5 +5,5 @@
 class GraphExporter
 { 
 public:
-	static void ExportCommunityLabels(thrust::host_vector<int> labels, std::string outputPath);
+	static void ExportCommunityLabels(const thrust::host_vector<int>& labels, std::string outputPath);
 };

@@ -3,7 +3,7 @@
 
 using namespace std;
 
-void GraphExporter::ExportCommunityLabels(thrust::host_vector<int> labels, std::string outputPath)
+void GraphExporter::ExportCommunityLabels(const thrust::host_vector<int>& labels, std::string outputPath)
 {
 	fstream out;
 	string line;

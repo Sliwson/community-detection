@@ -22,12 +22,11 @@ int main()
 	auto edges = loader.GetEdges();
 
 	timer.StopStage("loading data");
-	timer.StartStage("creating graph");
 
 	auto cuda = CudaLPA(vertices, edges);
-	cuda.CreateGpuGraph();
+	//timer calls inside
+	cuda.CreateGpuGraph(&timer);
 
-	timer.StopStage("creating graph");
 	timer.StartStage("calculation");
 
 	auto result = cuda.Calculate();
@@ -38,7 +37,7 @@ int main()
 	GraphExporter::ExportCommunityLabels(result, output);
 
 	timer.StopStage("export");
-	printf("\n");
+	printf("\n\n");
 	timer.PrintResults();
 
 	return 0;
