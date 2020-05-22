@@ -68,7 +68,7 @@ bool GraphLoader::Load()
             continue;
         }
 
-		vertices.push_back(ToInt(tokens[0]));
+		vertices.push_back(ToInt(tokens[0]) - 1);
     }
 
 	stream.close();
@@ -90,8 +90,8 @@ bool GraphLoader::Load()
             continue;
         }
 
-		auto v1 = ToInt(tokens[0]);
-		auto v2 = ToInt(tokens[1]);
+		auto v1 = ToInt(tokens[0]) - 1;
+		auto v2 = ToInt(tokens[1]) - 1;
 		edges.push_back(thrust::make_pair(v1, v2));
     }
 
