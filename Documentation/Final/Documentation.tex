@@ -62,16 +62,25 @@
 %Dane testowe
 %-----------------------------------------------------%
 \section{Dane testowe}
-
+Rozpoczynając pracę, zakładaliśmy, że opisane algorytmy będziemy badać na zbiorach danych udostępnianych przez firmę Facebook. Portal ten chyba najbardziej kojarzy się z ogromnym źródłem danych dotyczących społeczności. Niestety modyfikacje, które chcieliśmy zastosować, nie mogły zostać zrealizowane na datasetach ściągniętych z tego portalu. Żaden z szeroko dostępnych zbiorów nie zawierał informacji na temat liczby wspólnych znajomych, a także daty zawarcia znajomości. O ile zdobycie tej pierwszej wiadomośći jest bardzo proste przy użyciu nawet najbardziej naiwnego algorytmu brute force, tak uzyskanie dat można było przeprowadzić tylko w sposób losowy, co mogło by tylko zaburzyć osiągane wyniki. Wobec tego swe spojrzenie skierowaliśmy w stronę zbiorów, które na pierwszy rzut oka nie kojarzą się ze społecznościami tak dobrze jak Facebook.
 %-----------------------------------------------------%
 %NBA
 %-----------------------------------------------------%
 \subsection{NBA}
+'I loved this game' - to slogan reklamowy towarzyszący najlepszej lidze koszykarskiej, który odnosi się także do jednego z autorów tej pracy. Wybór tego zbioru danych motywowany był prywatnymi zainteresowaniami autorów, które wiążą się także z ogólną wiedzą na temat samej ligi. Dzięki temu zyskaliśmy możliwość oceny osiąganych rezultatów 'ludzkim okiem', przez co można było je poprawiać i oceniać dzięki swego rodzaju eksperckiej wiedzy na temat NBA.
 
+Swoją rolę odegrała tu także ogólna dostępność danych. Ich źródło stanowił portal basketball-reference.com, który stanowi internetową, koszykarską encyklopedię. Korzystając ze scrapera napisanego w języku JavaScript można było zautomatyzować proces wyszukiwania danych. Pomógł tutaj alfabetyczny spis koszykarzy - w ten sposób zdobyliśmy informację na temat każdego z nich, a także w łatwy sposób uzyskaliśmy liczbę wszystkich sezonów i klubów, w jakich w swojej karierze występował dany zawodnik. Następnie dane te zostały obrobione z wykorzystaniem SQL, w celu uzyskania relacji między zawodnikami, a także daty zawarcia znajomości. Liczba wspólnych znajomych została określona przy pomocy prostego algorytmu napisanego w języku C\#.
+
+Graf, który uzyskaliśmy, składa się z 4800 wierzchołków. Każdy wierzchołek można przypisać zawodnikowi, który postawił swą stopę na parkietach NBA w ciągu ponad 70 lat istnienia ligi. Dwaj zawodnicy są ze sobą w relacji, jeśli kiedykolwiek zagrali ze sobą w jednym klubie. Data zawarcia znajomości to w tym wypadku data pierwszego meczu, w którym obaj zawodnicy mieli okazję ze sobą zagrać. Tworząc relacje w ten sposób uzyskaliśmy ponad 146 tysięcy krawędzi.
 %-----------------------------------------------------%
 %Filmweb
 %-----------------------------------------------------%
 \subsection{Filmweb}
+Poszukując parametru daty zawarcia znajomości zwróciliśmy się także ku innej części branży rozrywkowej. Źrodło danych w tym wypadku stanowił portal filmweb.pl, który dysponuje ogromną bazą danych na temat aktorów i filmów. Skala tych danych jest tak duża, iż musieliśmy ograniczyć nasze prace tylko do polskich aktorów. W ten sposób uzyskaliśmy graf z 10 000 wierzchołków i 190031 krawędziami.
+
+Sposób uzyskania danych był analogiczny do tego prezentowanego w przypadku grafu NBA. Skonstruowany w języku JavaScript scraper został wykorzystany do przejrzenia listy wszystkich polskich aktorów, by następnie dla każdego z nich znaleźć listę kolegów z branży, z którymi najczęśniej występował w jednym filmie. Ten zbiór uczyniliśmy znajomymi badanego aktora. Datę zawarcia znajomości w tym wypadku stanowiła data premiery pierwszego filmu/serialu, w którym dana dwójka ze sobą wystąpiła. Dodatkowo na prośbę prowadzącego zbiór danych uzupełniony został o liczbę filmów, w których dana dwójka wspólnie występowała. Informacja ta okazała się również przydatna w modyfikacji jednego z algorytmów.
+
+Podsumowując, wierzchołki uzyskanego grafu stanowią polscy aktorzy, pobrani z ogólnodostępnej bazy filmweb. Dwaj aktorzy są ze sobą w relacji, jeśli jeden z nich znajduje się w zakładce 'najczęściej występował z ...' u drugiego. Motywację wyboru tego grafu jako testowego stanowiło ogólne zainteresowanie branżą filmową autorów pracy, a także ogólna dostępność danych. Sama etykietyzacja wierzchołków pozwoliła nam łatwiej oceniać poprawność działania algorytmów - zwłaszcza w początkowej fazie implementacji z wykorzystaniem tylko małych zbiorów danych.
 
 %-----------------------------------------------------%
 %Github
