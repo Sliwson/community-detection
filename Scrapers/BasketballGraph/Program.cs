@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MutualFriends;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -12,7 +13,8 @@ namespace BasketballGraph
 
         static void Main(string[] args)
         {
-            GetBasketballMutualFriends.ReadCommonRelation();
+            //GetBasketballMutualFriends.ReadCommonRelation();
+            GetFilmwebMutualFriends.ReadCommonRelation();
         }
 
 
