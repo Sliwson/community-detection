@@ -35,7 +35,8 @@ namespace BasketballGraph
             {
                 for (int j = 0; j < vertices_count; j++)
                 {
-                    if (i == j) continue;
+                    if (!pairs.Contains((i, j)))
+                        continue;
 
                     var count = ownRelations[i].Intersect(ownRelations[j]).Count();
                     if (count != 0)
