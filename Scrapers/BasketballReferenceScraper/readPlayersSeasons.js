@@ -5,6 +5,8 @@ const fs = require("fs");
 const listPlayerSeasons = require("./listPlayerSeasons");
 const url = "https://www.basketball-reference.com";
 
+const counter = parseInt(process.argv[2]);
+
 fs.readFile("./players.json", "utf8", (err, data) => {
   if (err) {
     console.log("error");
@@ -12,7 +14,7 @@ fs.readFile("./players.json", "utf8", (err, data) => {
   }
 
   var players = JSON.parse(data);
-  var counter = 199;
+  //var counter = 199;
 
   console.log("Start");
   const urls = [];

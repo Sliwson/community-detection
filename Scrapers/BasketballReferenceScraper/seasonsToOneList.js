@@ -13,7 +13,7 @@ for (var i = 0; i < 200; i++) {
 }
 
 fs.writeFile(
-  "./playersSeasons/allSeasons.json",
+  "./playersSeasons/allSeasons1.json",
   JSON.stringify(seasons),
   function(err) {
     if (err) {

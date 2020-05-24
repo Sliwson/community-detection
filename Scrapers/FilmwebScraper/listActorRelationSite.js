@@ -7,13 +7,18 @@ const listActorRelationSite = function(url) {
       //success!
       var relations = [];
 
-      $("#personUsualsPartnersList > li > div > .photoBox > a", html).each(function(i, item) {
-        var link = $(item).attr("href");
-        var name = $(item).text();
+      $("#personUsualsPartnersList > li > div", html).each(function(i, item) {
+        var a = $(item).children().first().children().first();
+        var link = a.attr("href");
+
+        var how_many = $(item).children().last().text().match(/\d+/)[0];
+        //console.log(how_many);
+        //var name = $(item).text();
 
         relations.push({
             first_link: url.link,
-            second_link: link
+            second_link: link,
+            how_many
           });
       });
 
