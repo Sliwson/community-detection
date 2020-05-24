@@ -6,7 +6,7 @@ using System.Text;
 
 namespace BasketballGraph
 {
-    public static class GetMutualFriends
+    public static class GetBasketballMutualFriends
     {
         private static string path = @"C:\Users\Admin\Desktop\PlayersConnection.csv";
         private static string writePath = @"C:\Users\Admin\Desktop\CommonRelation.csv";

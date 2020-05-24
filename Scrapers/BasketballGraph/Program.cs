@@ -12,7 +12,7 @@ namespace BasketballGraph
 
         static void Main(string[] args)
         {
-            GetMutualFriends.ReadCommonRelation();
+            GetBasketballMutualFriends.ReadCommonRelation();
         }
 
 
