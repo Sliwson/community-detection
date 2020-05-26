@@ -1,2 +1,0 @@
-Pass 0: vertices: 43, edges: 0, time: 0.11307954788208008s
-Pass 1: vertices: 241, edges: 0, time: 5.730949878692627s
