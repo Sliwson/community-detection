@@ -2,7 +2,7 @@ import requests
 import json
 import csv
 
-user = "wwylele"
+user = "gagolews"
 response = requests.get('https://api.github.com/users/' + user +  '/repos', auth=('8902bc979763f1342c7efe61f50cf05816ecf54d', 'x-oauth-basic'))
 responseJson = response.json()
 
