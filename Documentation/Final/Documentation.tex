@@ -114,7 +114,30 @@ Podsumowując, wierzchołki uzyskanego grafu stanowią polscy aktorzy, pobrani z
 %-----------------------------------------------------%
 \subsection{Algorytm Girvan-Newmana}
 \subsubsection{Analiza czasowa}
+Założenie polegające na tym, iż w każdym kroku liczone są najkrótsze ścieżki pomiędzy każdą parą wierzchołków okazało się kluczowe, jeśli patrzymy pod kątem czasu wykonania. Chcąc szybko osiągnąć wynik wybór algorytmu Girvan-Newman nie jest wyborem najlepszym już dla społeczności rozłącznych. Rozszerzając algorytm na społeczności nachodzące (przy pomocy algorytmu CONGA z własnymi modyfikacjami) jeszcze bardziej utrudniamy pracę algorytmowi, tworząc kopie wierzchołków i rozszerzając przez to zbiór par, dla których liczone są najkrótsze ścieżki.
 \subsubsection{Analiza jakościowa}
+Po wykonaniu analizy algorytmu przed przystąpieniem do implementacji, fakt jego wolnego działania nie został przez nikogo przyjęty ze zdziwieniem. Cechą, którą miał obronić się ten algorytm, była jakość rozwiązania. Rzeczywiście na tym polu można zauważyć, że algorytm zachowuje się o wiele lepiej z perspektywy użytkownika. Po wykonaniu pełnego przebiegu dla danego grafu i otrzymania wynikowego dendrogramu manipulacja wynikiem, którego poszukujemy zależy już tylko od indywidualnych preferencji użytkownika.
+
+Usystematyzować te preferencje pozwoliły metody wykorzystane w implementacji. Pierwszą z nich było określenie, którego z maksimów lokalnych poszukujemy. Na podstawie ich zbioru umożliwiony został wybór, który kwantyl wśród wyników jest tym nas interesującym. Jeżeli otrzymany wynik nie był jednak zadowalający (np. ze względu na zbyt duży bądź zbyt mały rozmiar społeczności wynikowych), można było zmienić wartość kwantylu i wedle preferencji uzyskać podział na większe bądź mniejsze grupy.
+
+Aby zaprezentować wyżej opisane własności najlepiej będzie posłużyć się przykładem. W tym celu skorzystam z grafu uczestników NBA All-Star Games w 4 ostatnich sezonach.
+
+#miejsce na coś o przykładzie
+
+Jak widzimy prezentowane grafy wynikowe różnią się sposobem podziału społeczności. Warto w tym momencie zwrócić również uwagę na miarę, na podstawie której wybierano rzeczone maksima. Algorytm CONGA ,jak i inne algorytmy dla społeczności nachodzących, nie definiuje jasnej miary, na podstawie której możemy określić, że dany podział grafu jest tym najlepszym. W tym wypadku skorzystano z miary modularności wykorzystanej w algorytmie OCDCLE. Widzimy jednak, że ciężko jest wychwycić tendencje jaką charakteryzuje się ten sposób wyliczania modularności. Jest to moment, w którym możemy wskazać duży atut algorytmu CONGA. Właśnie poprzez manipulację współczynnikiem kwantylu możemy w łatwy sposób manipulować wynikiem, jaki jest według nas najlepszy. Posiadając wynikowy dendrogram operacja uzyskiwania grafu wynikowego jest operacją liniową. Dzięki temu możemy odzyskać graf z każdego z kroków algorytmu w bardzo prosty sposób. Ułatwia to nie tylko implementacje, lecz także odnalezienie skali grup, jakich oczekiwał użytkownik.
+
+Skalę grup można określić poprzez parametr modularności (tutaj jednak najwyższa wartość nie jest jednak ściśle związana z rozmiarem grupy), można również modyfikować ją poprzez wykonanie preprocessingu (ta operacja jest jednak bardzo kosztowna, ponieważ de facto dwa razy wykonujemy sam algorytm, jedynie ograniczając liczbę iteracji podczas drugiego wykonania). Sam preprocessingu można również przeprowadzić "samemu" poprzez określenie pewnej wartości handicapu, jaki usuwanie krawędzi ma nad kopiowaniem wierzchołka. Dzięki temu można manipulować wielkością docelowych społeczności. Wariant ten prezentuje poniższy przykład.
+
+#miejsce na coś o przykładzie
+
+Wywołanie algorytmu w ten sposób na pewno przyniesie za sobą korzyść czasową. Jednocześnie jednak należy pamiętać, iż jest to równoznaczne z innym przebiegiem algorytmu. W tym wariancie parametr początkowy wpływa w głównej mierze na najmniejszy rozmiar społeczności jaki algorytm osiągnie. Im większy handicap na korzyść parametru edge betweenneess tym mniej podziałów na społeczności nachodzące, a co za tym idzie także większe rozmiary społeczności docelowych.
+
+W tym miejscu warto także wspomnieć o rezultatach, jakie udało się osiągnąć, dzięki wprowadzonym modyfikacjom. Posiadanie parametrów dat zawarcia znajomości znacznie ułatwiło proces podziału wierzchołka na oryginał i kopię zarówno od strony implementacyjnej, jak i logiki, która za tym stała. Modyfikacja wyłącznie po latach zawarcia znajomości miała na celu wyłonienie grupy tylko na podstawie daty zawarcia znajomości, a więc opierając się na założeniu, że grupę można identyfikować poprzez bliskie sobie daty zawarcia znajomości wśród jej uczestników. Dodając wagę w postaci liczby wspólnych znajomych przeniesiono nacisk na fakt przebywania dłużej w tej samej grupie - jeśli dwie osoby dłużej przebywają w tym samym otoczeniu, tym ich liczba wspólnych znajomych wzrasta.
+
+Analiza obu modyfikacji pod względem parametru modularności nie wskazuje niczego odkrywczego - dla obu modyfikacji osiągane rezultaty są do siebie zbliżone. (tutaj coś o liczbie iteracji itp.). W tym wypadku do analizy wykorzystano wiedzę ekspercką na temat grafu zawodników NBA. Posłużmy się więc przykładem:
+
+#miejsce na przykład Russell Westbrook/Dwyane Wade
+
 
 %-----------------------------------------------------%
 %LPA
