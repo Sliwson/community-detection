@@ -1,0 +1,14 @@
+Pass 0: vertices: 39, edges: 38, time: 0.0020017623901367188s
+Pass 1: vertices: 83, edges: 315, time: 0.010008811950683594s
+Pass 2: vertices: 200, edges: 1201, time: 0.04103732109069824s
+Pass 3: vertices: 300, edges: 2701, time: 0.07106399536132812s
+Pass 4: vertices: 400, edges: 4584, time: 0.12411284446716309s
+Pass 5: vertices: 500, edges: 7204, time: 0.18416714668273926s
+Pass 6: vertices: 370, edges: 5807, time: 0.04604196548461914s
+Pass 7: vertices: 1768, edges: 45868, time: 0.7596900463104248s
+Pass 8: vertices: 3181, edges: 89243, time: 2.264057159423828s
+Pass 9: vertices: 3411, edges: 146092, time: 2.7535016536712646s
+Pass 10: vertices: 4107, edges: 174105, time: 3.899543046951294s
+Pass 11: vertices: 4800, edges: 146369, time: 13.923650979995728s
+Pass 12: vertices: 6233, edges: 187328, time: 8.33056926727295s
+Pass 13: vertices: 10000, edges: 190031, time: 172.2244851589203s
