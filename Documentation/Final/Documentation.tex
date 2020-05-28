@@ -273,9 +273,22 @@ Na powyższym wykresie można zauważyć, że zależność czasu od ilości wier
 
 Jak szybkie potrafią być algorytmy do wykrywania społeczności pokazała implementacja przy użyciu biblioteki CUDA. Rezultat znacząco przekroczył nasze oczekiwania. Co prawda implementacja ta jest częściowo okrojona, lecz z powodzeniem można ją rozszerzać o modyfikacje zaimplementowane w wersji na CPU.
 
-%TODO: cuda plot
+\begin{table}[H]
+  \begin{center}
+    
+    \label{tab:table1}
+    \begin{tabular}{c|c|c|c}
+      \textbf{$|V|$} & \textbf{$|E|$} & \textbf{Czas alokacji (ms)} & \textbf{Czas obliczeń (ms)}\\
+      \hline
+      4800 & 146369 & 335 & 6\\
+      10000 & 190031 & 225 & 33 \\
+      3096951 & 2899051 & 467 & 162 \\
+    \end{tabular}
+    \caption{Wyniki czasowe algorytmu LPA zaimplementowanego przy użyciu biblioteki CUDA}
+  \end{center}
+\end{table}
 
-W podanych wynikach nie uwzględniam przebudowy reprezentacji grafu - została ona zaimplementowana naiwnie, ponieważ możemy założyć, że na wejściu otrzymujemy rządaną reprezentację. Uwzględniony został jednak czas alokacji pamięci na karcie graficznej - jest on znacząco większy od czasu obliczeń. Jego znaczenie może zostać zredukowane, gdy przetwarzamy graf kilkukrotnie, wtedy wystarczy nam jedna alokacja, na początku działania programu.
+W podanych wynikach nie uwzględniam przebudowy reprezentacji grafu - została ona zaimplementowana naiwnie, ponieważ możemy założyć, że na wejściu otrzymujemy żądaną reprezentację. Uwzględniony został jednak czas alokacji pamięci na karcie graficznej - jest on znacząco większy od czasu obliczeń. Jego znaczenie może zostać zredukowane, gdy przetwarzamy graf kilkukrotnie, wtedy wystarczy nam jedna alokacja, na początku działania programu. Patrząc na wyniki wnioski nasuwają się same - przy sieciach o rozmiarach rzędu milionów wierzchołków i krawędzi, ta implementacja sprawdzi się zdecydowanie najlepiej.
 
 \subsubsection{Analiza jakościowa}
 
