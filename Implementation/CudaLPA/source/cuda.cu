@@ -86,7 +86,7 @@ void CudaLPA::CreateGpuGraph(Timer* timer)
 
 		vertices[vertex] = currentEdge;
 
-		if (vertex % 100000 == 0)
+		if (vertex % 10000 == 0)
 			printf("Progress: %.2f%%\n", static_cast<float>(vertex) / verticesCount * 100);
 	}
 
