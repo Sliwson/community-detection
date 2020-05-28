@@ -164,13 +164,80 @@ Podsumowując, wierzchołki uzyskanego grafu stanowią polscy aktorzy, pobrani z
 %-----------------------------------------------------%
 \subsection{Algorytm Girvan-Newmana}
 \subsubsection{Analiza czasowa}
+Założenie polegające na tym, iż w każdym kroku liczone są najkrótsze ścieżki pomiędzy każdą parą wierzchołków okazało się kluczowe, jeśli patrzymy pod kątem czasu wykonania. Chcąc szybko osiągnąć wynik wybór algorytmu Girvan-Newman nie jest wyborem najlepszym już dla społeczności rozłącznych. Rozszerzając algorytm na społeczności nachodzące (przy pomocy algorytmu CONGA z własnymi modyfikacjami) jeszcze bardziej utrudniamy pracę algorytmowi, tworząc kopie wierzchołków i rozszerzając przez to zbiór par, dla których liczone są najkrótsze ścieżki.
+
 \subsubsection{Analiza jakościowa}
+Po wykonaniu analizy algorytmu, a przed przystąpieniem do implementacji, fakt jego wolnego działania nie został przez nikogo przyjęty ze zdziwieniem. Cechą, którą miał obronić się ten algorytm, była jakość rozwiązania. Rzeczywiście na tym polu można zauważyć, że algorytm zachowuje się o wiele lepiej z perspektywy użytkownika. Po wykonaniu pełnego przebiegu dla danego grafu i otrzymania wynikowego dendrogramu manipulacja wynikiem, którego poszukujemy, zależy już tylko od indywidualnych preferencji użytkownika.\\
+Usystematyzować te preferencje pozwoliły metody wykorzystane w implementacji. Pierwszą z nich było określenie, którego z maksimów lokalnych poszukujemy. Na podstawie ich zbioru umożliwiony został wybór, który kwantyl wśród wyników, jest tym nas interesującym. Jeżeli otrzymany wynik nie był jednak zadowalający (np. ze względu na zbyt duży bądź zbyt mały rozmiar społeczności wynikowych), można było zmienić wartość kwantylu i wedle preferencji uzyskać podział na większe bądź mniejsze grupy.\\
+Aby zaprezentować wyżej opisane własności najlepiej będzie posłużyć się przykładem. W tym celu skorzystam z grafu uczestników NBA All-Star Games w 4 ostatnich sezonach.
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=\textwidth]{images/ms-image-sample.png}
-\caption{Przykładowe wyjście}
+\includegraphics[width=\textwidth]{images/is-sample-1.png}
+\caption{Największa modularność}
 \end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{images/is-sample-2.png}
+\caption{Modularność na poziomie 0.3 wśród maksimów}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{images/is-sample-3.png}
+\caption{Najmniejsza modularność pośród maksimów}
+\end{figure}
+
+Powyższe przykłady idealnie obrazują, jak zmienia się rezultat w zależności od maksimum lokalnego, które wybierzemy. Widać jednocześnie, że dla najwyższej wartości modularności uzyskano grupy największe pod względem średniej liczby członków. Gdyby jednak poszukiwane grupy okazały się zbyt duże, manipulacja kwantylem pozwoli zmniejszyć ich rozmiar. I tak dla najmniejszego z maksimów graf wynikowy wskaże nam małe grupy, które jednak są najbardziej ściśle z sobą związane. \\
+
+Jest to moment, w którym możemy wskazać duży atut algorytmu CONGA. Właśnie poprzez manipulację współczynnikiem kwantylu możemy w łatwy sposób manipulować wynikiem, jaki jest według nas najlepszy. Posiadając wynikowy dendrogram operacja uzyskiwania grafu wynikowego jest operacją liniową. Dzięki temu możemy odzyskać graf z każdego z kroków algorytmu w bardzo prosty sposób. \\
+
+Warto zaznaczyć, że podczas prezentacji wyników skorzystano z własności maksimum lokalnego. Nic jednak nie stoi na przeszkodzie, aby odzyskać graf wynikowe w mniej zaawansowany sposób. Jednym z nich może być po prostu wybór numeru jednej z iteracji. W dendrogramie podczas każdego kroku rozmiary społeczności wynikowych trzymają się tendencji malejącej. Tak więc im dalszy krok algorytmu wybierzemy, tym graf wynikowy będzie posiadał społeczności mniejszych rozmiarów. \\
+
+Wielkość grup można określić poprzez parametr modularności (tutaj jednak najwyższa wartość nie jest jednak ściśle związana z rozmiarem grupy), natomiast skalę nakładania się społeczności można modyfikować poprzez wykonanie preprocessingu (ta operacja jest jednak bardzo kosztowna, ponieważ de facto dwa razy wykonujemy sam algorytm, jedynie ograniczając liczbę iteracji podczas drugiego wykonania). Sam preprocessingu można również przeprowadzić 'samodzielnie' poprzez określenie pewnej wartości priorytetu, jaki usuwanie krawędzi ma nad kopiowaniem wierzchołka. Wariant ten prezentuje poniższy przykład.\\
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{images/is-sample-4.png}
+\caption{Wynik przy gap=5 (największa wartość modularności)}
+\end{figure}
+
+Graf przedstawiony powyżej został wygenerowany z tego samego grafu początkowego co grafy z rysunków 1, 2 i 3. Prezentowany wynik to wynik dla iteracji o największej wartości modularności. Można zauważyć, iż rezultat ten jest zbliżony do grafu, który został uzyskany przy kwantylu 0.3 dla poprzedniego sposobu wyznaczania wyniku. Parametr gap ogranicza w naszym przypadku liczbę społeczności nachodzących, jednak zachwiana jest w ten sposób tendencja parametru modularności. Przy zerowej wartości priorytetu modularność dla kolejnych iteracji maleje, tutaj tracimy tę własność. Spójrzmy na wynik uzyskany dla kwantylu 0.3.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{images/is-sample-5.png}
+\caption{Wynik przy gap=5 i kwantylu 0.3}
+\end{figure}
+
+Widać więc, że dla prezentowanego maksimum społeczności są większych rozmiarów aniżeli dla wyniku osiągniętego przy największej modularności. W przypadku tak małego grafu ciężko zauważyć różnice na poziomie średniej liczby społeczności dla danego wierzchołka. Przy większych grafach zachowanie to jest jednak zauważalne. \\
+
+To prowadzi do kolejnej obserwacji poczynionej podczas badania algorytmu. Początkową fazę jego działania w głównej mierze stanowi kopiowanie wierzchołka. Jest to oczywiście zależne od wielkości grafu, a także jego gęstości, jednak wszędzie na początku działania algorytmu dokonywania jest seria kopii wierzchołka. Jednocześnie różnica pomiędzy wartościami edge betweenness i vertex betweenness maleje z wykonaniem każdej kolejnej kopii aż do wykonania pierwszego usunięcia krawędzi. Samo usuwanie krawędzi miało odbywać się w jednej iteracji dla wszystkich tych, które mają największy parametr edge betweenness. W rzeczywistości krok te sprowadzał się niemal dla każdej iteracji usunięciem tylko jednej krawędzi, ponieważ przy dużych grafach parametr edge betweenness był bardzo zróżnicowany dla każdej z krawędzi. Dopiero przy ostatnich iteracjach krawędzie usuwane były grupowo (zazwyczaj były to bardzo liczne grupy). \\
+
+Wracając do przykładu, wywołanie algorytmu w ten sposób na pewno przyniesie za sobą korzyść czasową. Jednocześnie jednak należy pamiętać, iż jest to równoznaczne z innym przebiegiem algorytmu. W tym wariancie parametr początkowy wpływa w głównej mierze na liczbe społeczności, do jakiej należy jeden wierzchołek. Im większy priorytet na korzyść parametru edge betweenneess tym mniej podziałów na społeczności nachodzące, a co za tym idzie także większe rozmiary społeczności docelowych.\\
+
+W tym miejscu warto także wspomnieć o rezultatach, jakie udało się osiągnąć, dzięki wprowadzonym modyfikacjom. Posiadanie parametrów dat zawarcia znajomości znacznie ułatwiło proces podziału wierzchołka na oryginał i kopię zarówno od strony implementacyjnej, jak i logiki, która za tym stała. Modyfikacja wyłącznie po latach zawarcia znajomości miała na celu wyłonienie grupy tylko na podstawie daty zawarcia znajomości, a więc opierając się na założeniu, że grupę można identyfikować poprzez bliskie sobie daty zawarcia znajomości wśród jej uczestników. Dodając wagę w postaci liczby wspólnych znajomych przeniesiono nacisk na fakt przebywania dłużej w tej samej grupie - jeśli dwie osoby dłużej przebywają w tym samym otoczeniu, tym ich liczba wspólnych znajomych wzrasta.\\
+
+Analiza obu modyfikacji pod względem parametru modularności nie wskazała znacznych różnic zależnych od modyfikacji. W tym wypadku do analizy wykorzystano wiedzę ekspercką na temat grafu zawodników NBA. Posłużmy się więc przykładem:
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{images/is-sample-6.png}
+\caption{Modyfikacja z rokiem zawarcia znajomości}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{images/is-sample-7.png}
+\caption{Modyfikacja z rokiem zawarcia znajomości i ze wspólną liczbą znajomych}
+\end{figure}
+
+Prezentowany przykład skupia się na osobie koszykarza Shaquille O'Neala. Zawodnik ten jest niezwykle utytułowany, a w swej karierze zwiedził mnóstwo klubów. Na wstępie warto zaznaczyć, iż wynik brany tutaj pod uwagę, został wybrany na podstawie największej wartości modularności. Na tym przykładzie możemy zaobserwować, iż przy uwzględnieniu liczby wspólnych znajomych społeczność wynikowa stała się bardzo liczna. Wynika to z faktu, iż podczas swej kariery analizowany zawodnik zdążył zagrać w jednym klubie z wieloma innymi koszykarzami, przez co z wieloma z nich miał dużą liczbę wspólnych znajomych. Gdy ten parametr pominiemy podany zawodnik znajdzie się w 3 społecznościach. Ponadto jedna z nich wyraźnie wskazuje na zespół Los Angeles Lakers, do którego O'Neal dołączył w roku 1996. \\
+
+Podobnych przykładów można znaleźć znacznie więcej w zależności od grafu, który analizujemy. Wskazują one, że dodanie liczby wspólnych znajomych jako wagi rzeczywiście wpływa na rozkład grup. Dysponując wiedzą na temat wierzchołków i realnych zależności można skupić się na analizie pojedynczych wierzchołków, jednak obserwacje w skali makro również przynoszą pewne wnioski. Podchodząc do problemu w ten sposób można zauważyć, iż w przypadku dodania wag krawędzi wynik 'spłaszcza się', zwracając mniej społeczności, które są za to bardziej liczne. Skorzystanie z samej daty zawarcia znajomości dzieli graf na mniejsze społeczności. \\
+
+Warto w tym miejscu wspomnieć jednak o tym, iż uzyskany wynik niekoniecznie jest zobowiązujący. W przypadku uzyskania zbyt dużych społeczności modyfikacja wyboru maksimum lokalnego zgodnie z obserwacjami poczynionymi w poprzednich akapitach. Algorytm CONGA daje bardzo dużą elastyczność w kwestii uzyskanych wyników. Modyfikacje, które zostały wykonane w głównej mierze skupiają się na rezultacie końcowyw. Ten jednak oparty jest na mierze modularności, która nie jest jednak w żaden sposób miarą wiążącą. W przypadku tego algorytmu to użytkownik 'decyduje', jaki podział na grupy według niego będzie najlepszy. Jeżeli oczywiście tylko cierpliwość pozwoli mu na odczekanie końca działania algorytmu.
 
 %-----------------------------------------------------%
 %LPA
