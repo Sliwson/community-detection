@@ -4,6 +4,9 @@
 #include <stdio.h>
 #include <charconv>
 #include <filesystem>
+#include <thrust/extrema.h>
+#include <thrust/sequence.h>
+#include <thrust/execution_policy.h>
 
 using namespace std;
 
@@ -34,7 +37,7 @@ namespace {
 
 bool GraphLoader::Load()
 {
-	if (!filesystem::exists(verticesPath))
+	if (type != GraphType::Facebook && !filesystem::exists(verticesPath))
 	{
 		printf("Vertices path incorrect (%s)!\n", verticesPath.c_str());
 		return false;
@@ -48,31 +51,40 @@ bool GraphLoader::Load()
 
     vertices.clear();
     edges.clear();
-
 	fstream stream;
-	stream.open(verticesPath, ios::in);
-    string line;
+	string line;
 
-    //get header
-	stream.ignore(3);
-    getline(stream, line);
-    printf("Reading %s with header \"%s\"\n", verticesPath.c_str(), line.c_str());
+	if (type != GraphType::Facebook)
+	{
+		stream.open(verticesPath, ios::in);
 
-    //read vertices
-    while (getline(stream, line)) 
-    {
-        auto tokens = Split(line, ';');
-        if (tokens.size() <= 0)
-        {
-            printf("Error, line contains 0 elements\n");
-            continue;
-        }
+		//get header
+		stream.ignore(3);
+		getline(stream, line);
+		printf("Reading %s with header \"%s\"\n", verticesPath.c_str(), line.c_str());
 
-		vertices.push_back(ToInt(tokens[0]) - 1);
-    }
+		//read vertices
+		int lineIdx = 0;
+		while (getline(stream, line)) 
+		{
+			auto tokens = Split(line, ';');
+			if (tokens.size() <= 0)
+			{
+				printf("Error, line contains 0 elements\n");
+				continue;
+			}
 
-	stream.close();
-	printf("Loaded %zd vertices\n", vertices.size());
+			if (type == GraphType::Basketball)
+				vertices.push_back(ToInt(tokens[0]) - 1);
+			else if (type == GraphType::Filmweb)
+				vertices.push_back(lineIdx);
+
+			lineIdx++;
+		}
+		stream.close();
+		printf("Loaded %zd vertices\n", vertices.size());
+	}
+
 	stream.open(edgesPath, ios::in);
 
 	//get header
@@ -84,6 +96,9 @@ bool GraphLoader::Load()
     while (getline(stream, line)) 
     {
         auto tokens = Split(line, ';');
+		if (type == GraphType::Facebook)
+			tokens = Split(line, ' ');
+
         if (tokens.size() <= 1)
         {
             printf("Error, line contains too few elements\n");
@@ -97,5 +112,19 @@ bool GraphLoader::Load()
 
 	stream.close();
 	printf("Loaded %zd edges\n", edges.size());
+
+
+	if (type == GraphType::Facebook)
+	{
+		auto max = std::max(edges[0].first, edges[0].second);
+		for (int i = 1; i < edges.size(); i++)
+			if (std::max(edges[i].first, edges[i].second) > max)
+				max = std::max(edges[i].first, edges[i].second);
+
+		vertices = thrust::host_vector<int>(max);
+		thrust::sequence(thrust::host, vertices.begin(), vertices.end());
+		printf("Loaded %zd vertices\n", vertices.size());
+	}
+
 	return true;
 }
