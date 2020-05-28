@@ -136,12 +136,6 @@ Podsumowując, wierzchołki uzyskanego grafu stanowią polscy aktorzy, pobrani z
 %Github
 %-----------------------------------------------------%
 \subsection{GitHub}
-W dzisiejszych czasach GitHub jest narzędziem używanym przez niemal
-wszystkich ludzi, którzy rozpoczęli swoją przygodę z programowaniem. Nie tylko ułatwia on pracę nad projektem w wieloosobowych zespołach, jednak potrafi być również wizytówką użytkownika. Okazało się, że może też stanowić źródło bardzo ciekawych danych. Portal ten udostępnia informacje: kto z kim pracował przy publicznych projektach, ile kontrybucji wykonał dany użytkownik, kiedy repozytorium zostało ostatnio zmodyfikowane. Dane te są łatwo dostępne za pośrednictwem API. Niestety, jest on zabezpieczone przed atakami typu DDOS poprzez limit zapytań na godzinę, przez co największy z otrzymanych grafów ma 1391 wierzchołków i 21695 krawędzi.\\
-
-Do uzyskania grafu napisany został skrypt w języku Python, który realizuje przeszukiwanie portalu wszerz. Przyjmuje on początkowego użytkownika, a następnie w pętli dodaje na stos wszystkich innych użytkowników, z którymi wybrana osoba współpracowała przy danym projekcie. Następnie dodaje krawędź między rozpatrywaną osobą, a użytkownikiem i rozpatruje kolejną osobę ze stosu.\\
-
-Podsumowując, graf składa się z wierzchołków, którymi są użytkownicy GitHuba oraz krawędzi znajdujących się między tymi użytkownikami, którzy współpracowali ze sobą w publicznym repozytorium. Warty odnotowania jest fakt, że do krawędzi dodano parametry -datę ostatniej edycji repozytorium oraz liczbę wspólnych commitów dla obu użytkowników.
 
 %-----------------------------------------------------%
 %Wyniki
@@ -258,9 +252,69 @@ Jak szybkie potrafią być algorytmy do wykrywania społeczności pokazała impl
 
 %TODO: cuda plot
 
+W podanych wynikach nie uwzględniam przebudowy reprezentacji grafu - została ona zaimplementowana naiwnie, ponieważ możemy założyć, że na wejściu otrzymujemy rządaną reprezentację. Uwzględniony został jednak czas alokacji pamięci na karcie graficznej - jest on znacząco większy od czasu obliczeń. Jego znaczenie może zostać zredukowane, gdy przetwarzamy graf kilkukrotnie, wtedy wystarczy nam jedna alokacja, na początku działania programu.
+
 \subsubsection{Analiza jakościowa}
 
+Analizę jakościową rozpoczniemy od porównania z implementacją wbudowaną w bibliotekę igraph. Do analizy użyto grafów z listy wspólnych grafów testowych.
 
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{images/ms-build-lpa-0.png}
+\caption{Wizualizacja wyniku działania algorytmu LPA w bibliotece igraph}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{images/ms-build-lpa-2.png}
+\caption{Wizualizacja wyniku działania algorytmu LPA w bibliotece igraph}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{images/ms-build-nba.png}
+\caption{Wizualizacja wyniku działania algorytmu LPA w bibliotece igraph}
+\end{figure}
+
+Można zaobserwować, że algorytm przy gęstych grafach tworzy małą liczbę dużych społeczności. We własnej implementacji, przy ograniczeniu liczby iteracji do 6 uzyskujemy rezultat bardziej zrównoważony:
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{images/ms-lpa-0.png}
+\caption{Wizualizacja wyniku działania własnej implementacji algorytmu LPA} 
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{images/ms-lpa-2.png}
+\caption{Wizualizacja wyniku działania własnej implementacji algorytmu LPA}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{images/ms-nba.png}
+\caption{Wizualizacja wyniku działania własnej implementacji algorytmu LPA}
+\end{figure}
+
+Poniżej przedstawiono wyniki działania dla modyfikacji związanej z datami zawarcia znajomości. O ile przy drugim grafie wynik nie wyglada lepiej niż w wersji bez modyfikacji, to w przypadku grafu mniejszego można zauważyć zdecydowanie bardziej naturalne rozłożenie etykiet. Również w przypadku grafu największego rozmiary społeczności stały się dużo bardziej zbalansowane - nie pojawiła sie społeczność, która zdecydowanie przeważałaby w grafie. Modyfikacja ta ma znaczący wpływ na wynik działania algorytmu i mogłaby z powodzeniem zostać użyta w praktycznej analizie problemu związanego z sieciami społecznościowymi.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{images/ms-lpa-m1-0.png}
+\caption{Wizualizacja wyniku działania modyfikacji związanej z datami algorytmu LPA} 
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{images/ms-lpa-m1-2.png}
+\caption{Wizualizacja wyniku działania modyfikacji związanej z datami algorytmu LPA}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{images/ms-m1-nba.png}
+\caption{Wizualizacja wyniku działania modyfikacji związanej z datami algorytmu LPA}
+\end{figure}
 %-----------------------------------------------------%
 %OCDLCE
 %-----------------------------------------------------%
@@ -279,7 +333,7 @@ Jak szybkie potrafią być algorytmy do wykrywania społeczności pokazała impl
 %Porównanie
 %-----------------------------------------------------%
 \subsection{Porównanie}
-Metody prezentowane w naszym raporcie znacznie różnią się od siebie pod kątem implementacyjnym. Pierwsze różnice można zaobserwować już na poziomie podejścia do problemu. Metoda Girvana-Newmana, jak i jej rozszrzenie w postaci algorytmu CONGA, jako jedyna rozpoczynała analizę problemu od niezmodyfikowanego grafu początkowego. Pozostałe metody analizę problemu rozpoczynały od pojedynczych wierzchołków, łącząc je w większe społeczności. \\
+Metody prezentowane w naszym raporcie znacznie różnią się od siebie pod kątem implementacji. Pierwsze różnice można zaobserwować już w sposobie podejścia do problemu. Metoda Girvana-Newmana, jak i jej rozszrzenie w postaci algorytmu CONGA, jako jedyna rozpoczynała analizę problemu od niezmodyfikowanego grafu początkowego. Pozostałe metody analizę problemu rozpoczynały od pojedynczych wierzchołków, łącząc je w większe społeczności. \\
 
 Wyżej wymieniona zależność niesie za sobą różnice czasowe w wykonaniu każdej z metod. Algorytm CONGA okazał się zdecydowanie najwolniejszy ze wszystkich, przy okazji osiągając rezultaty, które skutecznie eliminują go jako metodę użyteczną w analizie problemów związanych z naprawdę dużymi grafami. Na przeciwnym końcu znajduje się algorytm LPA - jego wykonanie jest niezwykle szybkie, zwłaszcza, gdy wzbogacono go o implementację na Cuda. Algorytmy OCDCLE i Louvain również okazały się wystarczająco szybkie, aby myśleć o ich użyciu w kontekście dużych grafów. Z tej dwójki to metoda Louvain znalazła się na drugim miejscu, jeśli chodzi o wyniki czasowe. \\
 
