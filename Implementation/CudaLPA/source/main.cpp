@@ -5,9 +5,9 @@
 #include "exporter.h"
 
 namespace {
-	constexpr char* verticesPath = "../../Data/Basketball/Players.csv";
-	constexpr char* edgesPath = "../../Data/Basketball/Edges.csv";
-	constexpr char* output = "../../Data/CudaLPA/Communities.csv";
+	constexpr char* verticesPath = "../../Data/Filmweb/allActors.csv";
+	constexpr char* edgesPath = "../../Data/Facebook/fb.mtx";
+	constexpr char* output = "../../Data/CudaLPA/Facebook.csv";
 }
 
 int main()
@@ -16,7 +16,7 @@ int main()
 
 	timer.StartStage("loading data");
 
-	auto loader = GraphLoader(verticesPath, edgesPath, GraphType::Basketball);
+	auto loader = GraphLoader(verticesPath, edgesPath, GraphType::Facebook);
 	loader.Load();
 	auto vertices = loader.GetVertices();
 	auto edges = loader.GetEdges();

@@ -6,7 +6,7 @@
 \usepackage{titling,lipsum}
 \usepackage{indentfirst}
 \usepackage{graphicx}
-\usepackage{geometry}
+\usepackage[margin=1in]{geometry}
 \usepackage{float}
 
 \addbibresource{bibliography.bib}
@@ -42,17 +42,26 @@ Problem wykrywania społeczności w sieciach okazał się być bardzo ciekawym, 
 \subsubsection{Implementacja}
 
 W przypadku tego algorytmu praca została rozpoczęta od podstaw, a więc tradycyjnej wersji algorytmu Girvan-Newman dla społeczności rozłącznych. Jak się okazało biblioteka igraph, z której korzystaliśmy, udostępnia wbudowaną funkcję do wyliczania parametru edge betweenness. Dzięki skorzystaniu z tej metody implementacja algorytmu sprowadziła się do krótkiej funkcji, która wyznacza ww. parametr, a następnie usuwa krawędź, dla której jest on największy. Algorytm ten nie podlegał dalszej analizie - wykorzystano go tylko do sprawdzenia poprawności danych, na których pracowaliśmy, a także określenia struktury wyniku użytej w całym algorytmu.\\
+
 Aby uzyskać wynik w postaci społeczności nachodzących użyty został algorytm CONGA, do którego zastosowano własne modyfikacje. Także w tym wypadku pomocna okazała się biblioteka igraph, w której zaimplementowana jest funkcja do wyznaczania parametru vertex betweenness. Dzięki temu w każdym kroku uzyskano zbiory dwóch kluczowych parametrów dla przebiegu całego algorytmu.\\
+
 Warto przybliżyć również strukturę wyniku, który był zwracany przez zmodyfikowany algorytm. Funkcja zwracała tablicę wartości modularnośći dla każdego z kroku algorytmu. Ponadto uzupełniana była także tablica tablic results, która zawierała wyjściowy dendrogram. Po wykonaniu kroku algorytmu do results doklejana była kolejna tablica, zawierającą krawędzie usunięte w danym kroku. W przypadku konstrukcji tej tablicy przyjęto następującą zasadę: gdy dochodziło do kopiowania wierzchołka pierwszą krawędź stanowiła pętle dla wierzchołka kopiowanego.\\
+
 Chcąc odtworzyć rozwiązanie dla danego kroku z dendrogramu wyjściowego, konieczne było użycie tablicy Overlap, która również była uzupełniana w trakcie działania programu. Dla oryginalnych wierzchołków wartość w tej tablicy wynosiła -1, dla dodawanych wskazywała na numer wierzchołka, z którego został on skopiowany.\\
+
 Wynik działania funkcji musiał jeszcze zostać zmodyfikowany w celu uzyskania najlepszego wyniku dla badanego grafu. Dzięki temu opierając się na współczynniku modularności określana była wartość docelowa dla danego grafu (więcej na temat w kolejnej sekcji). Następnie z wyjściowego dendrogramu graf był odtwarzany do kroku, któremu odpowiadał użyty parametr modularności. Kolejną część stanowiła modyfikacja takiego grafu do wizulizacji - konieczne było tutaj połączenie wszystkich kopii wierzchołków, przy zachowaniu odpowiednich numerów społeczności.
 
 \subsubsection{Podjęte decyzje}
 Pierwszą decyzję, jaką należało podjąć przy implementacji algorytmu, był wybór sposobu obliczania modularności. Miara ta jest jasno określona przez autorów oryginalnego algorytmu Girvan-Newman, lecz przy modyfikacjach dla społeczności nachodzących nie dysponujemy tego typu wzorem. Wobec tego jako miara modularności został wybrany tutaj wskaźnik użyty w przypadku algorytmu OCDLCE, który został odpowiednio dostosowany do algorytmu CONGA. Miara ta skupiona jest na jednej społeczności lokalnej, natomiast w opisywanym przypadku należało ją określić dla całego grafu. Wobec czego była ona wyliczana dla każdej uzyskanej społeczności, a następnie aby określić modularność dla całego grafu, posłożono się średnią arytmetyczną z uzyskanych wartości. \\
+
 Kolejny ważny wybór dotyczący modularności opierał się na wyborze tej wartości, dla której uzyskany wynik jest najlepszy. Założenie początkowe miary z OCDLCE opierało się na tym, iż rezultat jest najlepszy wtedy, gdy największa jest wartość tego parametru. W wypadku algorytmu CONGA również można skorzystać z takowego założenia, jednak nie można zapominać o plusach tego algorytmu, a więc łatwego odzyskiwania społeczności wynikowych w zależności od preferencji co do ich rozmiaru/kształtu. Aby to umożliwić, zdecydowano się na wybór maksimów lokalnych dla całej tablicy wartości modularności. Następnie z wybranych wartości dokonywano wyboru wartości wynikowej na podstawie określonego na wejściu kwantylu. Tą wartością można już było manipulować - im mniejsza jej wartość tym bardziej wynikowa społeczność była rozrzedzona. I analogicznie - chcąc otrzymać podział na większe grupy należało zwiększyć tę wartość.\\
+
 Manipulację liczbą społeczności, jaką chcemy otrzymać, można było także uskutecznić przy pomocy preprocessingu. Polegał on na przejściu całego grafu przez algorytm, z tą różnicą, że jedyną zwracaną wartością była tablica różnic pomiędzy wartościami edge i vertex betweenness. Bazując na wartościach z każdego kroku można było określić, jaki stopień rozdrobnienia społeczności chcemy uzyskać. W ten sposób do głównego wykonania programu można było przesłać parametr gap, który określał priorytet, jaki dajemy usuwaniu krawędzi nad kopiowaniem wierzchołka. Im większą wartość dla tego parametru wybraliśmy z wyniku preprocessingu, tym społeczności wynikowe były liczniejsze (co jednak zależało także od wyboru końcowego, wspomnianego w poprzednim akapicie).\\
+
 Przechodząc do esencji algorytmu należy wspomnieć o dokonanych własnych modyfikacjach. Początkowo założono, iż dla tego algorytmu modyfikacje będziemy stosować w procesie kopiowania wierzchołka. Zgodnie z tymi założeniami zaimplementowane zostały dwa rozwiązania. Pierwsze z nich stosuje podział wierzchołka wyłącznie na podstawie daty zawarcia znajomości. W ten sposób wyliczamy średnią z dat zawarcia znajomości dla każdej z incydentnych krawędzi danego wierzchołka, a następnie te z wartościami poniżej średniej 'przepinamy' do kopii wierzchołka, resztę pozostawiając z oryginałem.\\
+
 Podobnie postępujemy w przypadku modyfikacji używającej liczby wspólnych znajomych. W tym wypadku zmieniony został jednak sposób wyliczania wartości, która stanowi odniesienie porównania przy dzieleniu. Dla danego wierzchołka wyliczana jest tutaj średnia ważona, gdzie wagę stanowi liczba wspólnych znajomych. O ile pierwszy sposób wyliczania powinien premiować prosty podział chronologiczny, tak w tym wypadku większy nacisk powinien zostać położony na bardziej zżyte ze sobą społeczności (osoby, które niekoniecznie poznały się w danym czasie, ale dłużej znajdowały się wspólnie w danej grupie).\\
+
 Usuwanie krawędzi w trakcie działania algorytmu dokonywano zbiorowo - wszystkie krawędzie, dla których wartość parametru edge betweenness była największa, były usuwane w jednym kroku algorytmu.\\
 
 %-----------------------------------------------------%
@@ -121,7 +130,9 @@ Rozpoczynając pracę, zakładaliśmy, że opisane algorytmy będziemy badać na
 %-----------------------------------------------------%
 \subsection{NBA}
 'I love this game' - to slogan reklamowy towarzyszący najlepszej lidze koszykarskiej, który odnosi się także do jednego z autorów tej pracy. Wybór tego zbioru danych motywowany był prywatnymi zainteresowaniami autorów, które wiążą się także z ogólną wiedzą na temat samej ligi. Dzięki temu zyskaliśmy możliwość oceny osiąganych rezultatów 'ludzkim okiem', przez co można było je poprawiać i oceniać dzięki swego rodzaju eksperckiej wiedzy na temat NBA.\\
+
 Swoją rolę odegrała tu także ogólna dostępność danych. Ich źródło stanowił portal basketball-reference.com, który stanowi internetową, koszykarską encyklopedię. Korzystając ze scrapera napisanego w języku JavaScript można było zautomatyzować proces wyszukiwania danych. Pomógł tutaj alfabetyczny spis koszykarzy - w ten sposób zdobyliśmy informację na temat każdego z nich, a także w łatwy sposób uzyskaliśmy liczbę wszystkich sezonów i klubów, w jakich w swojej karierze występował dany zawodnik. Następnie dane te zostały obrobione z wykorzystaniem SQL, w celu uzyskania relacji między zawodnikami, a także daty zawarcia znajomości. Liczba wspólnych znajomych została określona przy pomocy prostego algorytmu napisanego w języku C\#.\\
+
 Graf, który uzyskaliśmy, składa się z 4800 wierzchołków. Każdy wierzchołek można przypisać zawodnikowi, który postawił swą stopę na parkietach NBA w ciągu ponad 70 lat istnienia ligi. Dwaj zawodnicy są ze sobą w relacji, jeśli kiedykolwiek zagrali ze sobą w jednym klubie. Data zawarcia znajomości to w tym wypadku data pierwszego meczu, w którym obaj zawodnicy mieli okazję ze sobą zagrać. Tworząc relacje w ten sposób uzyskaliśmy ponad 146 tysięcy krawędzi.
 
 %-----------------------------------------------------%
@@ -129,14 +140,21 @@ Graf, który uzyskaliśmy, składa się z 4800 wierzchołków. Każdy wierzchoł
 %-----------------------------------------------------%
 \subsection{Filmweb}
 Poszukując parametru daty zawarcia znajomości zwróciliśmy się także ku innej części branży rozrywkowej. Źrodło danych w tym wypadku stanowił portal filmweb.pl, który dysponuje ogromną bazą danych na temat aktorów i filmów. Skala tych danych jest tak duża, iż musieliśmy ograniczyć nasze prace tylko do polskich aktorów. W ten sposób uzyskaliśmy graf z 10 000 wierzchołków i 190031 krawędziami.\\
+
 Sposób uzyskania danych był analogiczny do tego prezentowanego w przypadku grafu NBA. Skonstruowany w języku JavaScript scraper został wykorzystany do przejrzenia listy wszystkich polskich aktorów, by następnie dla każdego z nich znaleźć listę kolegów z branży, z którymi najczęśniej występował w jednym filmie. Ten zbiór uczyniliśmy znajomymi badanego aktora. Datę zawarcia znajomości w tym wypadku stanowiła data premiery pierwszego filmu/serialu, w którym dana dwójka ze sobą wystąpiła. Dodatkowo na prośbę prowadzącego zbiór danych uzupełniony został o liczbę filmów, w których dana dwójka wspólnie występowała. Informacja ta okazała się również przydatna w modyfikacji jednego z algorytmów.\\
+
 Podsumowując, wierzchołki uzyskanego grafu stanowią polscy aktorzy, pobrani z ogólnodostępnej bazy filmweb. Dwaj aktorzy są ze sobą w relacji, jeśli jeden z nich znajduje się w zakładce 'najczęściej występował z ...' u drugiego. Motywację wyboru tego grafu jako testowego stanowiło ogólne zainteresowanie branżą filmową autorów pracy, a także ogólna dostępność danych. Sama etykietyzacja wierzchołków pozwoliła nam łatwiej oceniać poprawność działania algorytmów - zwłaszcza w początkowej fazie implementacji z wykorzystaniem tylko małych zbiorów danych.
 
 %-----------------------------------------------------%
 %Github
 %-----------------------------------------------------%
 \subsection{GitHub}
+W dzisiejszych czasach GitHub jest narzędziem używanym przez niemal
+wszystkich ludzi, którzy rozpoczęli swoją przygodę z programowaniem. Nie tylko ułatwia on pracę nad projektem w wieloosobowych zespołach, jednak potrafi być również wizytówką użytkownika. Okazało się, że może też stanowić źródło bardzo ciekawych danych. Portal ten udostępnia informacje: kto z kim pracował przy publicznych projektach, ile kontrybucji wykonał dany użytkownik, kiedy repozytorium zostało ostatnio zmodyfikowane. Dane te są łatwo dostępne za pośrednictwem API. Niestety, jest on zabezpieczone przed atakami typu DDOS poprzez limit zapytań na godzinę, przez co największy z otrzymanych grafów ma 1391 wierzchołków i 21695 krawędzi.\\
 
+Do uzyskania grafu napisany został skrypt w języku Python, który realizuje przeszukiwanie portalu wszerz. Przyjmuje on początkowego użytkownika, a następnie w pętli dodaje na stos wszystkich innych użytkowników, z którymi wybrana osoba współpracowała przy danym projekcie. Następnie dodaje krawędź między rozpatrywaną osobą, a użytkownikiem i rozpatruje kolejną osobę ze stosu.\\
+
+Podsumowując, graf składa się z wierzchołków, którymi są użytkownicy GitHuba oraz krawędzi znajdujących się między tymi użytkownikami, którzy współpracowali ze sobą w publicznym repozytorium. Warty odnotowania jest fakt, że do krawędzi dodano parametry -datę ostatniej edycji repozytorium oraz liczbę wspólnych commitów dla obu użytkowników.
 %-----------------------------------------------------%
 %Wyniki
 %-----------------------------------------------------%
@@ -147,10 +165,25 @@ Podsumowując, wierzchołki uzyskanego grafu stanowią polscy aktorzy, pobrani z
 %-----------------------------------------------------%
 \subsection{Algorytm Girvan-Newmana}
 \subsubsection{Analiza czasowa}
-Założenie polegające na tym, iż w każdym kroku liczone są najkrótsze ścieżki pomiędzy każdą parą wierzchołków okazało się kluczowe, jeśli patrzymy pod kątem czasu wykonania. Chcąc szybko osiągnąć wynik wybór algorytmu Girvan-Newman nie jest wyborem najlepszym już dla społeczności rozłącznych. Rozszerzając algorytm na społeczności nachodzące (przy pomocy algorytmu CONGA z własnymi modyfikacjami) jeszcze bardziej utrudniamy pracę algorytmowi, tworząc kopie wierzchołków i rozszerzając przez to zbiór par, dla których liczone są najkrótsze ścieżki.
+Algorytm Girvan-Newman jest algorytmem o dużej złożoności, co bezpośrednio przekłada się na czas jego działania. Założenie polegające na tym, iż w każdym kroku liczone są najkrótsze ścieżki pomiędzy każdą parą wierzchołków, okazało się kluczowe, jeśli patrzymy pod kątem czasu wykonania. Chcąc szybko osiągnąć wynik, wybór algorytmu Girvan-Newman nie jest wyborem najlepszym już dla społeczności rozłącznych. Rozszerzając algorytm na społeczności nachodzące (przy pomocy algorytmu CONGA z własnymi modyfikacjami) jeszcze bardziej utrudniamy pracę algorytmowi, tworząc kopie wierzchołków i rozszerzając przez to zbiór par, dla których liczone są najkrótsze ścieżki. Doskonale obrazuje to poniższy wykres.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{images/is-sample-8.png}
+\caption{Wykres czasu w zależności od liczby wierzchołków grafu}
+\end{figure}
+
+Dla grafów o liczbie wierzchołków mniejszej od 200 różnica czasu wykonania nie jest zbyt duża, bez znaczenia czy mówimy o klasycznym algorytmie Girvan-Newmana, czy którejś z modyfikacji algorytmu CONGA. Dla większych grafów różnice robią się już jednak o wiele bardziej zauważalne. Już dla grafu o liczbie wierzchołków równej 400 algorytm CONGA jest ponad 35 razy wolniejszy niż metoda Girvan-Newman. Jest to też ostatni graf, na którym udało się przebadać każdą z modyfikacji. Co prawda metoda Girvan-Newman (która przypomnijmy tylko usuwa krawędzie, nie tworząc kopii wierzchołka) poradziła sobie jeszcze z grafami o liczbie 500 i 1700 wierzchołków, to modyfikacja dla społeczności nachodzących nie zmieściła się w limitach czasowych określonych na testy. Warto też zaznaczyć, że w przypadku grafu o liczbie wierzchołków wynoszącej ponad 1700 czas wykonania metody Girvan-Newmana wyniósł niemal 25000 sekund! Jednocześnie na wykresie widać, że czasy działania obu modyfikacji są do siebie bardzo zbliżone, na co wskazuje wzajemne nakładanie się punktów. \\
+
+Dlaczego jednak algorytm CONGA nie poradził sobie z grafem mającym tylko 500 wierzchołków? W dodatku nie udało mu się zakończyć obliczeń także dla grafu mającego 370 wierzchołków. Fakt ten wynika z gęstości grafów, które zostały przebadane. W przypadku grafów gęstych parametr vertex betweennees znacznie częściej osiąga wartość większą aniżeli edge betweenness. Przez to czas wykonania algorytmu rośnie, gdyż powstają coraz to nowe wierzchołki, które są analizowane przy obliczaniu wszystkich najkrótszych ścieżek. O ile w metodzie Girvan-Newman czas wykonania pojedynczej iteracji maleje z każdą kolejną, tak dla CONGA nie mamy takiej gwarancji. Można się wręcz spodziewać, że na początku działania algorytmu, gdzie dochodzi do największej liczby kopii, efekt będzie zupełnie odwrotny. \\
+
+Reasumując, złożoność czasowa algorytmu CONGA uniemożliwia przebadanie go na bardzo dużych grafach. Jest to duży minus tego algorytmu, skutecznie uniemożliwiający wykorzystanie go na dużych zbiorach, gdyż takowe zaczynają się dla tej metody już w granicach 400 wierzchołków. Warto zwrócić również w tym wypadku uwagę na fakt gęstości grafu - na grafie gęstym algorytm może okazać się nie do wykonania w rozsądnym czasie już dla 370 wierzchołków. Jeżeli więc czas działania jest istotny dla odbiorcy (a w większości przypadków tak na pewno jest), algorytm CONGA nie sprawdzi się najlepiej. Jest on natomiast bardzo dobrą metodą szkoleniową do wykorzystania i analizy dla mniejszych i średnich grafów. \\
+
 \subsubsection{Analiza jakościowa}
 Po wykonaniu analizy algorytmu, a przed przystąpieniem do implementacji, fakt jego wolnego działania nie został przez nikogo przyjęty ze zdziwieniem. Cechą, którą miał obronić się ten algorytm, była jakość rozwiązania. Rzeczywiście na tym polu można zauważyć, że algorytm zachowuje się o wiele lepiej z perspektywy użytkownika. Po wykonaniu pełnego przebiegu dla danego grafu i otrzymania wynikowego dendrogramu manipulacja wynikiem, którego poszukujemy, zależy już tylko od indywidualnych preferencji użytkownika.\\
+
 Usystematyzować te preferencje pozwoliły metody wykorzystane w implementacji. Pierwszą z nich było określenie, którego z maksimów lokalnych poszukujemy. Na podstawie ich zbioru umożliwiony został wybór, który kwantyl wśród wyników, jest tym nas interesującym. Jeżeli otrzymany wynik nie był jednak zadowalający (np. ze względu na zbyt duży bądź zbyt mały rozmiar społeczności wynikowych), można było zmienić wartość kwantylu i wedle preferencji uzyskać podział na większe bądź mniejsze grupy.\\
+
 Aby zaprezentować wyżej opisane własności najlepiej będzie posłużyć się przykładem. W tym celu skorzystam z grafu uczestników NBA All-Star Games w 4 ostatnich sezonach.
 
 \begin{figure}[H]
@@ -172,8 +205,11 @@ Aby zaprezentować wyżej opisane własności najlepiej będzie posłużyć się
 \end{figure}
 
 Powyższe przykłady idealnie obrazują, jak zmienia się rezultat w zależności od maksimum lokalnego, które wybierzemy. Widać jednocześnie, że dla najwyższej wartości modularności uzyskano grupy największe pod względem średniej liczby członków. Gdyby jednak poszukiwane grupy okazały się zbyt duże, manipulacja kwantylem pozwoli zmniejszyć ich rozmiar. I tak dla najmniejszego z maksimów graf wynikowy wskaże nam małe grupy, które jednak są najbardziej ściśle z sobą związane. \\
+
 Jest to moment, w którym możemy wskazać duży atut algorytmu CONGA. Właśnie poprzez manipulację współczynnikiem kwantylu możemy w łatwy sposób manipulować wynikiem, jaki jest według nas najlepszy. Posiadając wynikowy dendrogram operacja uzyskiwania grafu wynikowego jest operacją liniową. Dzięki temu możemy odzyskać graf z każdego z kroków algorytmu w bardzo prosty sposób. \\
+
 Warto zaznaczyć, że podczas prezentacji wyników skorzystano z własności maksimum lokalnego. Nic jednak nie stoi na przeszkodzie, aby odzyskać graf wynikowe w mniej zaawansowany sposób. Jednym z nich może być po prostu wybór numeru jednej z iteracji. W dendrogramie podczas każdego kroku rozmiary społeczności wynikowych trzymają się tendencji malejącej. Tak więc im dalszy krok algorytmu wybierzemy, tym graf wynikowy będzie posiadał społeczności mniejszych rozmiarów. \\
+
 Wielkość grup można określić poprzez parametr modularności (tutaj jednak najwyższa wartość nie jest jednak ściśle związana z rozmiarem grupy), natomiast skalę nakładania się społeczności można modyfikować poprzez wykonanie preprocessingu (ta operacja jest jednak bardzo kosztowna, ponieważ de facto dwa razy wykonujemy sam algorytm, jedynie ograniczając liczbę iteracji podczas drugiego wykonania). Sam preprocessingu można również przeprowadzić 'samodzielnie' poprzez określenie pewnej wartości priorytetu, jaki usuwanie krawędzi ma nad kopiowaniem wierzchołka. Wariant ten prezentuje poniższy przykład.\\
 
 \begin{figure}[H]
@@ -182,7 +218,7 @@ Wielkość grup można określić poprzez parametr modularności (tutaj jednak n
 \caption{Wynik przy gap=5 (największa wartość modularności)}
 \end{figure}
 
-Graf przedstawiony powyżej został wygenerowany z tego samego grafu początkowego co grafy z rysunków 1, 2 i 3. Prezentowany wynik to wynik dla iteracji o największej wartości modularności. Można zauważyć, iż rezultat ten jest zbliżony do grafu, który został uzyskany przy kwantylu 0.3 dla poprzedniego sposobu wyznaczania wyniku. Parametr gap ogranicza w naszym przypadku liczbę społeczności nachodzących, jednak zachwiana jest w ten sposób tendencja parametru modularności. Przy zerowej wartości priorytetu modularność dla kolejnych iteracji maleje, tutaj tracimy tę własność. Spójrzmy na wynik uzyskany dla kwantylu 0.3.
+Graf przedstawiony powyżej został wygenerowany z tego samego grafu początkowego, który analizowany był na poprzednich rysunkach. Prezentowany wynik to wynik dla iteracji o największej wartości modularności. Można zauważyć, iż rezultat ten jest zbliżony do grafu, który został uzyskany przy kwantylu 0.3 dla poprzedniego sposobu wyznaczania wyniku. Parametr gap ogranicza w naszym przypadku liczbę społeczności nachodzących, jednak zachwiana jest w ten sposób tendencja parametru modularności. Przy zerowej wartości priorytetu modularność dla kolejnych iteracji maleje, tutaj tracimy tę własność. Spójrzmy na wynik uzyskany dla kwantylu 0.3.
 
 \begin{figure}[H]
 \centering
@@ -191,9 +227,13 @@ Graf przedstawiony powyżej został wygenerowany z tego samego grafu początkowe
 \end{figure}
 
 Widać więc, że dla prezentowanego maksimum społeczności są większych rozmiarów aniżeli dla wyniku osiągniętego przy największej modularności. W przypadku tak małego grafu ciężko zauważyć różnice na poziomie średniej liczby społeczności dla danego wierzchołka. Przy większych grafach zachowanie to jest jednak zauważalne. \\
+
 To prowadzi do kolejnej obserwacji poczynionej podczas badania algorytmu. Początkową fazę jego działania w głównej mierze stanowi kopiowanie wierzchołka. Jest to oczywiście zależne od wielkości grafu, a także jego gęstości, jednak wszędzie na początku działania algorytmu dokonywania jest seria kopii wierzchołka. Jednocześnie różnica pomiędzy wartościami edge betweenness i vertex betweenness maleje z wykonaniem każdej kolejnej kopii aż do wykonania pierwszego usunięcia krawędzi. Samo usuwanie krawędzi miało odbywać się w jednej iteracji dla wszystkich tych, które mają największy parametr edge betweenness. W rzeczywistości krok te sprowadzał się niemal dla każdej iteracji usunięciem tylko jednej krawędzi, ponieważ przy dużych grafach parametr edge betweenness był bardzo zróżnicowany dla każdej z krawędzi. Dopiero przy ostatnich iteracjach krawędzie usuwane były grupowo (zazwyczaj były to bardzo liczne grupy). \\
+
 Wracając do przykładu, wywołanie algorytmu w ten sposób na pewno przyniesie za sobą korzyść czasową. Jednocześnie jednak należy pamiętać, iż jest to równoznaczne z innym przebiegiem algorytmu. W tym wariancie parametr początkowy wpływa w głównej mierze na liczbe społeczności, do jakiej należy jeden wierzchołek. Im większy priorytet na korzyść parametru edge betweenneess tym mniej podziałów na społeczności nachodzące, a co za tym idzie także większe rozmiary społeczności docelowych.\\
+
 W tym miejscu warto także wspomnieć o rezultatach, jakie udało się osiągnąć, dzięki wprowadzonym modyfikacjom. Posiadanie parametrów dat zawarcia znajomości znacznie ułatwiło proces podziału wierzchołka na oryginał i kopię zarówno od strony implementacyjnej, jak i logiki, która za tym stała. Modyfikacja wyłącznie po latach zawarcia znajomości miała na celu wyłonienie grupy tylko na podstawie daty zawarcia znajomości, a więc opierając się na założeniu, że grupę można identyfikować poprzez bliskie sobie daty zawarcia znajomości wśród jej uczestników. Dodając wagę w postaci liczby wspólnych znajomych przeniesiono nacisk na fakt przebywania dłużej w tej samej grupie - jeśli dwie osoby dłużej przebywają w tym samym otoczeniu, tym ich liczba wspólnych znajomych wzrasta.\\
+
 Analiza obu modyfikacji pod względem parametru modularności nie wskazała znacznych różnic zależnych od modyfikacji. W tym wypadku do analizy wykorzystano wiedzę ekspercką na temat grafu zawodników NBA. Posłużmy się więc przykładem:
 
 \begin{figure}[H]
@@ -209,14 +249,10 @@ Analiza obu modyfikacji pod względem parametru modularności nie wskazała znac
 \end{figure}
 
 Prezentowany przykład skupia się na osobie koszykarza Shaquille O'Neala. Zawodnik ten jest niezwykle utytułowany, a w swej karierze zwiedził mnóstwo klubów. Na wstępie warto zaznaczyć, iż wynik brany tutaj pod uwagę, został wybrany na podstawie największej wartości modularności. Na tym przykładzie możemy zaobserwować, iż przy uwzględnieniu liczby wspólnych znajomych społeczność wynikowa stała się bardzo liczna. Wynika to z faktu, iż podczas swej kariery analizowany zawodnik zdążył zagrać w jednym klubie z wieloma innymi koszykarzami, przez co z wieloma z nich miał dużą liczbę wspólnych znajomych. Gdy ten parametr pominiemy podany zawodnik znajdzie się w 3 społecznościach. Ponadto jedna z nich wyraźnie wskazuje na zespół Los Angeles Lakers, do którego O'Neal dołączył w roku 1996. \\
-Podobnych przykładów można znaleźć znacznie więcej w zależności od grafu, który analizujemy. Wskazują one, że dodanie liczby wspólnych znajomych jako wagi rzeczywiście wpływa na rozkład grup. Dysponując wiedzą na temat wierzchołków i realnych zależności można skupić się na analizie pojedynczych wierzchołków, jednak obserwacje w skali makro również przynoszą pewne wnioski. Podchodząc do problemu w ten sposób można zauważyć, iż w przypadku dodania wag krawędzi wynik 'spłaszcza się', zwracając mniej społeczności, które są za to bardziej liczne. Skorzystanie z samej daty zawarcia znajomości dzieli graf na mniejsze społeczności. \\
-Warto w tym miejscu wspomnieć jednak o tym, iż uzyskany wynik niekoniecznie jest zobowiązujący. W przypadku uzyskania zbyt dużych społeczności modyfikacja wyboru maksimum lokalnego zgodnie z obserwacjami poczynionymi w poprzednich akapitach. Algorytm CONGA daje bardzo dużą elastyczność w kwestii uzyskanych wyników. Modyfikacje, które zostały wykonane w głównej mierze skupiają się na rezultacie końcowyw. Ten jednak oparty jest na mierze modularności, która nie jest jednak w żaden sposób miarą wiążącą. W przypadku tego algorytmu to użytkownik 'decyduje', jaki podział na grupy według niego będzie najlepszy. Jeżeli oczywiście tylko cierpliwość pozwoli mu na odczekanie końca działania algorytmu.
 
-\begin{figure}[H]
-\centering
-\includegraphics[width=\textwidth]{images/ms-image-sample.png}
-\caption{Przykładowe wyjście}
-\end{figure}
+Podobnych przykładów można znaleźć znacznie więcej w zależności od grafu, który analizujemy. Wskazują one, że dodanie liczby wspólnych znajomych jako wagi rzeczywiście wpływa na rozkład grup. Dysponując wiedzą na temat wierzchołków i realnych zależności można skupić się na analizie pojedynczych wierzchołków, jednak obserwacje w skali makro również przynoszą pewne wnioski. Podchodząc do problemu w ten sposób można zauważyć, iż w przypadku dodania wag krawędzi wynik 'spłaszcza się', zwracając mniej społeczności, które są za to bardziej liczne. Skorzystanie z samej daty zawarcia znajomości dzieli graf na mniejsze społeczności. \\
+
+Warto w tym miejscu wspomnieć jednak o tym, iż uzyskany wynik niekoniecznie jest zobowiązujący. W przypadku uzyskania zbyt dużych społeczności modyfikacja wyboru maksimum lokalnego zgodnie z obserwacjami poczynionymi w poprzednich akapitach. Algorytm CONGA daje bardzo dużą elastyczność w kwestii uzyskanych wyników. Modyfikacje, które zostały wykonane w głównej mierze skupiają się na rezultacie końcowyw. Ten jednak oparty jest na mierze modularności, która nie jest jednak w żaden sposób miarą wiążącą. W przypadku tego algorytmu to użytkownik 'decyduje', jaki podział na grupy według niego będzie najlepszy. Jeżeli oczywiście tylko cierpliwość pozwoli mu na odczekanie końca działania algorytmu.\\
 
 %-----------------------------------------------------%
 %LPA
@@ -237,10 +273,116 @@ Na powyższym wykresie można zauważyć, że zależność czasu od ilości wier
 
 Jak szybkie potrafią być algorytmy do wykrywania społeczności pokazała implementacja przy użyciu biblioteki CUDA. Rezultat znacząco przekroczył nasze oczekiwania. Co prawda implementacja ta jest częściowo okrojona, lecz z powodzeniem można ją rozszerzać o modyfikacje zaimplementowane w wersji na CPU.
 
-%TODO: cuda plot
+\begin{table}[H]
+  \begin{center}
+    
+    \label{tab:table1}
+    \begin{tabular}{c|c|c|c}
+      \textbf{$|V|$} & \textbf{$|E|$} & \textbf{Czas alokacji (ms)} & \textbf{Czas obliczeń (ms)}\\
+      \hline
+      4800 & 146369 & 335 & 6\\
+      10000 & 190031 & 225 & 33 \\
+      3096951 & 2899051 & 467 & 162 \\
+    \end{tabular}
+    \caption{Wyniki czasowe algorytmu LPA zaimplementowanego przy użyciu biblioteki CUDA}
+  \end{center}
+\end{table}
+
+W podanych wynikach nie uwzględniam przebudowy reprezentacji grafu - została ona zaimplementowana naiwnie, ponieważ możemy założyć, że na wejściu otrzymujemy żądaną reprezentację. Uwzględniony został jednak czas alokacji pamięci na karcie graficznej - jest on znacząco większy od czasu obliczeń. Jego znaczenie może zostać zredukowane, gdy przetwarzamy graf kilkukrotnie, wtedy wystarczy nam jedna alokacja, na początku działania programu. Patrząc na wyniki wnioski nasuwają się same - przy sieciach o rozmiarach rzędu milionów wierzchołków i krawędzi, ta implementacja sprawdzi się zdecydowanie najlepiej.
 
 \subsubsection{Analiza jakościowa}
 
+Analizę jakościową rozpoczniemy od porównania z implementacją wbudowaną w bibliotekę igraph. Do analizy użyto grafów z listy wspólnych grafów testowych.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{images/ms-build-lpa-0.png}
+\caption{Wizualizacja wyniku działania algorytmu LPA w bibliotece igraph}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{images/ms-build-lpa-2.png}
+\caption{Wizualizacja wyniku działania algorytmu LPA w bibliotece igraph}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{images/ms-build-nba.png}
+\caption{Wizualizacja wyniku działania algorytmu LPA w bibliotece igraph}
+\end{figure}
+
+Można zaobserwować, że algorytm przy gęstych grafach tworzy małą liczbę dużych społeczności. We własnej implementacji, przy ograniczeniu liczby iteracji do 6 uzyskujemy rezultat bardziej zrównoważony:
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{images/ms-lpa-0.png}
+\caption{Wizualizacja wyniku działania własnej implementacji algorytmu LPA} 
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{images/ms-lpa-2.png}
+\caption{Wizualizacja wyniku działania własnej implementacji algorytmu LPA}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{images/ms-nba.png}
+\caption{Wizualizacja wyniku działania własnej implementacji algorytmu LPA}
+\end{figure}
+
+Poniżej przedstawiono wyniki działania dla modyfikacji związanej z datami zawarcia znajomości. O ile przy drugim grafie wynik nie wyglada lepiej niż w wersji bez modyfikacji, to w przypadku grafu mniejszego można zauważyć zdecydowanie bardziej naturalne rozłożenie etykiet. Również w przypadku grafu największego rozmiary społeczności stały się dużo bardziej zbalansowane - nie pojawiła sie społeczność, która zdecydowanie przeważałaby w grafie. Modyfikacja ta ma znaczący wpływ na wynik działania algorytmu i mogłaby z powodzeniem zostać użyta w praktycznej analizie problemu związanego z sieciami społecznościowymi.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{images/ms-lpa-m1-0.png}
+\caption{Wizualizacja wyniku działania modyfikacji związanej z datami algorytmu LPA} 
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{images/ms-lpa-m1-2.png}
+\caption{Wizualizacja wyniku działania modyfikacji związanej z datami algorytmu LPA}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{images/ms-m1-nba.png}
+\caption{Wizualizacja wersji dla społeczności nachodzących algorytmu LPA}
+\end{figure}
+
+Poniżej przedstawiono wyniki algorytmu w wersji dla społeczności nachodzących.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{images/ms-lpa-ol-0.png}
+\caption{Wizualizacja wersji dla społeczności nachodzących algorytmu LPA}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{images/ms-lpa-ol-2.png}
+\caption{Wizualizacja wersji dla społeczności nachodzących algorytmu LPA}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{images/ms-ol-nba.png}
+\caption{Wizualizacja wersji dla społeczności nachodzących algorytmu LPA}
+\end{figure}
+
+O ile dla najmniejszego grafu otrzymane rezultaty są zadowalające, tak przy grafie średniej wielkości nie otrzymano oczekiwanych wyników. Nie udało się wyznaczyć społeczności nachodzących, a te, które zostały wskazane, są niewielkie, nie można wyznaczyć między nimi granic. W przypadku społeczności nachodzących nie jest łatwo przeprowadzić analizę na grafie dużym. Warto jednak zauważyć ciekawą zależność - wierzchołki łączące w sobie wiele społeczności utworzyły naturalny szkielet sturktury. Wierzchołki należące do jednej społeczności skupiły się w środku oraz na obwodzie.\\
+
+Ciekawe zjawisko można zaobserwować badając grafy przetwarzane równolegle. Podwójne buforowanie wierzchołków jest wymuszone w implementacji CUDA, aby uniknąć konfliktów w dostępie do pamięci. Na CPU grafy przetwarzane są synchronicznie. Poniżej przedstawiono wizualizację dla pełnego grafu NBA:
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{images/ms-cuda.png}
+\caption{Wizualizacja wyniku działania LPA CUDA dla grafu NBA}
+\end{figure}
+
+Otrzymane rezultaty sa znacząco inne niż w wersji synchronicznej. Społeczności jest zdecydowanie więcej, część z nich 'rozciąga się' przez znaczną część grafu. Małe kliki uformowały społeczności, co jest porządanym rezultatem. Biorąc pod uwagę czas wykonania tej wersji algorytmu wyniki są bardzo zadowalające.
 
 %-----------------------------------------------------%
 %OCDLCE
@@ -317,12 +459,31 @@ Wynik algorytmu jest bardzo trudny, a nawet niemożliwy, do analizy na podstawie
 %Porównanie
 %-----------------------------------------------------%
 \subsection{Porównanie}
+Metody prezentowane w naszym raporcie znacznie różnią się od siebie pod kątem implementacji. Pierwsze różnice można zaobserwować już w sposobie podejścia do problemu. Metoda Girvan-Newmana, jak i jej rozszerzenie w postaci algorytmu CONGA, jako jedyna rozpoczynała analizę problemu od niezmodyfikowanego grafu początkowego. Pozostałe metody analizę problemu rozpoczynały od pojedynczych wierzchołków, łącząc je w większe społeczności. \\
 
+Wyżej wymieniona zależność niesie za sobą różnice czasowe w wykonaniu każdej z metod. Algorytm CONGA okazał się zdecydowanie najwolniejszy ze wszystkich, przy okazji osiągając rezultaty, które skutecznie eliminują go jako metodę użyteczną w analizie problemów związanych z naprawdę dużymi grafami. Na przeciwnym końcu znajduje się algorytm LPA - jego wykonanie jest niezwykle szybkie, zwłaszcza, gdy wzbogacono go o implementację na CUDA. Algorytmy OCDCLE i Louvain również okazały się wystarczająco szybkie, aby myśleć o ich użyciu w kontekście grafów o liczie wierzchołków mniejszej mieszczącej się w granicy 10 000. Z tej dwójki to metoda Louvain znalazła się na drugim miejscu, jeśli chodzi o wyniki czasowe. \\
+
+Warto również zwrócić uwagę na założenia początkowe twórców każdego z algorytmu. Prezentowana praca skupiła się na wyszukiwania społeczności nachodzących, lecz trzy z użytych algorytmów początkowo zostały stworzone w celu wyszukiwania społeczności rozłącznych. Jedynie algorytm OCDCLE był bezpośrednio zwrócony na społeczności nachodzące. W związku z tym faktem usprawnienia związane z tym algorytmem skupiły się głównie na poprawie wyniku, natomiast przy pozostałych metodach własne pomysły można było skierować na przejście pomiędzy algorytmem dla społeczności rozłącznych i jego wersją dla społeczności nachodzących. Warto również zwrócić uwagę na to, iż metoda Louvain została wybrana jako metoda eksperymentalna. Wzmianki o niej można znaleźć w nielicznych dokumentach, a sam wybór stanowił chęć sprawdzenia działania tej metody. Po drugiej stronie można tutaj umieścić metodę Girvan-Newmana, która pojawia się niemal w każdej pracy związanej ze społecznościami nachodzącymi. \\
+
+Ciężko obiektywnie określić jakość rozwiązań, jakie zwracane są przez każdą z metod. Warto jednak nadmienić, iż to, na ile wynik jest dobry, może zależeć subiektywnie od danego użytkownika. Jednemu z odbiorców jako wynik docelowy może odpowiadać trzy duże grupy wynikowe, innemu duża liczba małych, aczkolwiek mocno związanych grupek. Warto więc porównać metodami pod kątem manipulacji osiąganymi rezultatami. Jako wzorzec przyjąć można tutaj metodę Girvan-Newmana, która umożliwia odzyskanie wyniku po każdej z wykonanych iteracji. Ze względu na wyniki czasowe jej przydatność jest jednak wątpliwa. Dla porównania algorytm LPA zwraca jednoznaczny wynik, jednak czas jego wykonania pozwala na wielokrotne uruchomienie algorytmu z różnymi parametrami, co powoduje zwracanie różnych wyników. Sposób ten okazuje się o wiele szybszy nawet przy wielokrotnym wywołaniu. Podobnie z problemem różnych rezultatów radzą sobie także algorytmy OCDCLE i Louvain. Ich czasy wykonania pozwalają na manipulację parametrami i zwracanie różnych wyników. Ponadto algorytm OCDCLE, dzięki temu, że od początku był tworzony z myślą o społecznościach nachodzących, posiada specjalny parametr regulujący stopień nachodzenia się społeczności. Natomiast w przypadku metody Louvain warto odnotować, iż osiągnięte rezultaty okazały się lepsze od tych osiągniętych w oryginalnej pracy.\\
+
+Porównując algorytmy pod względem ich słabych stron, możemy stwierdzić, iż metoda LPA radzi sobie słabo z dużymi grafami, mając tendencje do tworzenia bardzo licznych społeczności. Metoda OCDCLE posiada natomiast tendencję do tworzenia jednowierzchołkowych społeczności. Metoda Girvan-Newmana zdaje się omijać te błędy, jednak jej złożoność czasowa okazuje się tutaj barierą nie do pokonania. Problemem w algorytmie Louvain jest niedeterminizm, który może powodować pewne zaburzenia w wynikach dla niektórych z badanych grafów. \\
+ 
 %-----------------------------------------------------%
 %Wnioski
 %-----------------------------------------------------%
 \subsection{Wnioski}
+Kończąc poprzedni akapit negatywnymi aspektami algorytmów, ten można rozpocząć od pozytywnej wiadomości - wykrywanie społeczności nachodzących jest to temat niezwykle ciekawy, który autorów niniejszej pracy wciągnął swą złożonością, liczbą różnych możliwych podejść, a także szeroką gamą modyfikacji, którą można zastosować w pracy nad zaproponowanymi już przez kogoś metodami. Praca ta przedstawia 4 różne algorytmy, lecz jesteśmy pewni, iż skupiając się na analizie tylko jednego z nich, każdy z autorów mógłby wykonać nie mniej pracy niż przy obecnym projekcie. \\
 
+Temat społeczności nachodzących zachęca do analizy posiada dobrze zbilansowany próg wejścia do problemu. Nie jest to temat do analizy w jeden wieczór, jednak wiedza, jaką trzeba posiadać, aby zacząć analizować i modyfikować algorytmy nie stanowi bariery, której forsowanie zajmuje dużą ilosć czasu. \\
+
+W swej pracy natknęliśmy się także na problem z dostępnością danych do modyfikacji, jakie chcieliśmy zastosować. To jednak zaprowadziło nas do prostego wniosku, iż grafy znajdują się wszędzie wokół nas. W świecie social media i Internetu temat społeczności można utożsamiać z dużą ilością zbiorów danych o przeróżnych cechach i charakterystyce. Nas badania tego typu zaprowadziły w stronę dziedzin prywatnych zaintersowań, a więc koszykówki, filmu i informatyki. \\
+
+Podczas pracy odkryto, iż głównym problemem analizy społeczności nachodzących jest czas wykonania algorytmów. Większość znanych metod potrzebuje znacznej ilości czasu, aby w pełni przeanalizować graf o złożonej strukturze. Brakuje także swego rodzaju miary, która pozwala jasno sklasyfikować graf jako poprawny. Opierać można się tu tylko na intuicji, a także rozmiarze społeczności docelowych, jakie chcemy uzyskać, a także stopniu ich nachodzenia się. \\
+
+Problemem natury programistycznej jest natomiast analiza działania kodu w trakcie implementacji. W naszym przypadku dysponowaliśmy swego rodzaju wiedzą ekspercką na temat grafu NBA, jednak większość ogólnie dostępnych danych to prosty zbiór wierzchołków z etykietą w postaci numerów, a także krawędzi pomiędzy wierzchołkami. W związku z tym grafy przez nas stworzone mogą przysłużyć się przyszłej pracy nad wszelkiego rodzaju problemami dotyczącymi społeczności. \\
+
+Reasumując stwierdzamy, iż temat wyszukiwania społeczności nachodzących jest tematem bardzo ciekawym i cieszymy się z takiego wyboru tematu. Nasza wiedza w zakresie grafów, a także samych grafów społecznościowych wzrosła, a praca nad projektem sprawiła satysfakcję i radość. Nie był to projekt, do którego wracało się niechętnie. Uważamy także, że repozytorium kodu, które stworzyliśmy, może stanowić źródło dla dalszych kontrybucji i liczymy, że kod z tego projektu nie zostanie zamknięty w jednej z 'szuflad' Githuba. \\
 \newpage
 \printbibliography
 
