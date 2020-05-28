@@ -170,20 +170,7 @@ Podsumowując, graf składa się z wierzchołków, którymi są użytkownicy Git
 %-----------------------------------------------------%
 \subsection{Algorytm Girvan-Newmana}
 \subsubsection{Analiza czasowa}
-
-Algorytm Girvan-Newman jest algorytmem o dużej złożoności, co bezpośrednio przekłada się na czas jego działania. Założenie polegające na tym, iż w każdym kroku liczone są najkrótsze ścieżki pomiędzy każdą parą wierzchołków, okazało się kluczowe, jeśli patrzymy pod kątem czasu wykonania. Chcąc szybko osiągnąć wynik, wybór algorytmu Girvan-Newman nie jest wyborem najlepszym już dla społeczności rozłącznych. Rozszerzając algorytm na społeczności nachodzące (przy pomocy algorytmu CONGA z własnymi modyfikacjami) jeszcze bardziej utrudniamy pracę algorytmowi, tworząc kopie wierzchołków i rozszerzając przez to zbiór par, dla których liczone są najkrótsze ścieżki. Doskonale obrazuje to poniższy wykres.
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=\textwidth]{images/is-sample-8.png}
-\caption{Wykres czasu w zależności od liczby wierzchołków grafu}
-\end{figure}
-
-Dla grafów o liczbie wierzchołków mniejszej od 200 różnica czasu wykonania nie jest zbyt duża, bez znaczenia czy mówimy o klasycznym algorytmie Girvan-Newmana, czy którejś z modyfikacji algorytmu CONGA. Dla większych grafów różnice robią się już jednak o wiele bardziej zauważalne. Już dla grafu o liczbie wierzchołków równej 400 algorytm CONGA jest ponad 35 razy wolniejszy niż metoda Girvan-Newman. Jest to też ostatni graf, na którym udało się przebadać każdą z modyfikacji. Co prawda metoda Girvan-Newman (która przypomnijmy tylko usuwa krawędzie, nie tworząc kopii wierzchołka) poradziła sobie jeszcze z grafami o liczbie 500 i 1700 wierzchołków, to modyfikacja dla społeczności nachodzących nie zmieściła się w limitach czasowych określonych na testy. Warto też zaznaczyć, że w przypadku grafu o liczbie wierzchołków wynoszącej ponad 1700 czas wykonania metody Girvan-Newmana wyniósł niemal 25000 sekund! Jednocześnie na wykresie widać, że czasy działania obu modyfikacji są do siebie bardzo zbliżone, na co wskazuje wzajemne nakładanie się punktów. \\
-
-Dlaczego jednak algorytm CONGA nie poradził sobie z grafem mającym tylko 500 wierzchołków? W dodatku nie udało mu się zakończyć obliczeń także dla grafu mającego 370 wierzchołków. Fakt ten wynika z gęstości grafów, które zostały przebadane. W przypadku grafów gęstych parametr vertex betweennees znacznie częściej osiąga wartość większą aniżeli edge betweenness. Przez to czas wykonania algorytmu rośnie, gdyż powstają coraz to nowe wierzchołki, które są analizowane przy obliczaniu wszystkich najkrótszych ścieżek. O ile w metodzie Girvan-Newman czas wykonania pojedynczej iteracji maleje z każdą kolejną, tak dla CONGA nie mamy takiej gwarancji. Można się wręcz spodziewać, że na początku działania algorytmu, gdzie dochodzi do największej liczby kopii, efekt będzie zupełnie odwrotny. \\
-
-Reasumując, złożoność czasowa algorytmu CONGA uniemożliwia przebadanie go na bardzo dużych grafach. Jest to duży minus tego algorytmu, skutecznie uniemożliwiający wykorzystanie go na dużych zbiorach, gdyż takowe zaczynają się dla tej metody już w granicach 400 wierzchołków. Warto zwrócić również w tym wypadku uwagę na fakt gęstości grafu - na grafie gęstym algorytm może okazać się nie do wykonania w rozsądnym czasie już dla 370 wierzchołków. Jeżeli więc czas działania jest istotny dla odbiorcy (a w większości przypadków tak na pewno jest), algorytm CONGA nie sprawdzi się najlepiej. Jest on natomiast bardzo dobrą metodą szkoleniową do wykorzystania i analizy dla mniejszych i średnich grafów. \\
+Założenie polegające na tym, iż w każdym kroku liczone są najkrótsze ścieżki pomiędzy każdą parą wierzchołków okazało się kluczowe, jeśli patrzymy pod kątem czasu wykonania. Chcąc szybko osiągnąć wynik wybór algorytmu Girvan-Newman nie jest wyborem najlepszym już dla społeczności rozłącznych. Rozszerzając algorytm na społeczności nachodzące (przy pomocy algorytmu CONGA z własnymi modyfikacjami) jeszcze bardziej utrudniamy pracę algorytmowi, tworząc kopie wierzchołków i rozszerzając przez to zbiór par, dla których liczone są najkrótsze ścieżki.
 
 \subsubsection{Analiza jakościowa}
 Po wykonaniu analizy algorytmu, a przed przystąpieniem do implementacji, fakt jego wolnego działania nie został przez nikogo przyjęty ze zdziwieniem. Cechą, którą miał obronić się ten algorytm, była jakość rozwiązania. Rzeczywiście na tym polu można zauważyć, że algorytm zachowuje się o wiele lepiej z perspektywy użytkownika. Po wykonaniu pełnego przebiegu dla danego grafu i otrzymania wynikowego dendrogramu manipulacja wynikiem, którego poszukujemy, zależy już tylko od indywidualnych preferencji użytkownika.\\
@@ -222,7 +209,7 @@ Wielkość grup można określić poprzez parametr modularności (tutaj jednak n
 \caption{Wynik przy gap=5 (największa wartość modularności)}
 \end{figure}
 
-Graf przedstawiony powyżej został wygenerowany z tego samego grafu początkowego, który analizowany był na poprzednich rysunkach. Prezentowany wynik to wynik dla iteracji o największej wartości modularności. Można zauważyć, iż rezultat ten jest zbliżony do grafu, który został uzyskany przy kwantylu 0.3 dla poprzedniego sposobu wyznaczania wyniku. Parametr gap ogranicza w naszym przypadku liczbę społeczności nachodzących, jednak zachwiana jest w ten sposób tendencja parametru modularności. Przy zerowej wartości priorytetu modularność dla kolejnych iteracji maleje, tutaj tracimy tę własność. Spójrzmy na wynik uzyskany dla kwantylu 0.3.
+Graf przedstawiony powyżej został wygenerowany z tego samego grafu początkowego co grafy z rysunków 1, 2 i 3. Prezentowany wynik to wynik dla iteracji o największej wartości modularności. Można zauważyć, iż rezultat ten jest zbliżony do grafu, który został uzyskany przy kwantylu 0.3 dla poprzedniego sposobu wyznaczania wyniku. Parametr gap ogranicza w naszym przypadku liczbę społeczności nachodzących, jednak zachwiana jest w ten sposób tendencja parametru modularności. Przy zerowej wartości priorytetu modularność dla kolejnych iteracji maleje, tutaj tracimy tę własność. Spójrzmy na wynik uzyskany dla kwantylu 0.3.
 
 \begin{figure}[H]
 \centering
@@ -277,7 +264,20 @@ Na powyższym wykresie można zauważyć, że zależność czasu od ilości wier
 
 Jak szybkie potrafią być algorytmy do wykrywania społeczności pokazała implementacja przy użyciu biblioteki CUDA. Rezultat znacząco przekroczył nasze oczekiwania. Co prawda implementacja ta jest częściowo okrojona, lecz z powodzeniem można ją rozszerzać o modyfikacje zaimplementowane w wersji na CPU.\\
 
-%TODO: cuda plot
+\begin{table}[H]
+  \begin{center}
+    
+    \label{tab:table1}
+    \begin{tabular}{c|c|c|c}
+      \textbf{$|V|$} & \textbf{$|E|$} & \textbf{Czas alokacji (ms)} & \textbf{Czas obliczeń (ms)}\\
+      \hline
+      4800 & 146369 & 335 & 6\\
+      10000 & 190031 & 225 & 33 \\
+      3096951 & 2899051 & 467 & 162 \\
+    \end{tabular}
+    \caption{Wyniki czasowe algorytmu LPA zaimplementowanego przy użyciu biblioteki CUDA}
+  \end{center}
+\end{table}
 
 W podanych wynikach nie uwzględniam przebudowy reprezentacji grafu - została ona zaimplementowana naiwnie, ponieważ możemy założyć, że na wejściu otrzymujemy rządaną reprezentację. Uwzględniony został jednak czas alokacji pamięci na karcie graficznej - jest on znacząco większy od czasu obliczeń. Jego znaczenie może zostać zredukowane, gdy przetwarzamy graf kilkukrotnie, wtedy wystarczy nam jedna alokacja, na początku działania programu.
 
