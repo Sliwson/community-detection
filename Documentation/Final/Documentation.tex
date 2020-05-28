@@ -363,7 +363,17 @@ Poniżej przedstawiono wyniki algorytmu w wersji dla społeczności nachodzącyc
 \caption{Wizualizacja wersji dla społeczności nachodzących algorytmu LPA}
 \end{figure}
 
-O ile dla najmniejszego grafu otrzymane rezultaty są zadowalające, tak przy grafie średnim nie otrzymano oczekiwanych wyników. Nie udało się wyznaczyć społeczności nachodzących, a te które zostały wskazane są niewielkie, nie można wyznaczyć między nimi granic. W przypadku społeczności nachodzących nie jest łatwo przeprowadzić analizę na grafie dużym. Warto jednak zauważyć ciekawą zależność - wierzchołki łączące w sobie wiele społeczności utworzyły naturalny szkielet sturktury. Wierzchołki należące do jednej społeczności skupiły się w środku oraz na obwodzie.
+O ile dla najmniejszego grafu otrzymane rezultaty są zadowalające, tak przy grafie średnim nie otrzymano oczekiwanych wyników. Nie udało się wyznaczyć społeczności nachodzących, a te które zostały wskazane są niewielkie, nie można wyznaczyć między nimi granic. W przypadku społeczności nachodzących nie jest łatwo przeprowadzić analizę na grafie dużym. Warto jednak zauważyć ciekawą zależność - wierzchołki łączące w sobie wiele społeczności utworzyły naturalny szkielet sturktury. Wierzchołki należące do jednej społeczności skupiły się w środku oraz na obwodzie.\\
+
+Ciekawe zjawisko można zaobserwować badając grafy przetwarzane równolegle. Podwójne buforowanie wierzchołków jest wymuszone w implementacji CUDA, aby uniknąć konfliktów w dostępie do pamięci. Na CPU grafy przetwarzane są synchronicznie. Poniżej przedstawiono wizualizację dla pełnego grafu NBA:
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{images/ms-cuda.png}
+\caption{Wizualizacja wyniku działania LPA CUDA dla grafu NBA}
+\end{figure}
+
+Otrzymane rezultaty sa znacząco inne niż w wersji synchronicznej. Społeczności jest zdecydowanie więcej, część z nich 'rozciąga się' przez znaczną część grafu. Małe kliki uformowały społeczności, co jest porządanym rezultatem. Biorąc pod uwagę czas wykonania tej wersji algorytmu wyniki są bardzo zadowalające.
 
 %-----------------------------------------------------%
 %OCDLCE
