@@ -89,7 +89,20 @@ Zaimplementowano prostą wersję algorytmu używającej technologi CUDA. Impleme
 %-----------------------------------------------------%
 \subsection{Overlapping Community Detection by Local Community Expansion}
 \subsubsection{Implementacja}
+
+Algorytm OCDLCE został w pełni własnoręcznie zaimplementowany. W celu łatwiejszych modyfikacji został on podzielony na 3 funkcje, odpowiadające jego krokom. Dwa pierwsze kroki zwracają graf oraz listę społeczności, zaś 
+trzeci jedynie końcowy graf. \\
+
+W pierwszym kroku po kolei rozpatruje się wszystkie wierzchołki, a potem dla wybranego wierzchołka wszystkich jego sąsiadów, z którymi nie jest jeszcze w jednej społeczności. Potem zgodnie z algorytmem sprawdza się wspólnych sąsiadów i po zbadaniu modularności ewentualnie dodaje do tymczasowej społeczności. W przypadku gdy osiągnęła ona minimum 5 wierzchołków aktualizuje się zarówno informacje w wierzchołkach o przynależności do społeczności jak i listę wszystkich społeczności.\\
+
+W drugim kroku łączy się społeczności. Napisano w tym celu specjalną funkcję Union, która za pomocą wyliczenia $WOS$ definiuje czy społeczności powinny być złączone. \\
+
+W ostatnim kroku rozpatruje się wierzchołki nie należące do żadnej społeczności. W przypadku, gdy nie mają żadnej społeczności, rozpatruje się wszystkie społeczności sąsiadów, liczy modularność i w pozytywnym przypadku dodaje się rozpatrywany wierzchołek do danej społeczności.
+
 \subsubsection{Podjęte decyzje}
+Do pierwszego i trzeciego kroku dodano możliwość podania innej miary lokalnej modularności. W wersji podstawowej użyto modularności M, opisanej wzorem:\\ $M_in = \frac{M_in}{M_out}$ \\ zaś powyższa modyfikacja umożliwia zamiast tego skorzystanie z modularności f, opisanej wzorem:\\ $f_G = \frac{k^G_in}{(k^G_in + k^G_out)^\alpha}$\\, gdzie $k^G_in$ jest dwukrotnością liczby krawędzi o obu końcach w G, $k^G_out$ liczbą krawędzi o jednym końcu w G, zaś alpha parametrem. \\
+
+Kolejną modyfikacją była zmiana sposobu wyznaczania lokalnych społeczności w pierwszym kroku algorytmu. Zamiast każdej pary wierzchołków niebędących w społeczności, można rozpatrywać trójkę. Podejście to sprawia, że w pierwszym kroku uzyskuje się mniej początkowych społeczności, ale za to mocniej ze sobą związanych. Posiada ono jednak pewną wadę, zazwyczaj niepomijalna część wierzchołków o małej liczbie sąsiadów nie ma przypisanej żadnej społeczności.
 
 %-----------------------------------------------------%
 %Louvain
