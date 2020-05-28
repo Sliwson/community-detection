@@ -190,7 +190,45 @@ W podanych wynikach nie uwzględniam przebudowy reprezentacji grafu - została o
 
 \subsubsection{Analiza jakościowa}
 
-Analizę jakościową rozpoczniemy od porównania z implementacją wbudowaną w bibliotekę igraph.
+Analizę jakościową rozpoczniemy od porównania z implementacją wbudowaną w bibliotekę igraph. Do analizy użyto grafów z listy wspólnych grafów testowych.	
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{images/ms-build-lpa-0.png}
+\caption{Wizualizacja wyniku działania algorytmu LPA w bibliotece igraph}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{images/ms-build-lpa-2.png}
+\caption{Wizualizacja wyniku działania algorytmu LPA w bibliotece igraph}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{images/ms-build-nba.png}
+\caption{Wizualizacja wyniku działania algorytmu LPA w bibliotece igraph}
+\end{figure}
+
+Można zaobserwować, że algorytm przy gęstych grafach tworzy mało bardzo dużych społeczności. We własnej implementacji, przy ograniczeniu liczby iteracji do 6 uzyskujemy rezultat bardziej zrównoważony:
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{images/ms-lpa-0.png}
+\caption{Wizualizacja wyniku działania własnej implementacji algorytmu LPA}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{images/ms-lpa-2.png}
+\caption{Wizualizacja wyniku działania własnej implementacji algorytmu LPA}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{images/ms-nba.png}
+\caption{Wizualizacja wyniku działania własnej implementacji algorytmu LPA}
+\end{figure}
 
 %-----------------------------------------------------%
 %OCDLCE
