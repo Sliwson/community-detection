@@ -140,7 +140,9 @@ Podsumowując, wierzchołki uzyskanego grafu stanowią polscy aktorzy, pobrani z
 \subsubsection{Analiza czasowa}
 Złożoność czasowa, podobnie jak w przypadku pozostałych algorytmów, została przeanalizowana za pomocą standardowego zbioru przykładów.
 
-Pododbnie jak w przypad
+Podobnie jak w przypadku algorytmu LPA implementacja algorytmu z biblioteki igraph osiąga zdecydowanie lepsze czasy. Jednak wciąż algorytm zaimplementowany przez nas jest w stanie w sensownym czasie zakończyć działanie nawet dla grafu o liczbie wierzchołków równej kilka tysięcy. Po wykresie można zauważyć co prawda, że niestety nie udało się zachować złożoności $n\log{n}^2$. Powodem była konieczność przeliczania parametru $k_{in}$. Podjęte zostały  próby przerobienia algorytmu, by wartości nie były wyliczane od nowa w każdej iteracji, a jedynie uaktualniane, niestety okazały się one bezowocne.
+
+
 \subsubsection{Analiza jakościowa}
 
 %-----------------------------------------------------%
