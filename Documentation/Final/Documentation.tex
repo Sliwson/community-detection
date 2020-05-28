@@ -233,7 +233,7 @@ Poniżej przedstawiono wyniki analizy czasowej dla standardowego zbioru przykła
 
 Algorytm LPA, zgodnie z oczekiwaniami, okazał się być algorytmem wystarczająco szybkim, aby przeprowadzić obliczenia na wszystkich zbiorach danych w projekcie. Z wyników można odczytać, że implementacja biblioteczna jest nieporównywalnie szybsza od implementacji własnej dla dużych zbiorów danych. Jedną z przyczyn takich wyników, może być fakt, że backend biblioteki igraph jest napisany w języku C, gdzie dostęp do elementów grafu jest dużo szybszy niż przy użyciu dodatkowej warstwy abstrakcji. Innym powodem może być nieświadome użycie w implementacji operacji, która zmusza bibliotekę do przebudowania struktury grafu. Niestety, podczas analizy kodu źródłowego rozwiązania, nie udało się znaleźć źródła problemu.\\
 
-Na powyższym wykresie można zauważyć, że zależność czasu od ilości wierzchołków jest liniowa. Pomiarem, który zdecydowanie odbiegł od oczekiwań, jest pomiar dla największego grafu przy modyfikacji związanej z datami. Prawdopodobna przyczyna wiąże się z tym, że algorytm z modyfikacją podczas rozpatrzania remisu tworzy tablice pomocnicze oraz oblicza dla nich odchylenie standardowe. W przypadku grafu gęstego remisy występują często, co skutecznie spowolniło działanie programu.\\
+Na powyższym wykresie można zauważyć, że zależność czasu od ilości wierzchołków jest liniowa. Pomiarem, który zdecydowanie odbiegł od oczekiwań, jest pomiar dla największego grafu przy modyfikacji związanej z datami. Prawdopodobna przyczyna wiąże się z tym, że algorytm z modyfikacją podczas rozpatrywania remisu tworzy tablice pomocnicze oraz oblicza dla nich odchylenie standardowe. W przypadku grafu gęstego remisy występują często, co skutecznie spowolniło działanie programu.\\
 
 Jak szybkie potrafią być algorytmy do wykrywania społeczności pokazała implementacja przy użyciu biblioteki CUDA. Rezultat znacząco przekroczył nasze oczekiwania. Co prawda implementacja ta jest częściowo okrojona, lecz z powodzeniem można ją rozszerzać o modyfikacje zaimplementowane w wersji na CPU.
 
@@ -260,6 +260,37 @@ Podobnie jak w przypadku algorytmu LPA implementacja algorytmu z biblioteki igra
 
 
 \subsubsection{Analiza jakościowa}
+	Analiza jakościowa wyników zaimplementowanego algorytmu wypada z kolei zdecydowanie bardziej optymistycznie. Została przeprowadzona na  podgrafach grafu przedstawiającego połączenia pomiędzy zawodnikami NBA (wszystkie podgrafy wykorzystują ilość lat od pierwszego wspólnego wystąpienia jako wagę krawędzi). 
+\\ Pierwszym  był podgraf składający się z zawodników grających w drużynach All-Star z ostatnich 4 lat:
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{images/pw_img1.png}
+\caption{Wizualizacja wyniku działania algorytmu}
+\end{figure}
+
+W celu dokładnego zbadania jakości wyniku posłużyliśmy się wartością modularności ($Q= \frac{1}{2m} \sum\limits_{ij} [A_{ij} - \frac{d_i d_j}{2m}]\delta(s_i,s_j)$). Dla 5 różnych przebiegów (pamiętając, że algorytm jest niedeterministyczny) osiągnęliśmy następujące wartości: 0.63909, 0.63779, 0.63779, 0.63909, 0.63236. W porównaniu z wartością modularności, którą osiąga algorytm z biblioteki igraph: 0.59064, możemy stwierdzić że wyniki naszego algorytmu dla małych grafów (do 100 wierzchołków) wypadają bardzo dobrze. Ponadto, pomimo niedeterminizmu, są dosyć porównywalne. Dla potwierdzenia spójrzmy jeszcze na wartości dla podgrafu składającego się z zawodników z ostatnich 10 drużyn All-Star: 0.42936, 0.41937, 0.44528, 0.44048, 0.42730, 0.43560 i wynik  dla algorytmu bibliotecznego: 0.40900.
+\\ \\ 
+Rozważmy więc graf o większej ilości wierzchołków. Grafem, który będziemy rozważać, będzie podgraf składający się z 500 zawodników NBA:
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{images/pw_img2.png}
+\caption{Wizualizacja fragmentu wyniku działania algorytmu dla grafu o 500 wierzchołkach}
+\end{figure}
+
+W celu głębszej analizy spójrzmy na odchylenie standardowe modularności obliczonych dla 15 wywołań algorytmu: 0.0186 oraz wartość średnią tych modularności: 0.39502. Porównując to z wartością uzyskaną przez algorytm z bibliotek igraph: 0.44497 zauważamy, że dla większych grafów (a przynajmniej dla tego podgrafu) nasz algorytm nieznacznie przegrywa z bibliotecznym. Patrząc jednak na wartość największą z 15 przebiegów: 0.41930 różnica nie jest tak duża.
+
+\\\\
+Ostatnim grafem, który rozpatrzymy w przypadku społeczności rozłącznych będzie pełen graf NBA. 	
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{images/pw_img3.png}
+\caption{Wizualizacja wyniku działania algorytmu dla grafu NBA}
+\end{figure}
+\\
+Wynik algorytmu jest bardzo trudny, a nawet niemożliwy, do analizy na podstawie wizualizacji, więc spójrzmy na wartość modularności: dla naszej implementacji wynosi ona 0.57375, a dla algorytmu bibliotecznego: 0.58668. Wartość jest więc nieznacznie niższa, ale dalej bliska tej od sprawdzonej implementacji.
 
 %-----------------------------------------------------%
 %Porównanie
