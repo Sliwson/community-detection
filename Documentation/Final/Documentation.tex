@@ -221,7 +221,7 @@ Wielkość grup można określić poprzez parametr modularności (tutaj jednak n
 \caption{Wynik przy gap=5 (największa wartość modularności)}
 \end{figure}
 
-Graf przedstawiony powyżej został wygenerowany z tego samego grafu początkowego co grafy z rysunków 1, 2 i 3. Prezentowany wynik to wynik dla iteracji o największej wartości modularności. Można zauważyć, iż rezultat ten jest zbliżony do grafu, który został uzyskany przy kwantylu 0.3 dla poprzedniego sposobu wyznaczania wyniku. Parametr gap ogranicza w naszym przypadku liczbę społeczności nachodzących, jednak zachwiana jest w ten sposób tendencja parametru modularności. Przy zerowej wartości priorytetu modularność dla kolejnych iteracji maleje, tutaj tracimy tę własność. Spójrzmy na wynik uzyskany dla kwantylu 0.3.
+Graf przedstawiony powyżej został wygenerowany z tego samego grafu początkowego, który analizowany był na poprzednich rysunkach. Prezentowany wynik to wynik dla iteracji o największej wartości modularności. Można zauważyć, iż rezultat ten jest zbliżony do grafu, który został uzyskany przy kwantylu 0.3 dla poprzedniego sposobu wyznaczania wyniku. Parametr gap ogranicza w naszym przypadku liczbę społeczności nachodzących, jednak zachwiana jest w ten sposób tendencja parametru modularności. Przy zerowej wartości priorytetu modularność dla kolejnych iteracji maleje, tutaj tracimy tę własność. Spójrzmy na wynik uzyskany dla kwantylu 0.3.
 
 \begin{figure}[H]
 \centering
@@ -291,7 +291,7 @@ Jak szybkie potrafią być algorytmy do wykrywania społeczności pokazała impl
   \end{center}
 \end{table}
 
-W podanych wynikach nie uwzględniam przebudowy reprezentacji grafu - została ona zaimplementowana naiwnie, ponieważ możemy założyć, że na wejściu otrzymujemy rządaną reprezentację. Uwzględniony został jednak czas alokacji pamięci na karcie graficznej - jest on znacząco większy od czasu obliczeń. Jego znaczenie może zostać zredukowane, gdy przetwarzamy graf kilkukrotnie, wtedy wystarczy nam jedna alokacja, na początku działania programu. Patrząc na wyniki wnioski nasuwają się same - przy sieciach o rozmiarach rzędu milionów wierzchołków i krawędzi, ta implementacj sprawdzi się zdecydowanie najlepiej.
+W podanych wynikach nie uwzględniam przebudowy reprezentacji grafu - została ona zaimplementowana naiwnie, ponieważ możemy założyć, że na wejściu otrzymujemy żądaną reprezentację. Uwzględniony został jednak czas alokacji pamięci na karcie graficznej - jest on znacząco większy od czasu obliczeń. Jego znaczenie może zostać zredukowane, gdy przetwarzamy graf kilkukrotnie, wtedy wystarczy nam jedna alokacja, na początku działania programu. Patrząc na wyniki wnioski nasuwają się same - przy sieciach o rozmiarach rzędu milionów wierzchołków i krawędzi, ta implementacja sprawdzi się zdecydowanie najlepiej.
 
 \subsubsection{Analiza jakościowa}
 
