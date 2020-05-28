@@ -147,6 +147,12 @@ Podsumowując, wierzchołki uzyskanego grafu stanowią polscy aktorzy, pobrani z
 %Github
 %-----------------------------------------------------%
 \subsection{GitHub}
+W dzisiejszych czasach GitHub jest narzędziem używanym przez niemal
+wszystkich ludzi, mających choćby podstawowe doświadczenie z programowaniem. W znaczący sposób ułatwia on pracę nad projektem w wieloosobowych zespołach, jak i jest wizytówką użytkownika. Może też stanowić źródło bardzo ciekawych danych, udostępnia informację kto z kim pracował przy publicznych projektach. Dane te są całkiem łatwo dostępne za pośrednictwem api, problemem był jednak limit 5000 requestów na godzinę, przez co największy z otrzymanych grafów ma 1391 wierzchołków i 21695 krawędzi.
+
+Do uzyskania grafu napisany został specjalny skrypt w języku Python, który przyjmuje początkowego użytkownika, a następnie w pętli dodaje na stos wszystkich innych użytkowników, z którymi wybrana osoba współpracowała przy danym projekcie, dodaje krawędź między rozpatrywaną osobą, a innym użytkownikiem i rozpatruje kolejną osobę ze stosu
+
+Podsumowując, graf składa się z wierzchołków, którymi są użytkownicy GitHuba i krawędzi znajdujących się między tymi użytkownikami, którzy współpracowali ze sobą w publicznym repozytorium. Warty odnotowania jest fakt, że do krawędzi można dodać wagę taką jak data ostatniej edycji repozytorium, czy liczba wspólnych commitów obu użytkowników.
 
 %-----------------------------------------------------%
 %Wyniki
