@@ -28,7 +28,7 @@
 %Wstęp
 %-----------------------------------------------------%
 \section{Wstęp}
-Problem wykrywania społeczności w sieciach okazał się być bardzo ciekawym, a jendocześnie przystępnym zagadnieniem. W ramach poniższego opracowania przedstawiamy opis czterech zaimplementowanych przez nas algorytmów wraz z modyfikacjami, informacje na temat zebranych przez nas danych oraz wyniki działania. Postaramy się przybliżyć jakie problemy napotkaliśmy podczas pracy, czy otrzymane rezultaty są zgodne z oczekiwaniami przedstawionymi w dokumentacji wstępnej oraz jakie wnioski można wyciągnąć po przeprowadzonych eksperymentach.
+Problem wykrywania społeczności w sieciach okazał się być bardzo ciekawym, a jednocześnie przystępnym zagadnieniem. W ramach poniższego opracowania przedstawiamy opis czterech zaimplementowanych przez nas algorytmów wraz z modyfikacjami, informacje na temat zebranych przez nas danych oraz wyniki działania. Postaramy się przybliżyć jakie problemy napotkaliśmy podczas pracy, czy otrzymane rezultaty są zgodne z oczekiwaniami przedstawionymi w dokumentacji wstępnej oraz jakie wnioski można wyciągnąć po przeprowadzonych eksperymentach.
 
 %-----------------------------------------------------%
 %Algorytmy
@@ -52,7 +52,7 @@ Chcąc odtworzyć rozwiązanie dla danego kroku z dendrogramu wyjściowego, koni
 Wynik działania funkcji musiał jeszcze zostać zmodyfikowany w celu uzyskania najlepszego wyniku dla badanego grafu. Dzięki temu opierając się na współczynniku modularności określana była wartość docelowa dla danego grafu (więcej na temat w kolejnej sekcji). Następnie z wyjściowego dendrogramu graf był odtwarzany do kroku, któremu odpowiadał użyty parametr modularności. Kolejną część stanowiła modyfikacja takiego grafu do wizulizacji - konieczne było tutaj połączenie wszystkich kopii wierzchołków, przy zachowaniu odpowiednich numerów społeczności.
 
 \subsubsection{Podjęte decyzje}
-Pierwszą decyzję, jaką należało podjąć przy implementacji algorytmu, był wybór sposobu obliczania modularności. Miara ta jest jasno określona przez autorów oryginalnego algorytmu Girvan-Newman, lecz przy modyfikacjach dla społeczności nachodzących nie dysponujemy tego typu wzorem. Wobec tego jako miara modularności został wybrany tutaj wskaźnik użyty w przypadku algorytmu OCDLCE, który został odpowiednio dostosowany do algorytmu CONGA. Miara ta skupiona jest na jednej społeczności lokalnej, natomiast w opisywanym przypadku należało ją określić dla całego grafu. Wobec czego była ona wyliczana dla każdej uzyskanej społeczności, a następnie aby określić modularność dla całego grafu, posłożono się średnią arytmetyczną z uzyskanych wartości. \\
+Pierwszą decyzję, jaką należało podjąć przy implementacji algorytmu, był wybór sposobu obliczania modularności. Miara ta jest jasno określona przez autorów oryginalnego algorytmu Girvan-Newman, lecz przy modyfikacjach dla społeczności nachodzących nie dysponujemy tego typu wzorem. Wobec tego jako miara modularności został wybrany tutaj wskaźnik użyty w przypadku algorytmu OCDLCE, który został odpowiednio dostosowany do algorytmu CONGA. Miara ta skupiona jest na jednej społeczności lokalnej, natomiast w opisywanym przypadku należało ją określić dla całego grafu. Wobec czego była ona wyliczana dla każdej uzyskanej społeczności, a następnie aby określić modularność dla całego grafu, posłużono się średnią arytmetyczną z uzyskanych wartości. \\
 
 Kolejny ważny wybór dotyczący modularności opierał się na wyborze tej wartości, dla której uzyskany wynik jest najlepszy. Założenie początkowe miary z OCDLCE opierało się na tym, iż rezultat jest najlepszy wtedy, gdy największa jest wartość tego parametru. W wypadku algorytmu CONGA również można skorzystać z takowego założenia, jednak nie można zapominać o plusach tego algorytmu, a więc łatwego odzyskiwania społeczności wynikowych w zależności od preferencji co do ich rozmiaru/kształtu. Aby to umożliwić, zdecydowano się na wybór maksimów lokalnych dla całej tablicy wartości modularności. Następnie z wybranych wartości dokonywano wyboru wartości wynikowej na podstawie określonego na wejściu kwantylu. Tą wartością można już było manipulować - im mniejsza jej wartość tym bardziej wynikowa społeczność była rozrzedzona. I analogicznie - chcąc otrzymać podział na większe grupy należało zwiększyć tę wartość.\\
 
@@ -72,7 +72,7 @@ Usuwanie krawędzi w trakcie działania algorytmu dokonywano zbiorowo - wszystki
 
 Wersja podstawowa algorytmu Label Propagation była już zaimplementowana w bibliotece igraph. Pozostało jedynie dostosowanie jej wyniku tak, aby dało się go zwizualizować za pomocą naszej warstwy prezentacji. Jako że dalsze modyfikacje opierały się na tej wersji, konieczne okazało się również zaimplementowanie jej w naszym projekcie od podstaw.\\
 
-Posiadając już podstawową wersję algorytmu pozostało zmodyfikować ją tak, aby była ona w stanie wykrywać społeczności nachodzące. Zgodnie z dokumentacją początkową wprowadzono parametr, określający maksymalną liczbę społeczności, do której może przynależeć wierzchołek i zmodyfikowano krok algorytmu tak, aby był w stanie przypisać rozpatrzanemu wierzchołkowi więcej niż jedną społeczność.\\
+Posiadając już podstawową wersję algorytmu pozostało zmodyfikować ją tak, aby była ona w stanie wykrywać społeczności nachodzące. Zgodnie z dokumentacją początkową wprowadzono parametr, określający maksymalną liczbę społeczności, do której może przynależeć wierzchołek i zmodyfikowano krok algorytmu tak, aby był w stanie przypisać rozpatrywanemu wierzchołkowi więcej niż jedną społeczność.\\
 
 W ramach tego opracowania nie udało się wprowadzić modyfikacji z parametrem znormalizowanym. Okazało się jednak, że kroki z innych algorytmów można połączyć z algorytmem LPA. Tak więc wykorzystano krok pierwszy algorytmu OCDLCE do inicjalizacji początkowych społeczności algorytmu LPA. Korzystając z faktu, że algorytm LPA jest niedeterministyczny, można było również użyć ostatniego kroku algorytmu Louvein do połączenia kilku rozwiązań rozłącznych w takie, gdzie społeczności są nachodzące.\\
 
@@ -118,7 +118,7 @@ Celem algorytmu jest skonstruowanie macierzy przynależności. Jest to macierz $
 Następnie wywołujemy algorytm dla społeczności rozłącznych określoną ilość razy. Po każdym przebiegu wynikowa tablica jest tłumaczona, tak by społeczności odpowiadające tym w tablicy z oryginalnego przebiegu miały ten sam numer. W tym celu dla każdej społeczności znajdowana jest taka, w której ilość pokrywających się wierzchołków jest największa. Następnie macierz przynależności jest aktualizowana, analogicznie jak po początkowym przebiegu.\\ 
 Po wykonaniu założonych przebiegów, macierz przynależności jest normalizowana (tak by suma współczynników dla każdego wierzchołka wynosiła 1). Następnie każdemu wierzchołkowi przydzielane są społeczności, dla których współczynnik przynależności przekroczył wartość progową (obliczaną na podstawie parametru funkcji). Współczynniki dla społeczności, które nie przekroczyły wartości progowej są zerowane, a macierz znów jest normalizowana. Jeżeli wierzchołek dla wszystkich społeczności ma współczynnik 0 (tzn. jest wyizolowany), to jest on przydzielany do swojej społeczności. Jeżeli dla wierzchołka, żaden ze współczynników nie przekroczy wartości progowej, to umieszczany jest on w społeczności z największym współczynnikiem. Jest to rozwiązanie na swój sposób prowizoryczne. Takie wierzchołki mogą być bowiem czasami łącznikami pomiędzy społecznościami i w takich sytuacjach wypadałoby umieścić je we wszystkich społecznościach. Jest to jednak problem, który nie został poruszony w tej implementacji i może być obiektem usprawnień w przyszłości.
 \subsubsection{Podjęte decyzje}
-Metoda dla społeczności nachodzących opisana w artykule "A Fast Algorithm for Overlapping Community Detection" \cite{pw-paper3}, zakładała obecność jeszcze jednego kroku, którego celem miała być ogólna poprawa jakości wyniku. Metoda ta opierała się jednak na modularności Nicosii \cite{pw-paper2}, której obliczenie jest na tyle kosztowne, że zwiększa złożoność algorytmu do $n^3$. Z racji, że zdecydowanie pogorszyło by to czas obliczeń i negatywnie wpłynęło na możliwość wielokrotnego testowania (zwłaszcza dla grafów o kilku tysiącach wierzchołków), a także biorąc pod uwagę fakt, że wyniki bez tego kroku były zadowalające, postanowiliśmy z niego zrezygnować.\\\ Dodatkową modyfikacją jest możliwość przekazywania  opcjonalnego parametru do wywołania funkcji $louvain\_ algorithm$. Parametr ten wpływa na to jak bardzo element $\frac{\Sigma_{tot}*k_i}{2m^2}$ wpływa na zmianę modularności. Dla wartości mniejszych promuje on powstawanie niewielu, rozległych społeczności, a dla większych - powstawanie wielu drobniejszych społeczności. Najlepsze wartości modularności uzyskiwane są co prawda dla wartości 1, ale parametr pozwala na dostosowywanie wyniku do naszych oczekiwań, przy nieznacznych stratach na jakości.
+Metoda dla społeczności nachodzących opisana w artykule "A Fast Algorithm for Overlapping Community Detection" \cite{pw-paper3}, zakładała obecność jeszcze jednego kroku, którego celem miała być ogólna poprawa jakości wyniku. Metoda ta opierała się jednak na modularności Nicosii \cite{pw-paper2}, której obliczenie jest na tyle kosztowne, że zwiększa złożoność algorytmu do $n^3$. Z racji, że zdecydowanie pogorszyło by to czas obliczeń i negatywnie wpłynęło na możliwość wielokrotnego testowania (zwłaszcza dla grafów o kilku tysiącach wierzchołków), a także biorąc pod uwagę fakt, że wyniki bez tego kroku były zadowalające, postanowiliśmy z niego zrezygnować.\\\ Dodatkową modyfikacją jest możliwość przekazywania  opcjonalnego parametru do wywołania funkcji $louvain\_ algorithm$. Parametr ten wpływa na to jak bardzo element $\frac{\Sigma_{tot}*k_i}{2m^2}$ wpływa na zmianę modularności. Dla wartości mniejszych promuje on powstawanie niewielu rozległych społeczności, a dla większych - powstawanie wielu drobniejszych społeczności. Najlepsze wartości modularności uzyskiwane są co prawda dla wartości 1, ale parametr pozwala na dostosowywanie wyniku do naszych oczekiwań, przy nieznacznych stratach na jakości.
 
 %-----------------------------------------------------%
 %Dane testowe
@@ -139,9 +139,9 @@ Graf, który uzyskaliśmy, składa się z 4800 wierzchołków. Każdy wierzchoł
 %Filmweb
 %-----------------------------------------------------%
 \subsection{Filmweb}
-Poszukując parametru daty zawarcia znajomości zwróciliśmy się także ku innej części branży rozrywkowej. Źrodło danych w tym wypadku stanowił portal filmweb.pl, który dysponuje ogromną bazą danych na temat aktorów i filmów. Skala tych danych jest tak duża, iż musieliśmy ograniczyć nasze prace tylko do polskich aktorów. W ten sposób uzyskaliśmy graf z 10 000 wierzchołków i 190031 krawędziami.\\
+Poszukując parametru daty zawarcia znajomości zwróciliśmy się także ku innej części branży rozrywkowej. Źródło danych w tym wypadku stanowił portal filmweb.pl, który dysponuje ogromną bazą danych na temat aktorów i filmów. Skala tych danych jest tak duża, iż musieliśmy ograniczyć nasze prace tylko do polskich aktorów. W ten sposób uzyskaliśmy graf z 10 000 wierzchołków i 190031 krawędziami.\\
 
-Sposób uzyskania danych był analogiczny do tego prezentowanego w przypadku grafu NBA. Skonstruowany w języku JavaScript scraper został wykorzystany do przejrzenia listy wszystkich polskich aktorów, by następnie dla każdego z nich znaleźć listę kolegów z branży, z którymi najczęśniej występował w jednym filmie. Ten zbiór uczyniliśmy znajomymi badanego aktora. Datę zawarcia znajomości w tym wypadku stanowiła data premiery pierwszego filmu/serialu, w którym dana dwójka ze sobą wystąpiła. Dodatkowo na prośbę prowadzącego zbiór danych uzupełniony został o liczbę filmów, w których dana dwójka wspólnie występowała. Informacja ta okazała się również przydatna w modyfikacji jednego z algorytmów.\\
+Sposób uzyskania danych był analogiczny do tego prezentowanego w przypadku grafu NBA. Skonstruowany w języku JavaScript scraper został wykorzystany do przejrzenia listy wszystkich polskich aktorów, by następnie dla każdego z nich znaleźć listę kolegów z branży, z którymi najczęściej występował w jednym filmie. Ten zbiór uczyniliśmy znajomymi badanego aktora. Datę zawarcia znajomości w tym wypadku stanowiła data premiery pierwszego filmu/serialu, w którym dana dwójka ze sobą wystąpiła. Dodatkowo na prośbę prowadzącego zbiór danych uzupełniony został o liczbę filmów, w których dana dwójka wspólnie występowała. Informacja ta okazała się również przydatna w modyfikacji jednego z algorytmów.\\
 
 Podsumowując, wierzchołki uzyskanego grafu stanowią polscy aktorzy, pobrani z ogólnodostępnej bazy filmweb. Dwaj aktorzy są ze sobą w relacji, jeśli jeden z nich znajduje się w zakładce 'najczęściej występował z ...' u drugiego. Motywację wyboru tego grafu jako testowego stanowiło ogólne zainteresowanie branżą filmową autorów pracy, a także ogólna dostępność danych. Sama etykietyzacja wierzchołków pozwoliła nam łatwiej oceniać poprawność działania algorytmów - zwłaszcza w początkowej fazie implementacji z wykorzystaniem tylko małych zbiorów danych.
 
@@ -269,7 +269,7 @@ Poniżej przedstawiono wyniki analizy czasowej dla standardowego zbioru przykła
 
 Algorytm LPA, zgodnie z oczekiwaniami, okazał się być algorytmem wystarczająco szybkim, aby przeprowadzić obliczenia na wszystkich zbiorach danych w projekcie. Z wyników można odczytać, że implementacja biblioteczna jest nieporównywalnie szybsza od implementacji własnej dla dużych zbiorów danych. Jedną z przyczyn takich wyników, może być fakt, że backend biblioteki igraph jest napisany w języku C, gdzie dostęp do elementów grafu jest dużo szybszy niż przy użyciu dodatkowej warstwy abstrakcji. Innym powodem może być nieświadome użycie w implementacji operacji, która zmusza bibliotekę do przebudowania struktury grafu. Niestety, podczas analizy kodu źródłowego rozwiązania, nie udało się znaleźć źródła problemu.\\
 
-Na powyższym wykresie można zauważyć, że zależność czasu od ilości wierzchołków jest liniowa. Pomiarem, który zdecydowanie odbiegł od oczekiwań, jest pomiar dla największego grafu przy modyfikacji związanej z datami. Prawdopodobna przyczyna wiąże się z tym, że algorytm z modyfikacją podczas rozpatrzania remisu tworzy tablice pomocnicze oraz oblicza dla nich odchylenie standardowe. W przypadku grafu gęstego remisy występują często, co skutecznie spowolniło działanie programu.\\
+Na powyższym wykresie można zauważyć, że zależność czasu od ilości wierzchołków jest liniowa. Pomiarem, który zdecydowanie odbiegł od oczekiwań, jest pomiar dla największego grafu przy modyfikacji związanej z datami. Prawdopodobna przyczyna wiąże się z tym, że algorytm z modyfikacją podczas rozpatrywania remisu tworzy tablice pomocnicze oraz oblicza dla nich odchylenie standardowe. W przypadku grafu gęstego remisy występują często, co skutecznie spowolniło działanie programu.\\
 
 Jak szybkie potrafią być algorytmy do wykrywania społeczności pokazała implementacja przy użyciu biblioteki CUDA. Rezultat znacząco przekroczył nasze oczekiwania. Co prawda implementacja ta jest częściowo okrojona, lecz z powodzeniem można ją rozszerzać o modyfikacje zaimplementowane w wersji na CPU.
 
@@ -396,8 +396,65 @@ Otrzymane rezultaty sa znacząco inne niż w wersji synchronicznej. Społecznoś
 %-----------------------------------------------------%
 \subsection{Algorytm Louvain}
 \subsubsection{Analiza czasowa}
-\subsubsection{Analiza jakościowa}
+Złożoność czasowa, podobnie jak w przypadku pozostałych algorytmów, została przeanalizowana za pomocą standardowego zbioru przykładów.
 
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{images/pw-louvein-time.png}
+\caption{Wynik analizy czasowej algorytmu Louvain}
+\end{figure}
+
+Podobnie jak w przypadku algorytmu LPA implementacja algorytmu z biblioteki igraph osiąga zdecydowanie lepsze czasy. Jednak wciąż algorytm zaimplementowany przez nas jest w stanie w sensownym czasie zakończyć działanie nawet dla grafu o liczbie wierzchołków rzędu kilku tysięcy. Wykres wskazuje co prawda, że  że niestety nie udało się zachować złożoności $n\log{n}^2$. Powodem była konieczność przeliczania parametru $k_{in}$. Podjęte zostały  próby przerobienia algorytmu, by wartości nie były wyliczane od nowa w każdej iteracji, a jedynie uaktualniane, niestety okazały się one bezowocne. W przypadku wywołań wykorzystujących zmodyfikowaną wartość parametru $param$ możemy zauważyć, że wywołania promujące mniejszą ilość społeczności są nieznacznie szybsze (ok 50s dla 1768 wierzchołków, w porównaniu do ok 53s). Jest to spowodowane tym, że w każdym kroku bardziej zmniejsza się ilość wierzchołków. Analogicznie wywołanie promujące mniejsze społeczności trwa nieznacznie dłużej (ok 56s dla 1768 wierzchołków).
+ 
+\\ Wersja dla społeczności nachodzących wypada dość podobnie do standardowej, gdyż jest to kilkukrotne wywołanie standardowej wersji wraz z analizą wyniku.
+
+\subsubsection{Analiza jakościowa}
+	Analiza jakościowa wyników zaimplementowanego algorytmu wypada z kolei zdecydowanie bardziej optymistycznie. Została przeprowadzona na  podgrafach grafu przedstawiającego połączenia pomiędzy zawodnikami NBA (wszystkie podgrafy wykorzystują ilość lat od pierwszego wspólnego wystąpienia jako wagę krawędzi). 
+\\ Pierwszym  był podgraf składający się z zawodników grających w drużynach All-Star z ostatnich 4 lat:
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{images/pw_img1.png}
+\caption{Wizualizacja wyniku działania algorytmu}
+\end{figure}
+
+W celu dokładnego zbadania jakości wyniku posłużyliśmy się wartością modularności ($Q= \frac{1}{2m} \sum\limits_{ij} [A_{ij} - \frac{d_i d_j}{2m}]\delta(s_i,s_j)$). Dla 5 różnych przebiegów (pamiętając, że algorytm jest niedeterministyczny) osiągnęliśmy następujące wartości: 0.63909, 0.63779, 0.63779, 0.63909, 0.63236. W porównaniu z wartością modularności, którą osiąga algorytm z biblioteki igraph: 0.59064, możemy stwierdzić że wyniki naszego algorytmu dla małych grafów (do 100 wierzchołków) wypadają bardzo dobrze. Ponadto, pomimo niedeterminizmu, są dosyć porównywalne. Dla potwierdzenia spójrzmy jeszcze na wartości dla podgrafu składającego się z zawodników z ostatnich 10 drużyn All-Star: 0.42936, 0.41937, 0.44528, 0.44048, 0.42730, 0.43560 i wynik  dla algorytmu bibliotecznego: 0.40900.
+\\ \\ 
+Rozważmy więc graf o większej ilości wierzchołków. Grafem, który będziemy rozważać, będzie podgraf składający się z 500 zawodników NBA:
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{images/pw_img2.png}
+\caption{Wizualizacja fragmentu wyniku działania algorytmu dla grafu o 500 wierzchołkach}
+\end{figure}
+
+W celu głębszej analizy spójrzmy na odchylenie standardowe modularności obliczonych dla 15 wywołań algorytmu: 0.0186 oraz wartość średnią tych modularności: 0.39502. Porównując to z wartością uzyskaną przez algorytm z bibliotek igraph: 0.44497 zauważamy, że dla większych grafów (a przynajmniej dla tego podgrafu) nasz algorytm nieznacznie przegrywa z bibliotecznym. Patrząc jednak na wartość największą z 15 przebiegów: 0.41930 różnica nie jest tak duża.
+
+\\\\
+Ostatnim grafem, który rozpatrzymy w przypadku społeczności rozłącznych będzie pełen graf NBA. 	
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{images/pw_img3.png}
+\caption{Wizualizacja wyniku działania algorytmu dla grafu NBA}
+\end{figure}
+\\
+Wynik algorytmu jest bardzo trudny, a nawet niemożliwy, do analizy na podstawie wizualizacji, więc spójrzmy na wartość modularności: dla naszej implementacji wynosi ona 0.57375, a dla algorytmu bibliotecznego: 0.58668. Wartość jest więc nieznacznie niższa, ale dalej bliska tej od sprawdzonej implementacji.
+\\ Analiza jakościowa wykazała, że algorytm Louvain dla społeczności rozłącznych w naszym wykonaniu daje poprawne wyniki, zarówno dla małych jak i dla dużych grafów.
+\\ Spójrzmy jeszcze na wynik algorytmu dla społeczności nachodzących. W tym wypadku znowu posłużymy się grafem 500 graczy.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{images/pw_img4.png}
+\caption{Fragment wizualizacji dla społeczności nachodzących}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{images/pw_img5.png}
+\caption{Fragment wizualizacji dla społeczności nachodzących}
+\end{figure}
+\\ Obserwując strukturę grafu, zwłaszcza na przykładzie społeczności o numerach 1 i 2 można zakładać, że jest to dość sensowny wynik. Wskazuje też na to wartość modularności Nikozji która wynosi 1.22.
 %-----------------------------------------------------%
 %Porównanie
 %-----------------------------------------------------%
