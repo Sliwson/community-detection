@@ -170,7 +170,21 @@ Podsumowując, wierzchołki uzyskanego grafu stanowią polscy aktorzy, pobrani z
 %-----------------------------------------------------%
 \subsection{Label Propagation Algorithm}
 \subsubsection{Analiza czasowa}
-Algorytm LPA, zgodnie z oczekiwaniami, okazał się być algorytmem wystarczająco szybkim, aby przeprowadzić obliczenia na wszystkich zbiorach danych w projekcie.
+Poniżej przedstawiono wyniki analizy czasowej dla standardowego zbioru przykładów użytego w pracy.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{images/ms-lpa-benchmark.png}
+\caption{Wynik analizy czasowej algorytmu Label Propagation}
+\end{figure}
+
+Algorytm LPA, zgodnie z oczekiwaniami, okazał się być algorytmem wystarczająco szybkim, aby przeprowadzić obliczenia na wszystkich zbiorach danych w projekcie. Z wyników można odczytać, że implementacja biblioteczna jest nieporównywalnie szybsza od implementacji własnej dla dużych zbiorów danych. Jedną z przyczyn takich wyników, może być fakt, że backend biblioteki igraph jest napisany w języku C, gdzie dostęp do elementów grafu jest dużo szybszy niż przy użyciu dodatkowej warstwy abstrakcji. Innym powodem może być nieświadome użycie w implementacji operacji, która zmusza bibliotekę do przebudowania struktury grafu. Niestety, podczas analizy rozwiązania roziwązania nie udało się znaleźć źródła problemu.\\
+
+Na powyższym wykresie można zauważyć, że zależność czasu od ilości wierzchołków jest liniowa. Pomiarem, który zdecydowanie odbiegł od oczekiwań jest pomiar dla największego grafu przy modyfikacji związanej z datami. Prawdopodobna przyczyna wiąże się z tym, że alorytm z modyfikacją podczas rozpatrzania remisu tworzy tablice pomocnicze oraz oblicza dla nich odchylenie standardowe. W przypadku grafu gęstego remisy występują często, co skutecznie spowolniło działanie programu.\\
+
+Jak szybkie potrafią być algorytmy do wykrywania społeczności pokazała implementacja przy użyciu biblioteki CUDA. Rezultat znacząco przekroczył nasze oczekiwania. Co prawda implementacja ta jest częściowo okrojona, lecz z powodzeniem można ją rozszerzać o modyfikacje zaimplementowane w wersji na CPU.
+
+%TODO: cuda plot
 
 \subsubsection{Analiza jakościowa}
 
