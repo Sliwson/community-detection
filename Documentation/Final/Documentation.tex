@@ -91,7 +91,19 @@ Zaimplementowano prostą wersję algorytmu używającej technologi CUDA. Impleme
 %-----------------------------------------------------%
 \subsection{Overlapping Community Detection by Local Community Expansion}
 \subsubsection{Implementacja}
+
+Algorytm OCDLCE został w pełni własnoręcznie zaimplementowany. W celu łatwiejszych modyfikacji został on podzielony na 3 funkcje, odpowiadające jego krokom. Dwa pierwsze kroki zwracają graf oraz listę społeczności, zaś trzeci jedynie końcowy graf. \\
+
+W pierwszym kroku po kolei rozpratrywany jest każdy wierzchołek, a potem dla wybranego wierzchołka sprawdzamy wszystkich jego sąsiadów, z którymi nie jest jeszcze w jednej społeczności. Potem zgodnie z algorytmem sprawdza się wspólnych sąsiadów i po zbadaniu modularności ewentualnie dodaje do tymczasowej społeczności. W przypadku gdy osiągnęła ona minimum 5 wierzchołków aktualizuje się zarówno informacje w wierzchołkach o przynależności do społeczności jak i listę wszystkich społeczności.\\
+
+W drugim kroku łączy się społeczności. Została w tym celu stworzona specjalna funkcja Union, która za pomocą wyliczenia $WOS$ definiuje czy społeczności powinny zostać złączone. \\
+
+W ostatnim kroku rozpatruje się wierzchołki nie należące do żadnej społeczności. W przypadku, gdy nie należą do żadnej społeczności, rozpatruje się wszystkie społeczności sąsiadów, oblicza modularność i w przypadku pozytywnego wyniku, dodaje rozpatrywany wierzchołek do danej społeczności.
+
 \subsubsection{Podjęte decyzje}
+Do pierwszego i trzeciego kroku dodano możliwość podania innej miary lokalnej modularności. W wersji podstawowej użyto modularności M, opisanej wzorem:\\ $M_in = \frac{M_in}{M_out}$ \\ zaś dodatkowa modyfikacja umożliwia zamiast tego skorzystanie z modularności f, opisanej wzorem:\\ $f_G = \frac{k^G_in}{(k^G_in + k^G_out)^\alpha}$\\, gdzie $k^G_in$ jest dwukrotnością liczby krawędzi o obu końcach w G, $k^G_out$ liczbą krawędzi o jednym końcu w G, zaś alpha parametrem. \\
+
+Kolejną modyfikacją była zmiana sposobu wyznaczania lokalnych społeczności w pierwszym kroku algorytmu. Zamiast każdej pary wierzchołków niebędących w społeczności, można rozpatrywać trójkę. Podejście to sprawia, że w pierwszym kroku uzyskuje się mniej początkowych społeczności, ale za to mocniej ze sobą związanych. Posiada ono jednak pewną wadę, zazwyczaj niepomijalna część wierzchołków o małej liczbie sąsiadów nie ma przypisanej żadnej społeczności.
 
 %-----------------------------------------------------%
 %Louvain
@@ -389,7 +401,26 @@ Otrzymane rezultaty sa znacząco inne niż w wersji synchronicznej. Społecznoś
 %-----------------------------------------------------%
 \subsection{Overlapping Community Detection by Local Community Expansion}
 \subsubsection{Analiza czasowa}
+Poniżej znajduje się wykres analizy czasowej dla zbioru przykładów użytego w pracy:
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{images/bt-time.png}
+\caption{Wynik analizy czasowej algorytmu OCDLCE}
+\end{figure}
+
+Algorytm OCDLCE nie spełnił przewidywanych oczekiwań czasowych i już przy danych rzędu tysiąca jego działanie trwało relatywnie długo. Ciekawą obserwacją, widzoczną na powyższym wykresie, jest fakt, że modyfikacje kroku pierwszego, które powinny być istotnie wolniejsze, nie mają dużego wpływu na rezultat. Modyfikacja modularności również nie wpłynęła istotnie na czas wykonania programu.\\
+
+Z powyższych faktów można wywnioskować, że najbardziej kosztowny jest drugi krok algorytmu. Autorzy pracy naukowej, na której bazuje implementacja przekonywali, że pomimo teoretycznej złożoności kwadratowej, zazwyczaj krok ten wykonuje się dużo szybciej. Istnieje jednak możliwość, że faza łączenia społeczności nie została zaimplementowana w pełni optymalnie, co może mieć wpływ na uzyskany rezultat.\\
+
+Innym z powodu tego typu achowania może być fakt, że w pracy, na której bazowano, zakładano liczbę krawędzi rzędu liczby wierzchołków, a rozpatrywane przez nas grafy były dużo bardziej gęste.\\
+
 \subsubsection{Analiza jakościowa}
+Rezultaty zwracane przez algorytm są zadowalające. Gołym okiem można zauważyć, że dla wszystkich wersji algorytmu, niemal dla każdej pary społeczności istnieje duża grupa wierzchołków, należących do obu z nich.\\
+
+Modyfikacja modularności nie wpłynęła w istotny sposób na zasadę wybierania społeczności. Najprawdopodobniej spowodowane jest to faktem, że jej równianie nie różni się bardzo od używanej wcześniej modularności M. W przypadku parametru alpha równego 1, liczba społeczności była niemal zawsze taka sama, zaś dla innych wartości (np. 0.5) różniła się nieznacznie. 
+Zarówno w podstawowej wersji algorytmu, jak i tej używającej innej miary modularności, wierzchołki należą do wielu społeczności i rzadko zdarza się sytuacja, aby jakiś wierzchołek nie był przypisany do żadnej ze społeczności.\\
+
+W przypadku modyfikacji kroku pierwszego, sytuacja wygląda zupełnie inaczej. Liczba początkowych społeczności jest dużo mniejsza, ale wynikowe społeczności wydają się dużo bardziej zbalansowane, to znaczy zredukowana jest liczba zarówno wierzchołków należących do bardzo dużej liczby społeczności, jak i tych należących do jednej czy dwóch. Problemem jest zaś istotnie większa liczba wierzchołków nie należących do żadnej społeczności. Znajdują się one zazwyczaj na obrzeżach grafu. 
 
 %-----------------------------------------------------%
 %Louvain
