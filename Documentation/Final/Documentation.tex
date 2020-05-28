@@ -186,8 +186,11 @@ Jak szybkie potrafią być algorytmy do wykrywania społeczności pokazała impl
 
 %TODO: cuda plot
 
+W podanych wynikach nie uwzględniam przebudowy reprezentacji grafu - została ona zaimplementowana naiwnie, ponieważ możemy założyć, że na wejściu otrzymujemy rządaną reprezentację. Uwzględniony został jednak czas alokacji pamięci na karcie graficznej - jest on znacząco większy od czasu obliczeń. Jego znaczenie może zostać zredukowane, gdy przetwarzamy graf kilkukrotnie, wtedy wystarczy nam jedna alokacja, na początku działania programu.
+
 \subsubsection{Analiza jakościowa}
 
+Analizę jakościową rozpoczniemy od porównania z implementacją wbudowaną w bibliotekę igraph.
 
 %-----------------------------------------------------%
 %OCDLCE
