@@ -5,7 +5,7 @@
 enum class GraphType
 {
 	Basketball,
-	Github,
+	Facebook,
 	Filmweb
 };
 
