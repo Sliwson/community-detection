@@ -9,6 +9,13 @@
 \usepackage{geometry}
 \usepackage{float}
 
+\geometry{
+ a4paper,
+ total={170mm,257mm},
+ left=20mm,
+ top=20mm,
+}
+
 \addbibresource{bibliography.bib}
 
 \title{Grafy i sieci - wykrywanie społeczności\\dokumentacja końcowa}
@@ -256,7 +263,7 @@ Algorytm LPA, zgodnie z oczekiwaniami, okazał się być algorytmem wystarczają
 
 Na powyższym wykresie można zauważyć, że zależność czasu od ilości wierzchołków jest liniowa. Pomiarem, który zdecydowanie odbiegł od oczekiwań, jest pomiar dla największego grafu przy modyfikacji związanej z datami. Prawdopodobna przyczyna wiąże się z tym, że algorytm z modyfikacją podczas rozpatrzania remisu tworzy tablice pomocnicze oraz oblicza dla nich odchylenie standardowe. W przypadku grafu gęstego remisy występują często, co skutecznie spowolniło działanie programu.\\
 
-Jak szybkie potrafią być algorytmy do wykrywania społeczności pokazała implementacja przy użyciu biblioteki CUDA. Rezultat znacząco przekroczył nasze oczekiwania. Co prawda implementacja ta jest częściowo okrojona, lecz z powodzeniem można ją rozszerzać o modyfikacje zaimplementowane w wersji na CPU.
+Jak szybkie potrafią być algorytmy do wykrywania społeczności pokazała implementacja przy użyciu biblioteki CUDA. Rezultat znacząco przekroczył nasze oczekiwania. Co prawda implementacja ta jest częściowo okrojona, lecz z powodzeniem można ją rozszerzać o modyfikacje zaimplementowane w wersji na CPU.\\
 
 %TODO: cuda plot
 
