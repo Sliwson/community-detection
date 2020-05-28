@@ -1,19 +1,25 @@
 # Community detection
-Winforms program for spectral audio analysis.
 
-![Alt text](report/images/scr8.png)
+![Visualisation of nba graph](Documentation/Final/images/ms-m1-nba.png)
 
-# Features
-* Fast Fourier Transform on whole signal or single frames with window functions
-* Spectral analysis
-* Fundamental tone frequency analysis
+# Algorithms
+* Girvan-Newman
+* Label Propagation Algorithm
+* Overlapping Community Detection by Local Communities Expantions
+* Louvain Alogirhtm
+
+# Project structure
+* /Implementation - main section of the project, contains all implementations and common files
+* /Data - files containing datasets
+* /Documentation - initial and final documentation
+* /Scrapers - implementation of NBA, Filmweb and Github scrapers
+* /Results - some results from algorithms runs, mainly in svg
 
 # Technology stack
-* Window system - WinForms
-* Audio loading - NAudio
-* Audio analysis - MathNet.Numerics
-* Plotting - OxyPlot
+* Graph manipulation - python-igraph
+* Editor and environment - jupyter notebook
+* Parallel implementation - C++ CUDA
+* Report - LaTEX
 
 # Notes
 * As it was university course the report is written in polish
-* I noticed some bugs with audio files with high sample rates, they're probably caused by me misinterpreting NAudio reader's data.
