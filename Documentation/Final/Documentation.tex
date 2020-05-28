@@ -145,7 +145,7 @@ Rozpoczynając pracę, zakładaliśmy, że opisane algorytmy będziemy badać na
 %NBA
 %-----------------------------------------------------%
 \subsection{NBA}
-'I loved this game' - to slogan reklamowy towarzyszący najlepszej lidze koszykarskiej, który odnosi się także do jednego z autorów tej pracy. Wybór tego zbioru danych motywowany był prywatnymi zainteresowaniami autorów, które wiążą się także z ogólną wiedzą na temat samej ligi. Dzięki temu zyskaliśmy możliwość oceny osiąganych rezultatów 'ludzkim okiem', przez co można było je poprawiać i oceniać dzięki swego rodzaju eksperckiej wiedzy na temat NBA.\\
+'I love this game' - to slogan reklamowy towarzyszący najlepszej lidze koszykarskiej, który odnosi się także do jednego z autorów tej pracy. Wybór tego zbioru danych motywowany był prywatnymi zainteresowaniami autorów, które wiążą się także z ogólną wiedzą na temat samej ligi. Dzięki temu zyskaliśmy możliwość oceny osiąganych rezultatów 'ludzkim okiem', przez co można było je poprawiać i oceniać dzięki swego rodzaju eksperckiej wiedzy na temat NBA.\\
 
 Swoją rolę odegrała tu także ogólna dostępność danych. Ich źródło stanowił portal basketball-reference.com, który stanowi internetową, koszykarską encyklopedię. Korzystając ze scrapera napisanego w języku JavaScript można było zautomatyzować proces wyszukiwania danych. Pomógł tutaj alfabetyczny spis koszykarzy - w ten sposób zdobyliśmy informację na temat każdego z nich, a także w łatwy sposób uzyskaliśmy liczbę wszystkich sezonów i klubów, w jakich w swojej karierze występował dany zawodnik. Następnie dane te zostały obrobione z wykorzystaniem SQL, w celu uzyskania relacji między zawodnikami, a także daty zawarcia znajomości. Liczba wspólnych znajomych została określona przy pomocy prostego algorytmu napisanego w języku C\#.\\
 
@@ -354,20 +354,19 @@ Poniżej znajduje się wykres analizy czasowej dla zbioru przykładów użytego 
 \caption{Wynik analizy czasowej algorytmu OCDLCE}
 \end{figure}
 
-Algorytm OCDLCE nie spełnił w pełni oczekiwań czasowych, już przy danych rzędu tysiąca trwał relatywnie długo. Ciekawą obserwacją, widzoczną na powyższym wykresie, jest fakt, że modyfikacje kroku pierwszego, które powinny być istotnie wolniejsze, nie mają dużego wpływu na rezultat. Modyfikacja modularności również nie wpłynęła istotnie na czas wykonania programu.\\
+Algorytm OCDLCE nie spełnił przewidywanych oczekiwań czasowych i już przy danych rzędu tysiąca jego działanie trwało relatywnie długo. Ciekawą obserwacją, widzoczną na powyższym wykresie, jest fakt, że modyfikacje kroku pierwszego, które powinny być istotnie wolniejsze, nie mają dużego wpływu na rezultat. Modyfikacja modularności również nie wpłynęła istotnie na czas wykonania programu.\\
 
-Z powyższych faktów można wywnioskować, że najbardziej kosztowny jest drugi krok algorytmu. Autorzy pracy naukowej, na której bazuje implementacja przekonywali, że pomimo teoretycznej złożoności kwadratowej, zazwyczaj krok wykonuje się dużo szybciej. Istnieje jednak możliwość, że faza łączenia społeczności nie została zaimplementowana w pełni optymalnie, co może mieć wpływ na uzyskany rezultat.\\
+Z powyższych faktów można wywnioskować, że najbardziej kosztowny jest drugi krok algorytmu. Autorzy pracy naukowej, na której bazuje implementacja przekonywali, że pomimo teoretycznej złożoności kwadratowej, zazwyczaj krok ten wykonuje się dużo szybciej. Istnieje jednak możliwość, że faza łączenia społeczności nie została zaimplementowana w pełni optymalnie, co może mieć wpływ na uzyskany rezultat.\\
 
-Innym powodem może być fakt, że w pracy, na której bazowano, zakładano liczbę krawędzi rzędu liczby wierzchołków, a rozpatrywane przez nas grafy były dużo bardziej gęste.\\
+Innym z powodu tego typu achowania może być fakt, że w pracy, na której bazowano, zakładano liczbę krawędzi rzędu liczby wierzchołków, a rozpatrywane przez nas grafy były dużo bardziej gęste.\\
 
 \subsubsection{Analiza jakościowa}
-Algorytm zwraca bardzo ciekawe rezultaty. Gołym okiem można zauważyć, że dla wszystkich wersji algorytmu, niemal dla każdej pary społeczności istnieje duża grupa wierzchołków, należących do obu.\\
+Rezultaty zwracane przez algorytm są zadowalające. Gołym okiem można zauważyć, że dla wszystkich wersji algorytmu, niemal dla każdej pary społeczności istnieje duża grupa wierzchołków, należących do obu z nich.\\
 
-Modyfikacja modularności nie wpłynęła w istotny sposób na sposób wybierania społeczności. Najprawdopodobniej spowodowane jest to faktem, że jej równianie nie różni się bardzo od używanej wcześniej modularności M. W przypadku parametru alpha równego 1, liczba społeczności w była niemal zawsze taka sama, zaś dla innych wartości (na przykład 0.5) różniła się nieznacznie. 
-Za równo w podstawowej wersji algorytmu, jak i tej używającej innej miary modularności wierzchołki należą do wielu społeczności i rzadko zdarza się sytuacja, aby jakiś wierzchołek nie miał przypisanej społeczności.\\
+Modyfikacja modularności nie wpłynęła w istotny sposób na zasadę wybierania społeczności. Najprawdopodobniej spowodowane jest to faktem, że jej równianie nie różni się bardzo od używanej wcześniej modularności M. W przypadku parametru alpha równego 1, liczba społeczności była niemal zawsze taka sama, zaś dla innych wartości (np. 0.5) różniła się nieznacznie. 
+Zarówno w podstawowej wersji algorytmu, jak i tej używającej innej miary modularności, wierzchołki należą do wielu społeczności i rzadko zdarza się sytuacja, aby jakiś wierzchołek nie był przypisany do żadnej ze społeczności.\\
 
-
-W przypadku modyfikacji kroku pierwszego, sytuacja wygląda zupełnie inaczej. Liczba początkowych społeczności jest dużo mniejsza, ale społeczności wydają się dużo bardziej zbalansowane, to znaczy zredukowana jest liczba zarówno wierzchołków należących do bardzo dużej ilości społeczności, jak i tych należących do jednej czy dwóch. Problemem jest zaś istotnie większa liczba wierzchołków nie należących do żadnej społeczności. Znajdują się one zazwyczaj na obrzeżach grafu. 
+W przypadku modyfikacji kroku pierwszego, sytuacja wygląda zupełnie inaczej. Liczba początkowych społeczności jest dużo mniejsza, ale wynikowe społeczności wydają się dużo bardziej zbalansowane, to znaczy zredukowana jest liczba zarówno wierzchołków należących do bardzo dużej liczby społeczności, jak i tych należących do jednej czy dwóch. Problemem jest zaś istotnie większa liczba wierzchołków nie należących do żadnej społeczności. Znajdują się one zazwyczaj na obrzeżach grafu. 
 
 %-----------------------------------------------------%
 %Louvain
