@@ -435,9 +435,9 @@ Złożoność czasowa, podobnie jak w przypadku pozostałych algorytmów, zosta�
 \caption{Wynik analizy czasowej algorytmu Louvain}
 \end{figure}
 
-Podobnie jak w przypadku algorytmu LPA implementacja algorytmu z biblioteki igraph osiąga zdecydowanie lepsze czasy. Jednak wciąż algorytm zaimplementowany przez nas jest w stanie w sensownym czasie zakończyć działanie nawet dla grafu o liczbie wierzchołków rzędu kilku tysięcy. Wykres wskazuje co prawda, że  że niestety nie udało się zachować złożoności $n\log{n}^2$. Powodem była konieczność przeliczania parametru $k_{in}$. Podjęte zostały  próby przerobienia algorytmu, by wartości nie były wyliczane od nowa w każdej iteracji, a jedynie uaktualniane, niestety okazały się one bezowocne. W przypadku wywołań wykorzystujących zmodyfikowaną wartość parametru $param$ możemy zauważyć, że wywołania promujące mniejszą ilość społeczności są nieznacznie szybsze (ok 50s dla 1768 wierzchołków, w porównaniu do ok 53s). Jest to spowodowane tym, że w każdym kroku bardziej zmniejsza się ilość wierzchołków. Analogicznie wywołanie promujące mniejsze społeczności trwa nieznacznie dłużej (ok 56s dla 1768 wierzchołków).
- 
-\\ Wersja dla społeczności nachodzących wypada dość podobnie do standardowej, gdyż jest to kilkukrotne wywołanie standardowej wersji wraz z analizą wyniku.
+Podobnie jak w przypadku algorytmu LPA implementacja algorytmu z biblioteki igraph osiąga zdecydowanie lepsze czasy. Jednak wciąż algorytm zaimplementowany przez nas jest w stanie w sensownym czasie zakończyć działanie nawet dla grafu o liczbie wierzchołków rzędu kilku tysięcy. Wykres wskazuje co prawda, że  że niestety nie udało się zachować złożoności $n\log{n}^2$. Powodem była konieczność przeliczania parametru $k_{in}$. Podjęte zostały  próby przerobienia algorytmu, by wartości nie były wyliczane od nowa w każdej iteracji, a jedynie uaktualniane, niestety okazały się one bezowocne. W przypadku wywołań wykorzystujących zmodyfikowaną wartość parametru $param$ możemy zauważyć, że wywołania promujące mniejszą ilość społeczności są nieznacznie szybsze (ok 50s dla 1768 wierzchołków, w porównaniu do ok 53s). Jest to spowodowane tym, że w każdym kroku bardziej zmniejsza się ilość wierzchołków. Analogicznie wywołanie promujące mniejsze społeczności trwa nieznacznie dłużej (ok 56s dla 1768 wierzchołków).\\ 
+
+Wersja dla społeczności nachodzących wypada dość podobnie do standardowej, gdyż jest to kilkukrotne wywołanie standardowej wersji wraz z analizą wyniku.
 
 \subsubsection{Analiza jakościowa}
 	Analiza jakościowa wyników zaimplementowanego algorytmu wypada z kolei zdecydowanie bardziej optymistycznie. Została przeprowadzona na  podgrafach grafu przedstawiającego połączenia pomiędzy zawodnikami NBA (wszystkie podgrafy wykorzystują ilość lat od pierwszego wspólnego wystąpienia jako wagę krawędzi). 
@@ -459,17 +459,16 @@ Rozważmy więc graf o większej ilości wierzchołków. Grafem, który będziem
 \caption{Wizualizacja fragmentu wyniku działania algorytmu dla grafu o 500 wierzchołkach}
 \end{figure}
 
-W celu głębszej analizy spójrzmy na odchylenie standardowe modularności obliczonych dla 15 wywołań algorytmu: 0.0186 oraz wartość średnią tych modularności: 0.39502. Porównując to z wartością uzyskaną przez algorytm z bibliotek igraph: 0.44497 zauważamy, że dla większych grafów (a przynajmniej dla tego podgrafu) nasz algorytm nieznacznie przegrywa z bibliotecznym. Patrząc jednak na wartość największą z 15 przebiegów: 0.41930 różnica nie jest tak duża.
+W celu głębszej analizy spójrzmy na odchylenie standardowe modularności obliczonych dla 15 wywołań algorytmu: 0.0186 oraz wartość średnią tych modularności: 0.39502. Porównując to z wartością uzyskaną przez algorytm z bibliotek igraph: 0.44497 zauważamy, że dla większych grafów (a przynajmniej dla tego podgrafu) nasz algorytm nieznacznie przegrywa z bibliotecznym. Patrząc jednak na wartość największą z 15 przebiegów: 0.41930 różnica nie jest tak duża.\\
 
-\\\\
-Ostatnim grafem, który rozpatrzymy w przypadku społeczności rozłącznych będzie pełen graf NBA. 	
+Ostatnim grafem, który rozpatrzymy w przypadku społeczności rozłącznych będzie pełen graf NBA.\\
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{images/pw_img3.png}
 \caption{Wizualizacja wyniku działania algorytmu dla grafu NBA}
 \end{figure}
-\\
+
 Wynik algorytmu jest bardzo trudny, a nawet niemożliwy, do analizy na podstawie wizualizacji, więc spójrzmy na wartość modularności: dla naszej implementacji wynosi ona 0.57375, a dla algorytmu bibliotecznego: 0.58668. Wartość jest więc nieznacznie niższa, ale dalej bliska tej od sprawdzonej implementacji.
 \\ Analiza jakościowa wykazała, że algorytm Louvain dla społeczności rozłącznych w naszym wykonaniu daje poprawne wyniki, zarówno dla małych jak i dla dużych grafów.
 \\ Spójrzmy jeszcze na wynik algorytmu dla społeczności nachodzących. W tym wypadku znowu posłużymy się grafem 500 graczy.
@@ -485,7 +484,8 @@ Wynik algorytmu jest bardzo trudny, a nawet niemożliwy, do analizy na podstawie
 \includegraphics[width=\textwidth]{images/pw_img5.png}
 \caption{Fragment wizualizacji dla społeczności nachodzących}
 \end{figure}
-\\ Obserwując strukturę grafu, zwłaszcza na przykładzie społeczności o numerach 1 i 2 można zakładać, że jest to dość sensowny wynik. Wskazuje też na to wartość modularności Nikozji która wynosi 1.22.
+
+Obserwując strukturę grafu, zwłaszcza na przykładzie społeczności o numerach 1 i 2 można zakładać, że jest to dość sensowny wynik. Wskazuje też na to wartość modularności Nikozji która wynosi 1.22.
 %-----------------------------------------------------%
 %Porównanie
 %-----------------------------------------------------%
