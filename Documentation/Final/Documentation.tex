@@ -344,7 +344,7 @@ Można zaobserwować, że algorytm przy gęstych grafach tworzy małą liczbę d
 \caption{Wizualizacja wyniku działania własnej implementacji algorytmu LPA}
 \end{figure}
 
-Poniżej przedstawiono wyniki działania dla modyfikacji związanej z datami zawarcia znajomości. O ile przy drugim grafie wynik nie wyglada lepiej niż w wersji bez modyfikacji, to w przypadku grafu mniejszego można zauważyć zdecydowanie bardziej naturalne rozłożenie etykiet. Również w przypadku grafu największego rozmiary społeczności stały się dużo bardziej zbalansowane - nie pojawiła sie społeczność, która zdecydowanie przeważałaby w grafie. Modyfikacja ta ma znaczący wpływ na wynik działania algorytmu i mogłaby z powodzeniem zostać użyta w praktycznej analizie problemu związanego z sieciami społecznościowymi. Ponadto zmienia fundamentalny aspekt algorytmu - rozstrzyganie remisów jest teraz deterministyczne, a w rezultacie również i cały algorytm.
+Poniżej przedstawiono wyniki działania dla modyfikacji związanej z datami zawarcia znajomości. O ile przy drugim grafie wynik nie wygląda lepiej niż w wersji bez modyfikacji, to w przypadku grafu mniejszego można zauważyć zdecydowanie bardziej naturalne rozłożenie etykiet. Również w przypadku grafu największego rozmiary społeczności stały się dużo bardziej zbalansowane - nie pojawiła sie społeczność, która zdecydowanie przeważałaby w grafie. Modyfikacja ta ma znaczący wpływ na wynik działania algorytmu i mogłaby z powodzeniem zostać użyta w praktycznej analizie problemu związanego z sieciami społecznościowymi. Ponadto zmienia fundamentalny aspekt algorytmu - rozstrzyganie remisów jest teraz deterministyczne, a w rezultacie cały algorytm zyskuje tę własność.
 
 \begin{figure}[H]
 \centering
@@ -394,9 +394,9 @@ Ciekawe zjawisko można zaobserwować badając grafy przetwarzane równolegle. P
 \caption{Wizualizacja wyniku działania LPA CUDA dla grafu NBA}
 \end{figure}
 
-Otrzymane rezultaty sa znacząco inne niż w wersji synchronicznej. Społeczności jest zdecydowanie więcej, część z nich 'rozciąga się' przez znaczną część grafu. Małe kliki uformowały społeczności, co jest porządanym rezultatem. Biorąc pod uwagę czas wykonania tej wersji algorytmu wyniki są bardzo zadowalające.\\
+Otrzymane rezultaty sa znacząco inne niż w wersji synchronicznej. Społeczności jest zdecydowanie więcej, część z nich 'rozciąga się' przez znaczną część grafu. Małe kliki uformowały społeczności, co jest pożądanym rezultatem. Biorąc pod uwagę czas wykonania tej wersji algorytmu wyniki są bardzo zadowalające.\\
 
-Ciekawe rezultaty otrzymano badając połączenie algorytmu LPA z łączeniem społeczności rozłącznych w nachodzące, zaimplementowanego w algorytmie Louvain. Zastosowano tutaj wersję podstawową algorytmu LPA dla społeczności rozłącznych, ponieważ etap łączenia wymaga, aby rezultaty bazowego algorytmu były niedeterministyczne. Przykładowe wyniki eksperymentu przedstawiono poniżej.
+Interesujące rezultaty otrzymano badając kombinację algorytmu LPA z ostatnim krokiem algorytmu Louvain - łączeniem kilku różnych przyporządkowań społeczności rozłącznych w jedno przyporządkowanie nachodzące. Zastosowano tutaj wersję podstawową algorytmu LPA dla społeczności rozłącznych, ponieważ etap łączenia wymaga, aby rezultaty bazowego algorytmu były niedeterministyczne. Przykładowe wyniki eksperymentu przedstawiono poniżej.
 
 \begin{figure}[H]
 \centering
