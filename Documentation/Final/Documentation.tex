@@ -415,13 +415,93 @@ Z powyższych faktów można wywnioskować, że najbardziej kosztowny jest drugi
 Innym z powodu tego typu achowania może być fakt, że w pracy, na której bazowano, zakładano liczbę krawędzi rzędu liczby wierzchołków, a rozpatrywane przez nas grafy były dużo bardziej gęste.\\
 
 \subsubsection{Analiza jakościowa}
-Rezultaty zwracane przez algorytm są zadowalające. Gołym okiem można zauważyć, że dla wszystkich wersji algorytmu, niemal dla każdej pary społeczności istnieje duża grupa wierzchołków, należących do obu z nich.\\
+W algorytmie przeprowadzono dwie modyfikacje i okazało się że obie mają istotny wpływ na rezultat. Wszystkie cztery przetestowane kombinacje zwracają rezultaty zbliżone do oczekiwanych.\\ 
 
-Modyfikacja modularności nie wpłynęła w istotny sposób na zasadę wybierania społeczności. Najprawdopodobniej spowodowane jest to faktem, że jej równianie nie różni się bardzo od używanej wcześniej modularności M. W przypadku parametru alpha równego 1, liczba społeczności była niemal zawsze taka sama, zaś dla innych wartości (np. 0.5) różniła się nieznacznie. 
-Zarówno w podstawowej wersji algorytmu, jak i tej używającej innej miary modularności, wierzchołki należą do wielu społeczności i rzadko zdarza się sytuacja, aby jakiś wierzchołek nie był przypisany do żadnej ze społeczności.\\
+Pierwszą zmianą było użycie innej miary modularności. Modularność f okazała się dużo lepszą miarą. Główną jej zaletą jest elastyczność związana z parametrem alpha. Dla wartości 1 modularność zachowuje się jak modularność M. Przetestowano dwie inne wartości: 0.5 i 1.5. Dla wartości 0.5 liczba znalezionych społeczności w pierwszym kroku okazała się nieznacznie mniejsza, zaś dla 1.5 kilka razy większa. Warto odnotować, że w kroku drugim różnica ta praktycznie zanika. Poniżej podane są przykładowe ilości społeczności po danym kroku dla grafu o 1391 wierzchołkach oraz wizualizację uzyskanych grafów:\\
+Dla wersji bez modyfikacji:\\
+Liczba społeczności po pierwszym kroku: 101\\
+Liczba społeczności po drugim kroku: 87\\
+Dla wersji używającej modularności f z parametrem alpha równym 1.5:\\
+Liczba społeczności po pierwszym kroku: 163\\
+Liczba społeczności po drugim kroku: 88\\
 
-W przypadku modyfikacji kroku pierwszego, sytuacja wygląda zupełnie inaczej. Liczba początkowych społeczności jest dużo mniejsza, ale wynikowe społeczności wydają się dużo bardziej zbalansowane, to znaczy zredukowana jest liczba zarówno wierzchołków należących do bardzo dużej liczby społeczności, jak i tych należących do jednej czy dwóch. Problemem jest zaś istotnie większa liczba wierzchołków nie należących do żadnej społeczności. Znajdują się one zazwyczaj na obrzeżach grafu. 
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{images/bt-sample-1.png}
+\caption{Wizualizacja dla wersji bez modyfikacji}
+\end{figure}
 
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{images/bt-sample-2.png}
+\caption{Wizualizacja dla wersji korzystającej z modularności f}
+\end{figure}
+
+Otrzymane rezultaty wyglądają całkiem podobnie, lecz wersja korzystającej z modularności f wydaje się wyznaczać lepsze rezultaty, przy użyciu podobnej liczby społeczności. To że rezultat jest lepszy można uzasadnić mniejszą liczbą wierzchołków należących do bardzo dużej liczby społeczności oraz większą liczbą należących do kilku społeczności, będących ich nakładającą się częścią.\\
+
+Kolejną wprowadzoną modyfikacją była zmiana kroku pierwszego, polegającego na wyznaczaniu początkowych społeczności. Rezultaty okazały się znacznie odległe od oczekiwanych. Pierwszą intuicją związaną z ową modyfikacją było zmniejszenie liczby wierzchołków, gdyż znalezienie trzech wierzchołków niebędących aktualnie parami ze sobą w żadnej społeczności wydaje się trudniejsze od znalezienia takiej pary. Okazało się jednak, że liczba społeczności wzrosła kilkukrotnie. Po dłuższym zastanowieniu się można dojść do wniosku, że może wynikać to z faktu, że poprzez zaczęcie z 3 wierzchołków zamiast 2 początkowa modularność może być mniejsza. Kolejnym, niezbyt pożądanym efektem jest izolacja wierzchołków o małej liczbie sąsiadów. W związku z powyższym uzyskuje się graf o wielu początkowych społecznościach, względnie dużej liczbie wierzchołków mających przypisanych wiele społeczności oraz niepomijalnej liczbie wierzchołków, które nie mają przypisane żadnej. Poniżej znajdują się wyniki owej modyfikacji dla już wcześniej analizowanego grafu.\\
+Dla zmodyfikowanej wersji z podstawową modularnością:\\
+Liczba społeczności po pierwszym kroku: 307\\
+Liczba społeczności po drugim kroku: 95\\
+Dla zmodyfikowanej wersji używającej modularności f z parametrem alpha równym 1.5:\\
+Liczba społeczności po pierwszym kroku: 380\\
+Liczba społeczności po drugim kroku: 108\\
+
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{images/bt-sample-3.png}
+\caption{Wizualizacja dla zmodyfikowanej wersji z podstawową modularnością}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{images/bt-sample-4.png}
+\caption{Wizualizacja dla zmodyfikowanej wersji korzystającej z modularności f}
+\end{figure}
+
+Jak widać na powyższych wizualizacjach, rezultaty nie wydają się tak dobre, jak dla podstawowej wersji algorytmu. Wersja korzystające z domyślnej modularności nie przypisała kilku wierzchołkom żadnej społeczności, zaś wersja z modularnością f  przypisała do niektórych wierzchołków ogromną liczbę społeczności.\\
+
+Jednak dla pewnych grafów, chociażby takich o bardzo małej liczbie wierzchołków, owa modyfikacja, a właściwie modyfikacja korzystająca z modularności f zwraca pozytywne, oczekiwane na początku rezultaty. Poniżej znajduje się zestawienie wszystkich czterech konfiguracji dla pewnego grafu o 83 wierzchołkach:
+Dla wersji bez modyfikacji:\\
+Liczba społeczności po pierwszym kroku: 25\\
+Liczba społeczności po drugim kroku: 22\\
+Dla wersji używającej modularności f z parametrem alpha równym 1.5:\\
+Liczba społeczności po pierwszym kroku: 24\\
+Liczba społeczności po drugim kroku: 20\\
+Dla zmodyfikowanej wersji z podstawową modularnością:\\
+Liczba społeczności po pierwszym kroku: 8\\
+Liczba społeczności po drugim kroku: 7\\
+Dla zmodyfikowanej wersji używającej modularności f z parametrem alpha równym 1.5:\\
+Liczba społeczności po pierwszym kroku: 8\\
+Liczba społeczności po drugim kroku: 7\\
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{images/bt-sample-5.png}
+\caption{Wizualizacja dla wersji z podstawową modularnością}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{images/bt-sample-6.png}
+\caption{Wizualizacja dla wersji korzystającej z modularności f}
+\end{figure}
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{images/bt-sample-7.png}
+\caption{Wizualizacja dla zmodyfikowanej wersji z podstawową modularnością}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{images/bt-sample-8.png}
+\caption{Wizualizacja dla zmodyfikowanej wersji korzystającej z modularności f}
+\end{figure}
+
+Zmodyfikowana wersja z użyciem domyślnej modularności co prawda zostawia jeden wierzchołek bez przypisanej społeczności, ale po użyciu modularności f uzyskano najbardziej zrównoważony i bardzo zbliżony do początkowych oczekiwań rezultat.\\
+
+Podsumowując, zdecydowanie warto używać modularności f zamiast modularności M, a w niektórych przypadkach można rozważyć skorzystanie z modyfikacji pierwszego kroku algorytmu.
 %-----------------------------------------------------%
 %Louvain
 %-----------------------------------------------------%
@@ -435,13 +515,14 @@ Złożoność czasowa, podobnie jak w przypadku pozostałych algorytmów, zosta�
 \caption{Wynik analizy czasowej algorytmu Louvain}
 \end{figure}
 
-Podobnie jak w przypadku algorytmu LPA implementacja algorytmu z biblioteki igraph osiąga zdecydowanie lepsze czasy. Jednak wciąż algorytm zaimplementowany przez nas jest w stanie w sensownym czasie zakończyć działanie nawet dla grafu o liczbie wierzchołków rzędu kilku tysięcy. Wykres wskazuje co prawda, że  że niestety nie udało się zachować złożoności $n\log{n}^2$. Powodem była konieczność przeliczania parametru $k_{in}$. Podjęte zostały  próby przerobienia algorytmu, by wartości nie były wyliczane od nowa w każdej iteracji, a jedynie uaktualniane, niestety okazały się one bezowocne. W przypadku wywołań wykorzystujących zmodyfikowaną wartość parametru $param$ możemy zauważyć, że wywołania promujące mniejszą ilość społeczności są nieznacznie szybsze (ok 50s dla 1768 wierzchołków, w porównaniu do ok 53s). Jest to spowodowane tym, że w każdym kroku bardziej zmniejsza się ilość wierzchołków. Analogicznie wywołanie promujące mniejsze społeczności trwa nieznacznie dłużej (ok 56s dla 1768 wierzchołków).
- 
-\\ Wersja dla społeczności nachodzących wypada dość podobnie do standardowej, gdyż jest to kilkukrotne wywołanie standardowej wersji wraz z analizą wyniku.
+Podobnie jak w przypadku algorytmu LPA implementacja algorytmu z biblioteki igraph osiąga zdecydowanie lepsze czasy. Jednak wciąż algorytm zaimplementowany przez nas jest w stanie w sensownym czasie zakończyć działanie nawet dla grafu o liczbie wierzchołków rzędu kilku tysięcy. Wykres wskazuje co prawda, że  że niestety nie udało się zachować złożoności $n\log{n}^2$. Powodem była konieczność przeliczania parametru $k_{in}$. Podjęte zostały  próby przerobienia algorytmu, by wartości nie były wyliczane od nowa w każdej iteracji, a jedynie uaktualniane, niestety okazały się one bezowocne. W przypadku wywołań wykorzystujących zmodyfikowaną wartość parametru $param$ możemy zauważyć, że wywołania promujące mniejszą ilość społeczności są nieznacznie szybsze (ok 50s dla 1768 wierzchołków, w porównaniu do ok 53s). Jest to spowodowane tym, że w każdym kroku bardziej zmniejsza się ilość wierzchołków. Analogicznie wywołanie promujące mniejsze społeczności trwa nieznacznie dłużej (ok 56s dla 1768 wierzchołków).\\
+
+Wersja dla społeczności nachodzących wypada dość podobnie do standardowej, gdyż jest to kilkukrotne wywołanie standardowej wersji wraz z analizą wyniku.
 
 \subsubsection{Analiza jakościowa}
-	Analiza jakościowa wyników zaimplementowanego algorytmu wypada z kolei zdecydowanie bardziej optymistycznie. Została przeprowadzona na  podgrafach grafu przedstawiającego połączenia pomiędzy zawodnikami NBA (wszystkie podgrafy wykorzystują ilość lat od pierwszego wspólnego wystąpienia jako wagę krawędzi). 
-\\ Pierwszym  był podgraf składający się z zawodników grających w drużynach All-Star z ostatnich 4 lat:
+	Analiza jakościowa wyników zaimplementowanego algorytmu wypada z kolei zdecydowanie bardziej optymistycznie. Została przeprowadzona na  podgrafach grafu przedstawiającego połączenia pomiędzy zawodnikami NBA (wszystkie podgrafy wykorzystują ilość lat od pierwszego wspólnego wystąpienia jako wagę krawędzi). \\
+
+Pierwszym  był podgraf składający się z zawodników grających w drużynach All-Star z ostatnich 4 lat:
 
 \begin{figure}[H]
 \centering
@@ -449,8 +530,8 @@ Podobnie jak w przypadku algorytmu LPA implementacja algorytmu z biblioteki igra
 \caption{Wizualizacja wyniku działania algorytmu}
 \end{figure}
 
-W celu dokładnego zbadania jakości wyniku posłużyliśmy się wartością modularności ($Q= \frac{1}{2m} \sum\limits_{ij} [A_{ij} - \frac{d_i d_j}{2m}]\delta(s_i,s_j)$). Dla 5 różnych przebiegów (pamiętając, że algorytm jest niedeterministyczny) osiągnęliśmy następujące wartości: 0.63909, 0.63779, 0.63779, 0.63909, 0.63236. W porównaniu z wartością modularności, którą osiąga algorytm z biblioteki igraph: 0.59064, możemy stwierdzić że wyniki naszego algorytmu dla małych grafów (do 100 wierzchołków) wypadają bardzo dobrze. Ponadto, pomimo niedeterminizmu, są dosyć porównywalne. Dla potwierdzenia spójrzmy jeszcze na wartości dla podgrafu składającego się z zawodników z ostatnich 10 drużyn All-Star: 0.42936, 0.41937, 0.44528, 0.44048, 0.42730, 0.43560 i wynik  dla algorytmu bibliotecznego: 0.40900.
-\\ \\ 
+W celu dokładnego zbadania jakości wyniku posłużyliśmy się wartością modularności ($Q= \frac{1}{2m} \sum\limits_{ij} [A_{ij} - \frac{d_i d_j}{2m}]\delta(s_i,s_j)$). Dla 5 różnych przebiegów (pamiętając, że algorytm jest niedeterministyczny) osiągnęliśmy następujące wartości: 0.63909, 0.63779, 0.63779, 0.63909, 0.63236. W porównaniu z wartością modularności, którą osiąga algorytm z biblioteki igraph: 0.59064, możemy stwierdzić że wyniki naszego algorytmu dla małych grafów (do 100 wierzchołków) wypadają bardzo dobrze. Ponadto, pomimo niedeterminizmu, są dosyć porównywalne. Dla potwierdzenia spójrzmy jeszcze na wartości dla podgrafu składającego się z zawodników z ostatnich 10 drużyn All-Star: 0.42936, 0.41937, 0.44528, 0.44048, 0.42730, 0.43560 i wynik  dla algorytmu bibliotecznego: 0.40900.\\\\ 
+
 Rozważmy więc graf o większej ilości wierzchołków. Grafem, który będziemy rozważać, będzie podgraf składający się z 500 zawodników NBA:
 
 \begin{figure}[H]
@@ -459,9 +540,8 @@ Rozważmy więc graf o większej ilości wierzchołków. Grafem, który będziem
 \caption{Wizualizacja fragmentu wyniku działania algorytmu dla grafu o 500 wierzchołkach}
 \end{figure}
 
-W celu głębszej analizy spójrzmy na odchylenie standardowe modularności obliczonych dla 15 wywołań algorytmu: 0.0186 oraz wartość średnią tych modularności: 0.39502. Porównując to z wartością uzyskaną przez algorytm z bibliotek igraph: 0.44497 zauważamy, że dla większych grafów (a przynajmniej dla tego podgrafu) nasz algorytm nieznacznie przegrywa z bibliotecznym. Patrząc jednak na wartość największą z 15 przebiegów: 0.41930 różnica nie jest tak duża.
+W celu głębszej analizy spójrzmy na odchylenie standardowe modularności obliczonych dla 15 wywołań algorytmu: 0.0186 oraz wartość średnią tych modularności: 0.39502. Porównując to z wartością uzyskaną przez algorytm z bibliotek igraph: 0.44497 zauważamy, że dla większych grafów (a przynajmniej dla tego podgrafu) nasz algorytm nieznacznie przegrywa z bibliotecznym. Patrząc jednak na wartość największą z 15 przebiegów: 0.41930 różnica nie jest tak duża.\\\\
 
-\\\\
 Ostatnim grafem, który rozpatrzymy w przypadku społeczności rozłącznych będzie pełen graf NBA. 	
 
 \begin{figure}[H]
@@ -469,7 +549,7 @@ Ostatnim grafem, który rozpatrzymy w przypadku społeczności rozłącznych bę
 \includegraphics[width=\textwidth]{images/pw_img3.png}
 \caption{Wizualizacja wyniku działania algorytmu dla grafu NBA}
 \end{figure}
-\\
+
 Wynik algorytmu jest bardzo trudny, a nawet niemożliwy, do analizy na podstawie wizualizacji, więc spójrzmy na wartość modularności: dla naszej implementacji wynosi ona 0.57375, a dla algorytmu bibliotecznego: 0.58668. Wartość jest więc nieznacznie niższa, ale dalej bliska tej od sprawdzonej implementacji.
 \\ Analiza jakościowa wykazała, że algorytm Louvain dla społeczności rozłącznych w naszym wykonaniu daje poprawne wyniki, zarówno dla małych jak i dla dużych grafów.
 \\ Spójrzmy jeszcze na wynik algorytmu dla społeczności nachodzących. W tym wypadku znowu posłużymy się grafem 500 graczy.
@@ -485,12 +565,12 @@ Wynik algorytmu jest bardzo trudny, a nawet niemożliwy, do analizy na podstawie
 \includegraphics[width=\textwidth]{images/pw_img5.png}
 \caption{Fragment wizualizacji dla społeczności nachodzących}
 \end{figure}
-\\ Obserwując strukturę grafu, zwłaszcza na przykładzie społeczności o numerach 1 i 2 można zakładać, że jest to dość sensowny wynik. Wskazuje też na to wartość modularności Nikozji która wynosi 1.22.
+Obserwując strukturę grafu, zwłaszcza na przykładzie społeczności o numerach 1 i 2 można zakładać, że jest to dość sensowny wynik. Wskazuje też na to wartość modularności Nikozji która wynosi 1.22.
 %-----------------------------------------------------%
 %Porównanie
 %-----------------------------------------------------%
 \subsection{Porównanie}
-Metody prezentowane w naszym raporcie znacznie różnią się od siebie pod kątem implementacji. Pierwsze różnice można zaobserwować już w sposobie podejścia do problemu. Metoda Girvan-Newmana, jak i jej rozszerzenie w postaci algorytmu CONGA, jako jedyna rozpoczynała analizę problemu od niezmodyfikowanego grafu początkowego. Pozostałe metody analizę problemu rozpoczynały od pojedynczych wierzchołków, łącząc je w większe społeczności. \\
+Metody prezentowane w naszym raporcie znacznie różnią się od siebie pod kątem implementacji. Pierwsze różnice można zaobserwować już w sposobie podejścia do problemu. Metoda Girvan-Newmana, jak i jej rozszerzenie w postaci algorytmu CONGA, jako jedyna rozpoczynała analizę problemu od niezmodyfikowanego grafu początkowego. Pozostałe metody analizę problemu rozpoczynały od pojedynczych wierzchołków, łącząc je w większe społeczności.\\
 
 Wyżej wymieniona zależność niesie za sobą różnice czasowe w wykonaniu każdej z metod. Algorytm CONGA okazał się zdecydowanie najwolniejszy ze wszystkich, przy okazji osiągając rezultaty, które skutecznie eliminują go jako metodę użyteczną w analizie problemów związanych z naprawdę dużymi grafami. Na przeciwnym końcu znajduje się algorytm LPA - jego wykonanie jest niezwykle szybkie, zwłaszcza, gdy wzbogacono go o implementację na CUDA. Algorytmy OCDCLE i Louvain również okazały się wystarczająco szybkie, aby myśleć o ich użyciu w kontekście grafów o liczie wierzchołków mniejszej mieszczącej się w granicy 10 000. Z tej dwójki to metoda Louvain znalazła się na drugim miejscu, jeśli chodzi o wyniki czasowe. \\
 
