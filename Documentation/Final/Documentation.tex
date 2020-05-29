@@ -394,7 +394,29 @@ Ciekawe zjawisko można zaobserwować badając grafy przetwarzane równolegle. P
 \caption{Wizualizacja wyniku działania LPA CUDA dla grafu NBA}
 \end{figure}
 
-Otrzymane rezultaty sa znacząco inne niż w wersji synchronicznej. Społeczności jest zdecydowanie więcej, część z nich 'rozciąga się' przez znaczną część grafu. Małe kliki uformowały społeczności, co jest porządanym rezultatem. Biorąc pod uwagę czas wykonania tej wersji algorytmu wyniki są bardzo zadowalające.
+Otrzymane rezultaty sa znacząco inne niż w wersji synchronicznej. Społeczności jest zdecydowanie więcej, część z nich 'rozciąga się' przez znaczną część grafu. Małe kliki uformowały społeczności, co jest porządanym rezultatem. Biorąc pod uwagę czas wykonania tej wersji algorytmu wyniki są bardzo zadowalające.\\
+
+Ciekawe rezultaty otrzymano badając połączenie algorytmu LPA z łączeniem społeczności rozłącznych w nachodzące, zaimplementowanego w algorytmie Louvain. Zastosowano tutaj wersję podstawową algorytmu LPA dla społeczności rozłącznych, ponieważ etap łączenia wymaga, aby rezultaty bazowego algorytmu były niedeterministyczne. Przykładowe wyniki eksperymentu przedstawiono poniżej.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{images/ms-louvain-lpa.png}
+\caption{Wizualizacja kombinacji LPA + Louvain}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{images/ms-louvain-lpa-2.png}
+\caption{Wizualizacja kombinacji LPA + Louvain}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{images/ms-louvain-lpa-3.png}
+\caption{Wizualizacja kombinacji LPA + Louvain}
+\end{figure}
+
+Wyniki pokazują, że algorytm tworzy społeczności nachodzące tam, gdzie występował niedeterminizm. Wielkość przecięcia społeczności jest wiarygodna, ponadto można ją modyfikować za pomocą parametru. Wadą tego rozwiązania jest fakt, że etap łączenia ma złożoność wyższą, niż algorytm LPA, co uniemożliwia zastosowanie go dla grafów dużych. Jednak kombinacja ta jest wydajniejsza, niż użycie algorytmu Louvain w pierwszym kroku, co sprawia, że warto ją rozważyć w zastosowaniach praktycznych. W sprawozdaniu nie przedstawiam wyników połączenia algorytmu OCDLCE z algorytmem LPA, gdyż nie dało ono zadowalających wyników.
 
 %-----------------------------------------------------%
 %OCDLCE
