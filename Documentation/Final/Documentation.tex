@@ -41,7 +41,7 @@ Problem wykrywania społeczności w sieciach okazał się być bardzo ciekawym, 
 \subsection{Algorytm Girvan-Newmana}
 \subsubsection{Implementacja}
 
-W przypadku tego algorytmu praca została rozpoczęta od podstaw, a więc tradycyjnej wersji algorytmu Girvan-Newman dla społeczności rozłącznych. Jak się okazało biblioteka igraph, z której korzystaliśmy, udostępnia wbudowaną funkcję do wyliczania parametru edge betweenness. Dzięki skorzystaniu z tej metody implementacja algorytmu sprowadziła się do krótkiej funkcji, która wyznacza ww. parametr, a następnie usuwa krawędź, dla której jest on największy. Algorytm ten nie podlegał dalszej analizie - wykorzystano go tylko do sprawdzenia poprawności danych, na których pracowaliśmy, a także określenia struktury wyniku użytej w całym algorytmu.\\
+W przypadku tego algorytmu praca została rozpoczęta od podstaw, a więc tradycyjnej wersji algorytmu Girvan-Newman dla społeczności rozłącznych. Jak się okazało, biblioteka igraph, z której korzystaliśmy, udostępnia wbudowaną funkcję do wyliczania parametru edge betweenness. Dzięki skorzystaniu z tej metody implementacja algorytmu sprowadziła się do krótkiej funkcji, która wyznacza ww. parametr, a następnie usuwa krawędź, dla której jest on największy. Algorytm ten nie podlegał dalszej analizie - wykorzystano go tylko do sprawdzenia poprawności danych, na których pracowaliśmy, a także określenia struktury wyniku użytej w całym algorytmu.\\
 
 Aby uzyskać wynik w postaci społeczności nachodzących użyty został algorytm CONGA, do którego zastosowano własne modyfikacje. Także w tym wypadku pomocna okazała się biblioteka igraph, w której zaimplementowana jest funkcja do wyznaczania parametru vertex betweenness. Dzięki temu w każdym kroku uzyskano zbiory dwóch kluczowych parametrów dla przebiegu całego algorytmu.\\
 
@@ -70,13 +70,13 @@ Usuwanie krawędzi w trakcie działania algorytmu dokonywano zbiorowo - wszystki
 \subsection{Label Propagation Algorithm}
 \subsubsection{Implementacja}
 
-Wersja podstawowa algorytmu Label Propagation była już zaimplementowana w bibliotece igraph. Pozostało jedynie dostosowanie jej wyniku tak, aby dało się go zwizualizować za pomocą naszej warstwy prezentacji. Jako że dalsze modyfikacje opierały się na tej wersji, konieczne okazało się również zaimplementowanie jej w naszym projekcie od podstaw.\\
+Wersja podstawowa algorytmu Label Propagation była już zaimplementowana w bibliotece igraph. Pozostało jedynie dostosowanie jej wyniku tak, aby dało się go zwizualizować za pomocą wspólnej dla projektu warstwy prezentacji. Jako że dalsze modyfikacje opierały się na tej wersji, konieczne okazało się również zaimplementowanie jej od podstaw.\\
 
-Posiadając już podstawową wersję algorytmu pozostało zmodyfikować ją tak, aby była ona w stanie wykrywać społeczności nachodzące. Zgodnie z dokumentacją początkową wprowadzono parametr, określający maksymalną liczbę społeczności, do której może przynależeć wierzchołek i zmodyfikowano krok algorytmu tak, aby był w stanie przypisać rozpatrywanemu wierzchołkowi więcej niż jedną społeczność.\\
+Posiadając już bazową wersję algorytmu, pozostało zmodyfikować ją tak, aby była ona w stanie wykrywać społeczności nachodzące. Zgodnie z dokumentacją początkową wprowadzono parametr, określający maksymalną liczbę społeczności, do której może przynależeć wierzchołek i zmodyfikowano krok algorytmu tak, aby był w stanie przypisać rozpatrywanemu wierzchołkowi więcej niż jedną społeczność.\\
 
-W ramach tego opracowania nie udało się wprowadzić modyfikacji z parametrem znormalizowanym. Okazało się jednak, że kroki z innych algorytmów można połączyć z algorytmem LPA. Tak więc wykorzystano krok pierwszy algorytmu OCDLCE do inicjalizacji początkowych społeczności algorytmu LPA. Korzystając z faktu, że algorytm LPA jest niedeterministyczny, można było również użyć ostatniego kroku algorytmu Louvein do połączenia kilku rozwiązań rozłącznych w takie, gdzie społeczności są nachodzące.\\
+W ramach tego opracowania nie udało się wprowadzić modyfikacji z parametrem znormalizowanym. Okazało się jednak, że kroki z innych algorytmów można połączyć z algorytmem LPA. Tak więc wykorzystano krok pierwszy algorytmu OCDLCE do inicjalizacji początkowych społeczności algorytmu LPA. Korzystając z faktu, że algorytm LPA jest niedeterministyczny, można było również użyć ostatniego kroku algorytmu Louvain do połączenia kilku rozwiązań rozłącznych w takie, gdzie społeczności są nachodzące.\\
 
-Modyfikacje związane z dodatkowymi własnościami grafu zostały zrealizowane zgodnie z założeniami. Dla dat zawarcia znajomości algorytm opiera się na odchyleniu standardowym - wybiera społeczność, gdzie jest ono najmniejsze. Przy liczbie wspólnych znajomych, czy innym parametrze ilościowym (np. liczba commitów w pracy nad wspólnym repozytorium), wybierana jest grupa, gdzie suma dla tego parametru jest maksymalna.
+Modyfikacje związane z dodatkowymi własnościami grafu zostały zrealizowane zgodnie z założeniami. Dla dat zawarcia znajomości algorytm opiera się na odchyleniu standardowym - wybiera społeczność, gdzie jest ono najmniejsze. Przy liczbie wspólnych znajomych lub innym parametrze ilościowym (np. liczbie commitów w pracy nad wspólnym repozytorium), wybierana jest grupa, gdzie suma dla tego parametru jest maksymalna.
 
 \subsubsection{Podjęte decyzje}
 
@@ -94,14 +94,18 @@ Zaimplementowano prostą wersję algorytmu używającej technologi CUDA. Impleme
 
 Algorytm OCDLCE został w pełni samodzielnie zaimplementowany. W celu łatwiejszych modyfikacji został on podzielony na 3 funkcje, odpowiadające jego krokom. Dwa pierwsze kroki zwracają graf oraz listę społeczności, zaś trzeci jedynie końcowy graf. \\
 
-W pierwszym kroku po kolei rozpratrywany jest każdy wierzchołek, a potem dla wybranego wierzchołka sprawdzamy wszystkich jego sąsiadów, z którymi nie jest jeszcze w jednej społeczności. Potem zgodnie z algorytmem sprawdza się wspólnych sąsiadów i po zbadaniu modularności ewentualnie dodaje do tymczasowej społeczności. W przypadku gdy osiągnęła ona minimum 5 wierzchołków aktualizuje się zarówno informacje w wierzchołkach o przynależności do społeczności jak i listę wszystkich społeczności.\\
+W pierwszym kroku rozpratrywany jest po kolei każdy wierzchołek, a następnie, dla wybranego wierzchołka sprawdzani są wszyscy jego sąsiedzi, z którymi nie jest on jeszcze w jednej społeczności. W dalszej kolejności, zgodnie z założeniami algorytmu, sprawdza się wspólnych sąsiadów, których po zbadaniu modularności można dodać do tymczasowej społeczności. W przypadku gdy osiągnęła ona 5 wierzchołków, aktualizowana jest zarówno informacje w wierzchołkach o przynależności do społeczności jak i lista wszystkich społeczności.\\
 
-W drugim kroku łączy się społeczności. Została w tym celu stworzona specjalna funkcja Union, która za pomocą wyliczenia $WOS$ definiuje czy społeczności powinny zostać złączone. \\
+W drugim kroku łączone są społeczności. Została w tym celu stworzona specjalna funkcja Union, która za pomocą wyliczenia parametru $WOS$ definiuje czy społeczności powinny zostać złączone. \\
 
-W ostatnim kroku rozpatruje się wierzchołki nie należące do żadnej społeczności. W przypadku, gdy nie należą do żadnej społeczności, rozpatruje się wszystkie społeczności sąsiadów, oblicza modularność i w przypadku pozytywnego wyniku, dodaje rozpatrywany wierzchołek do danej społeczności.
+W ostatnim kroku rozpatruje się wierzchołki nie należące do żadnej społeczności. Dla każdego takiego wierzchołka, rozpatruje się wszystkie społeczności sąsiadów, oblicza modularność i w przypadku pozytywnego wyniku, dodaje go do danej społeczności.
 
 \subsubsection{Podjęte decyzje}
-Do pierwszego i trzeciego kroku dodano możliwość podania innej miary lokalnej modularności. W wersji podstawowej użyto modularności M, opisanej wzorem:\\ $$M_in = \frac{M_in}{M_out}$$ \\ zaś dodatkowa modyfikacja umożliwia zamiast tego skorzystanie z modularności f, opisanej wzorem:\\ $$f_G = \frac{k^G_in}{(k^G_in + k^G_out)^\alpha}$$\\, gdzie $k^G_in$ jest dwukrotnością liczby krawędzi o obu końcach w G, $k^G_out$ liczbą krawędzi o jednym końcu w G, zaś alpha parametrem. \\
+Do pierwszego i trzeciego kroku dodano możliwość podania innej miary lokalnej modularności. W wersji podstawowej użyto modularności M, opisanej szczegółowo w dokumentacji początkowej. Dla przypomnienia, wyraża się ona wzorem:
+$$M = \frac{M_{in}}{M_{out}}$$
+Zaimplementowana modyfikacja umożliwia zamiast tej miary skorzystanie z modularności f, opisanej wzorem:
+$$f_G = \frac{k^G_{in}}{(k^G_{in} + k^G_{out})^\alpha}$$,
+gdzie $k^G_{in}$ jest dwukrotnością liczby krawędzi o obu końcach w G, $k^G_{out}$ liczbą krawędzi o jednym końcu w G, zaś alpha parametrem.\\
 
 Kolejną modyfikacją była zmiana sposobu wyznaczania lokalnych społeczności w pierwszym kroku algorytmu. Zamiast każdej pary wierzchołków niebędących w społeczności, można rozpatrywać trójkę. Podejście to sprawia, że w pierwszym kroku uzyskuje się mniej początkowych społeczności, ale za to mocniej ze sobą związanych. Posiada ono jednak pewną wadę - zazwyczaj niepomijalna część wierzchołków o małej liczbie sąsiadów nie ma przypisanej żadnej społeczności.
 
